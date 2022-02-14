@@ -15,7 +15,7 @@ public class GameState extends State
     public GameState(Handler handler)
     {
         super(handler);
-        world = new World(handler,"map_test_100x100.png", 100, 100, 1100, 400); // Image has to be grayscale
+        world = new World(handler,"map_test_48x27.png", 1100, 400); // Image has to be grayscale
         handler.setWorld(world);
     }
 

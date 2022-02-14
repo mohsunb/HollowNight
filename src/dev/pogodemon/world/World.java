@@ -25,12 +25,23 @@ public class World
     private int[][] tiles;
     private EntityManager entityManager;
 
-    public World(Handler handler, String path, int width, int height, int spawnX, int spawnY)
+    public World(Handler handler, String path, int spawnX, int spawnY)
     {
+        try
+        {
+            this.width = ImageIO.read(new File(path)).getWidth();
+            this.height = ImageIO.read(new File(path)).getHeight();
+        }
+
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
         this.handler = handler;
         entityManager = new EntityManager(handler, new Player(handler, 0, 0));
 
-        loadWorldFromImage(path, width, height, spawnX, spawnY);
+        loadWorldFromImage(path, spawnX, spawnY);
 
         entityManager.getPlayer().setX(spawnX);
         entityManager.getPlayer().setY(spawnY);
@@ -76,10 +87,10 @@ public class World
     }
 
     // Image has to be grayscale
-    private void loadWorldFromImage(String ImageName, int width, int height, int spawnX, int spawnY)
+    private void loadWorldFromImage(String ImageName, int spawnX, int spawnY)
     {
-        this.width = width;
-        this.height = height;
+        //this.width = width;
+        //this.height = height;
         this.spawnX = spawnX;
         this.spawnY = spawnY;
         DataBufferByte data = null;

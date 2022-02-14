@@ -10,10 +10,14 @@ import java.awt.*;
 public class Player extends Creature
 {
     private boolean jumping = false;
-    private boolean constant_jumping = false;
-    private boolean can_dash = true;
+    private boolean illegal_jumping = false;
+    private boolean can_dash = false;
     private boolean dashing = false;
     private boolean just_dashed = false;
+    private boolean can_dash_twice = false;
+
+    //Abilities
+    private boolean hasMantisClaw = true;
 
     public Player(Handler handler, float x, float y)
     {
@@ -56,27 +60,33 @@ public class Player extends Creature
                 dash_length_timer = 0;
                 just_dashed = true;
             }
+
+            if (!can_dash_twice && grounded)
+                can_dash_twice = true;
         }
 
         //Add dash cooldown of 0.6 seconds
         if (just_dashed)
         {
             dash_cooldown_timer++;
-            if (dash_cooldown_timer >= Launcher.framerate_limit * 0.2)
+            if (dash_cooldown_timer >= Launcher.framerate_limit * 0.6)
             {
                 just_dashed = false;
                 dash_cooldown_timer = 0;
             }
         }
 
-        if (!dashing && !can_dash && grounded && !handler.getKeyManager().c)
+        if (!dashing && !can_dash && (grounded || can_dash_twice) && !handler.getKeyManager().c)
         {
-            can_dash = true;
+            if (hasMantisClaw)
+                can_dash = true;
         }
 
         if (!just_dashed && !dashing && can_dash && handler.getKeyManager().c)
         {
             dashing = true;
+            if (can_dash_twice)
+                can_dash_twice = false;
 
             if (facing_right)
                 xMove += DEFAULT_SPEED * 5;
@@ -86,11 +96,17 @@ public class Player extends Creature
             speedY = 0;
         }
 
-        //Jumping and gravity START
+        //Jumping START
 
-        if (!constant_jumping && grounded && !jumping && handler.getKeyManager().z)
+        if (!grounded && !jumping && handler.getKeyManager().z)
+            illegal_jumping = true;
+
+        if (illegal_jumping && grounded && !handler.getKeyManager().z)
+            illegal_jumping = false;
+
+        if (!illegal_jumping && grounded && !jumping && handler.getKeyManager().z)
         {
-            constant_jumping = true;
+            illegal_jumping = true;
             jumping = true;
             speedY = 9.0f; //Jumping initial speed
             if (!dashing || !just_dashed)
@@ -125,8 +141,7 @@ public class Player extends Creature
         }
 
         if (grounded && !handler.getKeyManager().z)
-            constant_jumping = false;
-
+            illegal_jumping = false;
         //Jumping and gravity END
 
         if (handler.getKeyManager().right)

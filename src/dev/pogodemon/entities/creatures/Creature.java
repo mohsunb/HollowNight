@@ -121,6 +121,19 @@ public abstract class Creature extends Entity
             }
         }
 
+        else if (yMove == 0)
+        {
+            int ty = (int) Math.floor((y + 1 + bounds.y + bounds.height) / Tile.TILE_HEIGHT);
+            if (!collisionWithTile((int) Math.floor((x + bounds.x) / Tile.TILE_WIDTH), ty)
+                    && !collisionWithTile((int) Math.floor((x + bounds.x + bounds.width) / Tile.TILE_WIDTH), ty)
+                    && !collisionWithTile((int) Math.floor((x + bounds.x + bounds.width * 0.5) / Tile.TILE_WIDTH), ty))
+            {
+                grounded = false;
+                ceiling_collide = false;
+                yMove += speedY;
+            }
+        }
+
         else
         {
             int ty = (int) Math.floor((y + yMove + bounds.y + bounds.height) / Tile.TILE_HEIGHT);
