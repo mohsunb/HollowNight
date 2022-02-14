@@ -5,6 +5,7 @@ An attempt at remaking "Hollow Knight" from Team Cherry for a project aimed at i
 ## Update 14-Feb-2022: v0.0.1a
 * Improved entity grounded state detection
 * Fixed a bug with jumping where pressing jump mid-air after falling off of a platform and holding jump would result in a jump upon landing
+* Added ability to dash a second time mid-air after dashing off of platforms
 
 ## Update 13-Feb-2022: v0.0.1
 * Added collision detection for creature type entities
