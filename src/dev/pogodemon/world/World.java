@@ -86,11 +86,13 @@ public class World
         return tile;
     }
 
-    // Image has to be grayscale
+
     private void loadWorldFromImage(String ImageName, int spawnX, int spawnY)
     {
-        //this.width = width;
-        //this.height = height;
+        /*
+        The input image has to be grayscale (8-bit color)
+         */
+
         this.spawnX = spawnX;
         this.spawnY = spawnY;
         DataBufferByte data = null;

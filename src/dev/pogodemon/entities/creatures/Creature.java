@@ -13,6 +13,8 @@ public abstract class Creature extends Entity
     protected float xMove, yMove;
     protected boolean facing_right = true;
 
+    protected float fall_distance = 0;
+
     public static final int DEFAULT_HEALTH = 100;
     public static final float DEFAULT_SPEED = 4.0f * 144 / Launcher.framerate_limit; // To make the movement speed independent of the framerate
 
@@ -25,6 +27,8 @@ public abstract class Creature extends Entity
 
     protected boolean grounded = false;
     protected boolean ceiling_collide = false;
+    protected boolean will_hard_fall = false;
+    protected boolean fall_shocked = false;
 
     public Creature(Handler handler, float x, float y, float width, float height)
     {
@@ -49,7 +53,7 @@ public abstract class Creature extends Entity
 
             yMove += speedY;
         }
-
+        
         moveX();
         moveY();
     }
@@ -119,6 +123,7 @@ public abstract class Creature extends Entity
                 ceiling_collide = true;
                 y = ty * Tile.TILE_HEIGHT + Tile.TILE_HEIGHT - bounds.y;
             }
+
         }
 
         else if (yMove == 0)
@@ -136,6 +141,14 @@ public abstract class Creature extends Entity
 
         else
         {
+            
+            if (!will_hard_fall && fall_distance < 1600)
+                fall_distance += yMove;
+            else
+            {
+                will_hard_fall = true;
+                fall_distance = 0;
+            }
             int ty = (int) Math.floor((y + yMove + bounds.y + bounds.height) / Tile.TILE_HEIGHT);
             if (!collisionWithTile((int) Math.floor((x + bounds.x) / Tile.TILE_WIDTH), ty)
                     && !collisionWithTile((int) Math.floor((x + bounds.x + bounds.width) / Tile.TILE_WIDTH), ty)
