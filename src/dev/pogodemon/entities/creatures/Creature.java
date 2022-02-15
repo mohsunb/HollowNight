@@ -30,6 +30,24 @@ public abstract class Creature extends Entity
     protected boolean will_hard_fall = false;
     protected boolean fall_shocked = false;
 
+    //Abilities (temporary, will be loaded off of a save file in the future)
+    protected boolean hasMothwingCloak = true;
+    protected boolean hasMantisClaw = true;
+
+    //jumping helper dynamic flags
+    protected boolean jumping = false;
+    protected boolean illegal_jumping = false;
+
+    //dashing helper dynamic flags
+    protected boolean can_dash = false;
+    protected boolean dashing = false;
+    protected boolean just_dashed = false;
+    protected boolean can_dash_twice = false;
+
+    //wall jump helper flags
+    protected boolean cling_right = false;
+    protected boolean cling_left = false;
+
     public Creature(Handler handler, float x, float y, float width, float height)
     {
         super(handler, x, y, width, height);
@@ -70,17 +88,48 @@ public abstract class Creature extends Entity
                     && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)))
             {
                 x += xMove;
+                if (cling_left)
+                    cling_left = false;
+                if (cling_right)
+                    cling_right = false;
             }
 
             else
             {
 
                 if (CREATURE_TYPE == 0)
+                {
                     x = tx * Tile.TILE_WIDTH - bounds.x - bounds.width - 1;
+
+                    if (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) && !jumping && !grounded && !dashing && hasMantisClaw)
+                    {
+                        facing_right = false;
+                        cling_right = true;
+                    }
+                }
+
+
                 else
                 {
                     facing_right = !facing_right;
                 }
+            }
+        }
+
+        else if (xMove == 0)
+        {
+            if (cling_right)
+            {
+                int tx = (int) Math.floor((x + xMove + bounds.x + bounds.width + 1) / Tile.TILE_WIDTH);
+                if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)))
+                    cling_right = false;
+            }
+
+            else if (cling_left)
+            {
+                int tx = (int) Math.floor((x + xMove + bounds.x - 1) / Tile.TILE_WIDTH);
+                if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)))
+                    cling_left = false;
             }
         }
 
@@ -94,11 +143,21 @@ public abstract class Creature extends Entity
                     && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)))
             {
                 x += xMove;
+                if (cling_right)
+                    cling_right = false;
+                if (cling_left)
+                    cling_left = false;
             }
 
             else
             {
                 x = tx * Tile.TILE_WIDTH + Tile.TILE_WIDTH - bounds.x;
+
+                if (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) && !jumping  && !grounded && !dashing && hasMantisClaw)
+                {
+                    cling_left = true;
+                    facing_right = true;
+                }
             }
         }
     }
@@ -135,7 +194,12 @@ public abstract class Creature extends Entity
             {
                 grounded = false;
                 ceiling_collide = false;
-                yMove += speedY;
+
+                if (cling_left || cling_right)
+                    yMove += speedY * 0.25;
+
+                else
+                    yMove += speedY;
             }
         }
 

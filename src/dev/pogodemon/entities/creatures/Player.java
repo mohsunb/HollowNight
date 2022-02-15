@@ -9,20 +9,6 @@ import java.awt.*;
 
 public class Player extends Creature
 {
-    //Abilities (temporary, will be loaded off of a save file in the future)
-    private boolean hasMothwingCloak = true;
-    //private boolean hasMantisClaw = true;
-
-    //jumping helper dynamic flags
-    private boolean jumping = false;
-    private boolean illegal_jumping = false;
-
-    //dashing helper dynamic flags
-    private boolean can_dash = false;
-    private boolean dashing = false;
-    private boolean just_dashed = false;
-    private boolean can_dash_twice = false;
-
     public Player(Handler handler, float x, float y)
     {
         super(handler, x, y, Creature.DEFAULT_WIDTH * 0.75f, Creature.DEFAULT_HEIGHT * 1.625f);
@@ -35,26 +21,56 @@ public class Player extends Creature
         CREATURE_TYPE = 0; //Player
     }
 
+    private boolean wall_jumping_right = false;
+    private boolean wall_jumping_left = false;
+    
     @Override
     public void update()
     {
-        //prevent hard fall by dashing
-        if (dashing || grounded)
+        if (cling_right || cling_left)
+            can_dash = true;
+
+        //prevent hard fall by dashing or clinging
+        if (dashing || grounded || cling_right || cling_left)
         {
             fall_distance = 0;
         }
-
-        if (dashing)
-            will_hard_fall = false;
-
+        
+        if ((cling_right && !jumping) || (cling_left && !jumping))
+        {
+            wall_jumping_right = false;
+            wall_jumping_left = false;
+        }
+        
         getInput();
         move();
         handler.getCamera().centerOnEntity(this);
+
+        //wall cling reset
+        if (grounded || dashing)
+        {
+            if (cling_right)
+                cling_right = false;
+
+            if (cling_left)
+                cling_left = false;
+        }
+
+        if (dashing || cling_right || cling_left)
+        {
+            will_hard_fall = false;
+            if (-speedY > DEFAULT_SPEED * 2 * 0.25 || yMove > DEFAULT_SPEED * 2 * 0.25)
+            {
+                yMove = 0;
+                speedY = DEFAULT_SPEED * 2 * 0.25f;
+            }
+        }
     }
 
     long dash_length_timer = 0;
     long dash_cooldown_timer = 0;
     long fall_shock_timer = 0;
+    long wall_jump_force_horizontal_move_timer = 0;
 
     private void getInput()
     {
@@ -128,17 +144,27 @@ public class Player extends Creature
             }
 
             //Jumping START
-
-            if (!grounded && !jumping && handler.getKeyManager().z)
+            if (!grounded && !cling_left && !cling_right && !jumping && handler.getKeyManager().z)
                 illegal_jumping = true;
 
-            if (illegal_jumping && grounded && !handler.getKeyManager().z)
+            if (illegal_jumping && (grounded || cling_right || cling_left) && !handler.getKeyManager().z)
                 illegal_jumping = false;
 
-            if (!illegal_jumping && grounded && !jumping && handler.getKeyManager().z)
+            if (!illegal_jumping && (grounded || cling_right || cling_left) && !jumping && handler.getKeyManager().z)
             {
+                if (cling_left)
+                {
+                    wall_jumping_right = true;
+                }
+
+                else if (cling_right)
+                {
+                    wall_jumping_left = true;
+                }
+                
                 illegal_jumping = true;
                 jumping = true;
+                
                 speedY = 10.0f; //Jumping initial speed
                 if (!dashing || !just_dashed)
                     yMove += -speedY;
@@ -154,6 +180,38 @@ public class Player extends Creature
                     jumping = false;
                     speedY = 0;
                 }
+                
+                if (wall_jumping_right)
+                {
+                    wall_jump_force_horizontal_move_timer++;
+                    if (wall_jump_force_horizontal_move_timer >= Launcher.framerate_limit * 0.15)
+                    {
+                        wall_jump_force_horizontal_move_timer = 0;
+                        wall_jumping_right = false;
+                    }
+                    
+                    else
+                    {
+                        handler.getKeyManager().right = true;
+                        handler.getKeyManager().left = false;
+                    }
+                }
+
+                else if (wall_jumping_left)
+                {
+                    wall_jump_force_horizontal_move_timer++;
+                    if (wall_jump_force_horizontal_move_timer >= Launcher.framerate_limit * 0.15)
+                    {
+                        wall_jump_force_horizontal_move_timer = 0;
+                        wall_jumping_left = false;
+                    }
+
+                    else
+                    {
+                        handler.getKeyManager().right = false;
+                        handler.getKeyManager().left = true;
+                    }
+                }
             }
 
             else if (jumping && !handler.getKeyManager().z && speedY != 0)
@@ -164,7 +222,13 @@ public class Player extends Creature
             else
             {
                 jumping = false;
-                if (!grounded && speedY <= DEFAULT_SPEED * 2)
+
+                int t = (int) (DEFAULT_SPEED * 2);
+
+                if (cling_left || cling_right)
+                    t = (int) (DEFAULT_SPEED * 2 * 0.25);
+
+                if (!grounded && speedY <= t)
                     speedY += 0.2;
 
                 if (grounded || dashing)
@@ -174,24 +238,22 @@ public class Player extends Creature
                     yMove += speedY;
             }
 
-            if (grounded && !handler.getKeyManager().z)
+            if ((grounded || cling_right || cling_left) && !handler.getKeyManager().z)
                 illegal_jumping = false;
             //Jumping END
 
-            if (handler.getKeyManager().right)
+            if (!dashing && handler.getKeyManager().right)
             {
                 if(!facing_right)
                     facing_right = true;
-                if (!dashing)
-                    xMove += speedX;
+                xMove += speedX;
             }
 
-            if (handler.getKeyManager().left)
+            if (!dashing && handler.getKeyManager().left)
             {
                 if(facing_right)
                     facing_right = false;
-                if (!dashing)
-                    xMove += -speedX;
+                xMove += -speedX;
             }
         }
 
@@ -208,7 +270,12 @@ public class Player extends Creature
         gfx.setColor(Color.white);
         gfx.drawString("X: " + (int) x / Tile.TILE_WIDTH, 5, 15);
         gfx.drawString("Y: " + (handler.getWorld().getHeight() - (int)  y / Tile.TILE_HEIGHT), 5, 30);
-        gfx.drawString("Fall distance: " + fall_distance, 5, 45);
+        gfx.drawString("Cling left: " + cling_left, 5, 45);
+        gfx.drawString("Cling right: " + cling_right, 5, 60);
+        gfx.drawString("wall jump right : " + wall_jumping_right, 5, 75);
+        gfx.drawString("wall jump left : " + wall_jumping_left, 5, 90);
+        gfx.drawString("jumping: " + jumping, 5, 105);
+
 
         //Render HUD
         gfx.drawImage(Assets.soul_vessel_hud, 90, 80, null);
@@ -220,7 +287,13 @@ public class Player extends Creature
             gfx.drawImage(Assets.mask_full, 50 * i + 200, 98, null);
 
         //Render player
-        if (facing_right)
+        if (hasMantisClaw && cling_left)
+            gfx.drawImage(Assets.cling_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset()), null);
+
+        else if (hasMantisClaw && cling_right)
+            gfx.drawImage(Assets.cling_right, (int) (x - handler.getCamera().getxOffset() - 14), (int) (y - handler.getCamera().getyOffset()), null);
+
+        else if (facing_right)
         {
             if (fall_shocked)
                 gfx.drawImage(Assets.fall_shock_right, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
@@ -238,7 +311,6 @@ public class Player extends Creature
                 else
                     gfx.drawImage(Assets.walk_right, (int) (x - handler.getCamera().getxOffset() - 4 - 7), (int) (y - handler.getCamera().getyOffset()), null);
             }
-
 
 
             else

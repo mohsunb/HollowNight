@@ -5,7 +5,8 @@ import java.awt.image.BufferedImage;
 public class Assets
 {
     public static BufferedImage player_right, player_left, tile_collision, tile_empty, grass, husk_right, husk_left, mask_full, mask_empty
-            , soul_vessel_hud, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left, fall_shock_right, fall_shock_left;
+            , soul_vessel_hud, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left, fall_shock_right
+            , fall_shock_left, cling_right, cling_left;
 
     public static void init()
     {
@@ -29,5 +30,7 @@ public class Assets
         fall_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/fall_left.png");
         fall_shock_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/fall_shock_right.png");
         fall_shock_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/fall_shock_left.png");
+        cling_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/cling_right.png");
+        cling_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/cling_left.png");
     }
 }

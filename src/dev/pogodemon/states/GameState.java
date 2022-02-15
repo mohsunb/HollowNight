@@ -12,7 +12,7 @@ public class GameState extends State
     public GameState(Handler handler)
     {
         super(handler);
-        kings_pass = new World(handler,"kings_pass.png", 3000, 2500);
+        kings_pass = new World(handler,"kings_pass.png", 3000, 4480);
         handler.setWorld(kings_pass);
     }
 
