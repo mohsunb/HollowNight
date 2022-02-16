@@ -1,16 +1,22 @@
 package dev.pogodemon.entities;
 
 import dev.pogodemon.Game;
+import dev.pogodemon.entities.creatures.PlayerSlash;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
+import java.util.Iterator;
 
 public abstract class Entity
 {
+    public int health;
+    protected boolean exists = true;
     protected Handler handler;
     protected float x, y;
     protected float width, height;
     protected Rectangle bounds;
+
+    public boolean is_harmful = false; //by default all entities don't do contact damage
 
     public Entity(Handler handler, float x, float y, float width, float height)
     {
@@ -21,6 +27,52 @@ public abstract class Entity
         this.height = height;
 
         bounds = new Rectangle(0, 0, (int) width, (int) height);
+    }
+
+    public void removeEntity()
+    {
+        exists = false;
+    }
+
+    public boolean doesExist()
+    {
+        return exists;
+    }
+
+    public boolean checkEntityCollisions(float xOffset, float yOffset)
+    {
+        for (Entity e : handler.getWorld().getEntityManager().getEntities())
+        {
+           if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this))
+                continue;
+
+            if (e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset)))
+                return true;
+        }
+
+        return false;
+    }
+
+    public Entity getCollidingEntity(float xOffset, float yOffset)
+    {
+        Entity entity = null;
+        for (Entity e : handler.getWorld().getEntityManager().getEntities())
+        {
+            if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this))
+                continue;
+
+            if (e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset)))
+            {
+                entity = e;
+                break;
+            }
+        }
+        return entity;
+    }
+
+    public Rectangle getCollisionBounds(float xOffset, float yOffset)
+    {
+        return new Rectangle((int) (x + bounds.x + xOffset), (int) (y + bounds.y + yOffset), bounds.width, bounds.height);
     }
 
     public float getX()

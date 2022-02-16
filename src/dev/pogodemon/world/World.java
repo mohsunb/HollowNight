@@ -47,6 +47,11 @@ public class World
         entityManager.getPlayer().setY(spawnY);
     }
 
+    public EntityManager getEntityManager()
+    {
+        return entityManager;
+    }
+
     public void addEntity(Entity e)
     {
         entityManager.addEntity(e);

@@ -1,6 +1,7 @@
 package dev.pogodemon.entities;
 
 import dev.pogodemon.entities.creatures.Player;
+import dev.pogodemon.entities.creatures.PlayerSlash;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -17,6 +18,12 @@ public class EntityManager
         this.handler = handler;
         this.player = player;
         entities = new ArrayList<Entity>();
+        addEntity(player);
+    }
+
+    public ArrayList<Entity> getEntities()
+    {
+        return entities;
     }
 
     public void addEntity(Entity e)
@@ -28,13 +35,10 @@ public class EntityManager
     {
         for (Entity e : entities)
             e.update();
-
-        player.update();
     }
 
     public void render(Graphics gfx)
     {
-        player.render(gfx);
         for (Entity e : entities)
             e.render(gfx);
     }

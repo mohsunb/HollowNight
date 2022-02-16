@@ -2,6 +2,7 @@ package dev.pogodemon.entities.creatures;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
+import dev.pogodemon.entities.Entity;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -21,12 +22,147 @@ public class Player extends Creature
         CREATURE_TYPE = 0; //Player
     }
 
-    private boolean wall_jumping_right = false;
-    private boolean wall_jumping_left = false;
-    
+    //slashing helper flags
+    public int nail_damage = 5;
+    public boolean alternative_slash_sprite = true; // = !self to change
+    public boolean slashing = false;
+    private boolean slash_blocked = false;
+    private boolean illegal_slash = false;
+    public boolean down_slashing = false;
+    public boolean up_slashing = false;
+    public boolean just_attacked = false;
+    public boolean attack_knockback = false;
+    public boolean pogo = false;
+    long attack_knockback_timer = 0;
+    long pogo_timer = 0;
+    long invulnerable_timer = 0;
+    long damage_shock_timer = 0;
+    long slash_cooldown_timer = 0;
+    long slash_timer = 0;
+
     @Override
     public void update()
     {
+        if (attack_knockback)
+        {
+            if (facing_right)
+            {
+                handler.getKeyManager().left = true;
+            }
+
+            else
+            {
+                handler.getKeyManager().right = true;
+            }
+        }
+
+        if (attack_knockback)
+        {
+            attack_knockback_timer++;
+            if (attack_knockback_timer >= Launcher.framerate_limit * 0.2)
+            {
+                attack_knockback_timer = 0;
+                attack_knockback = false;
+            }
+        }
+
+        if (pogo)
+        {
+            speedY = 0;
+            pogo_timer++;
+            if (pogo_timer >= Launcher.framerate_limit * 0.25)
+            {
+                pogo_timer = 0;
+                pogo = false;
+                yMove = 0;
+            }
+        }
+
+        if (just_attacked && !slashing)
+            just_attacked = false;
+
+        if (!handler.getKeyManager().x && !slashing)
+        {
+            if (handler.getKeyManager().up)
+            {
+                up_slashing = true;
+                down_slashing = false;
+            }
+
+            else if (!handler.getKeyManager().up)
+            {
+                up_slashing = false;
+            }
+        }
+
+        if (!handler.getKeyManager().x && !slashing && !grounded)
+        {
+            if (handler.getKeyManager().down)
+            {
+                down_slashing = true;
+                up_slashing = false;
+            }
+
+            else if (!handler.getKeyManager().down)
+            {
+                down_slashing = false;
+            }
+        }
+
+        if (grounded && down_slashing && !slashing)
+            down_slashing = false;
+
+        if (!handler.getKeyManager().x && handler.getKeyManager().up && handler.getKeyManager().down)
+        {
+            down_slashing = false;
+            up_slashing = false;
+        }
+
+        if (slashing)
+        {
+            slash_timer++;
+            if (!slash_blocked)
+                slash_blocked = true;
+        }
+
+        if (slash_blocked)
+        {
+            slash_cooldown_timer++;
+        }
+
+        if (slash_timer >= Launcher.framerate_limit * 0.35)
+        {
+            slash_timer = 0;
+            slashing = false;
+        }
+
+        if (slash_cooldown_timer >= Launcher.framerate_limit * 0.41)
+        {
+            slash_cooldown_timer = 0;
+            slash_blocked = false;
+        }
+
+        if (health <= 0)
+            handler.getKeyManager().q = true;
+
+        if (invulnerable)
+            invulnerable_timer++;
+
+        if (damage_shocked)
+            damage_shock_timer++;
+
+        if (invulnerable_timer >= Launcher.framerate_limit * 1.3)
+        {
+            invulnerable = false;
+            invulnerable_timer = 0;
+        }
+
+        if (damage_shock_timer >= Launcher.framerate_limit * 0.2)
+        {
+            damage_shocked = false;
+            damage_shock_timer = 0;
+        }
+
         if (cling_right || cling_left)
             can_dash = true;
 
@@ -44,6 +180,7 @@ public class Player extends Creature
         
         getInput();
         move();
+
         handler.getCamera().centerOnEntity(this);
 
         //wall cling reset
@@ -65,6 +202,9 @@ public class Player extends Creature
                 speedY = DEFAULT_SPEED * 2 * 0.25f;
             }
         }
+
+        if (pogo)
+            yMove = -5f;
     }
 
     long dash_length_timer = 0;
@@ -74,14 +214,31 @@ public class Player extends Creature
 
     private void getInput()
     {
+        if (!dashing && !fall_shocked && !damage_shocked && !slashing && !slash_blocked && !illegal_slash && handler.getKeyManager().x)
+        {
+            slashing = true;
+            alternative_slash_sprite = !alternative_slash_sprite;
+        }
+
+        if (slash_blocked && handler.getKeyManager().x)
+            illegal_slash = true;
+
+        if (!handler.getKeyManager().x)
+            illegal_slash = false;
+
         //So that player doesn't stop during dash
         if(!dashing)
             xMove = 0;
-        yMove = 0;
+        if (!pogo)
+            yMove = 0;
 
         //Limit dash to 0.272 seconds
         if (dashing)
         {
+            yMove = 0;
+            if (slashing)
+                slashing = false;
+
             dash_length_timer++;
             if (dash_length_timer >= Launcher.framerate_limit * 0.272)
             {
@@ -121,7 +278,7 @@ public class Player extends Creature
             }
         }
 
-        if (!fall_shocked)
+        if (!fall_shocked && !damage_shocked)
         {
             if (!dashing && !can_dash && (grounded || can_dash_twice) && !handler.getKeyManager().c)
             {
@@ -244,15 +401,21 @@ public class Player extends Creature
 
             if (!dashing && handler.getKeyManager().right)
             {
-                if(!facing_right)
-                    facing_right = true;
+                if (!slashing)
+                {
+                    if(!facing_right)
+                        facing_right = true;
+                }
                 xMove += speedX;
             }
 
             if (!dashing && handler.getKeyManager().left)
             {
-                if(facing_right)
-                    facing_right = false;
+                if (!slashing && !attack_knockback)
+                {
+                    if(facing_right)
+                        facing_right = false;
+                }
                 xMove += -speedX;
             }
         }
@@ -267,24 +430,13 @@ public class Player extends Creature
     @Override
     public void render(Graphics gfx)
     {
-        gfx.setColor(Color.white);
-        gfx.drawString("X: " + (int) x / Tile.TILE_WIDTH, 5, 15);
-        gfx.drawString("Y: " + (handler.getWorld().getHeight() - (int)  y / Tile.TILE_HEIGHT), 5, 30);
-        gfx.drawString("Cling left: " + cling_left, 5, 45);
-        gfx.drawString("Cling right: " + cling_right, 5, 60);
-        gfx.drawString("wall jump right : " + wall_jumping_right, 5, 75);
-        gfx.drawString("wall jump left : " + wall_jumping_left, 5, 90);
-        gfx.drawString("jumping: " + jumping, 5, 105);
-
-
-        //Render HUD
-        gfx.drawImage(Assets.soul_vessel_hud, 90, 80, null);
-
-        for (int i = 0; i < DEFAULT_HEALTH / 20; i++)
-            gfx.drawImage(Assets.mask_empty, 50 * i + 200, 100, null);
-
-        for (int i = 0; i < health / 20; i++)
-            gfx.drawImage(Assets.mask_full, 50 * i + 200, 98, null);
+        /*gfx.setColor(Color.white);
+        gfx.drawString("X: " + (int) x , 5, 15);
+        gfx.drawString("Y: " + (int) y, 5, 30);
+        gfx.drawString("xMove: " + (int) xMove , 5, 45);
+        gfx.drawString("yMove: " + (int) yMove , 5, 60);
+        gfx.drawString("speedX: " + (int) speedX, 5, 90);
+        gfx.drawString("speedY: " + (int) speedY, 5, 105);*/
 
         //Render player
         if (hasMantisClaw && cling_left)
@@ -303,6 +455,28 @@ public class Player extends Creature
                 gfx.drawImage(Assets.dash_right, (int) (x - handler.getCamera().getxOffset() - 4 - 111), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
+            else if (slashing)
+            {
+                if (up_slashing)
+                {
+                    gfx.drawImage(Assets.upslash_char_right, (int) (x - handler.getCamera().getxOffset() - 43), (int) (y - handler.getCamera().getyOffset() + 30), null);
+                }
+
+                else if (down_slashing)
+                {
+                    gfx.drawImage(Assets.downslash_char_right, (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() + 8), null);
+                }
+
+                else if (alternative_slash_sprite)
+                {
+                    gfx.drawImage(Assets.slash1_char_right, (int) (x - handler.getCamera().getxOffset() - 35), (int) (y - handler.getCamera().getyOffset()), null);
+                }
+                else
+                {
+                    gfx.drawImage(Assets.slash2_char_right, (int) (x - handler.getCamera().getxOffset() - 35), (int) (y - handler.getCamera().getyOffset()), null);
+                }
+            }
+
             else if (grounded)
             {
                 if (xMove == 0)
@@ -311,7 +485,6 @@ public class Player extends Creature
                 else
                     gfx.drawImage(Assets.walk_right, (int) (x - handler.getCamera().getxOffset() - 4 - 7), (int) (y - handler.getCamera().getyOffset()), null);
             }
-
 
             else
             {
@@ -332,6 +505,28 @@ public class Player extends Creature
                 gfx.drawImage(Assets.dash_left, (int) (x - handler.getCamera().getxOffset() - 4 + 1), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
+            else if (slashing)
+            {
+                if (up_slashing)
+                {
+                    gfx.drawImage(Assets.upslash_char_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 30), null);
+                }
+
+                else if (down_slashing)
+                {
+                    gfx.drawImage(Assets.downslash_char_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 8), null);
+                }
+
+                else if (alternative_slash_sprite)
+                {
+                    gfx.drawImage(Assets.slash1_char_left, (int) (x - handler.getCamera().getxOffset() - 11), (int) (y - handler.getCamera().getyOffset()), null);
+                }
+                else
+                {
+                    gfx.drawImage(Assets.slash2_char_left, (int) (x - handler.getCamera().getxOffset() - 8), (int) (y - handler.getCamera().getyOffset()), null);
+                }
+            }
+
             else if (grounded)
             {
                 if (xMove == 0)
@@ -340,8 +535,6 @@ public class Player extends Creature
                 else
                     gfx.drawImage(Assets.walk_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset()), null);
             }
-
-
 
             else
             {
@@ -355,5 +548,29 @@ public class Player extends Creature
         //Render player hitboxes (for testing purposes)
         //gfx.setColor(Color.blue);
         //gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
+
+        //Render HUD
+        gfx.drawImage(Assets.soul_vessel_hud, 90, 80, null);
+
+        for (int i = 0; i < DEFAULT_HEALTH / 20; i++)
+            gfx.drawImage(Assets.mask_empty, 50 * i + 200, 100, null);
+
+        for (int i = 0; i < health / 20; i++)
+            gfx.drawImage(Assets.mask_full, 50 * i + 200, 98, null);
+    }
+
+    public boolean isSlashing()
+    {
+        return slashing;
+    }
+
+    public boolean isFacingRight()
+    {
+        return facing_right;
+    }
+
+    public boolean isFacingLeft()
+    {
+        return !facing_right;
     }
 }

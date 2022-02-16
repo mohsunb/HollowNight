@@ -6,7 +6,9 @@ public class Assets
 {
     public static BufferedImage player_right, player_left, tile_collision, tile_empty, grass, husk_right, husk_left, mask_full, mask_empty
             , soul_vessel_hud, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left, fall_shock_right
-            , fall_shock_left, cling_right, cling_left;
+            , fall_shock_left, cling_right, cling_left, slash1_right, slash1_left, slash2_right, slash2_left, upslash_right, upslash_left
+            , downslash_right, downslash_left, upslash_char_right, upslash_char_left, downslash_char_right, downslash_char_left
+            , slash1_char_left, slash1_char_right, slash2_char_right, slash2_char_left;
 
     public static void init()
     {
@@ -32,5 +34,22 @@ public class Assets
         fall_shock_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/fall_shock_left.png");
         cling_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/cling_right.png");
         cling_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/cling_left.png");
+        slash1_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash1_right.png");
+        slash1_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash1_left.png");
+        slash2_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash2_right.png");
+        slash2_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash2_left.png");
+        upslash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/upslash_right.png");
+        upslash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/upslash_left.png");
+        downslash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/downslash_right.png");
+        downslash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/downslash_left.png");
+        upslash_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/upslash_char_right.png");
+        upslash_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/upslash_char_left.png");
+        downslash_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/downslash_char_right.png");
+        downslash_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/downslash_char_left.png");
+
+        slash1_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash1_char_left.png");
+        slash1_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash1_char_right.png");
+        slash2_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash2_char_right.png");
+        slash2_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash2_char_left.png");
     }
 }
