@@ -8,7 +8,9 @@ public class Assets
             , soul_vessel_hud, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left, fall_shock_right
             , fall_shock_left, cling_right, cling_left, slash1_right, slash1_left, slash2_right, slash2_left, upslash_right, upslash_left
             , downslash_right, downslash_left, upslash_char_right, upslash_char_left, downslash_char_right, downslash_char_left
-            , slash1_char_left, slash1_char_right, slash2_char_right, slash2_char_left;
+            , slash1_char_left, slash1_char_right, slash2_char_right, slash2_char_left, spikes_small_up, spikes_small_right
+            , spikes_small_down, spikes_small_left, spikes_medium_up, spikes_medium_right, spikes_medium_down, spikes_medium_left
+            , spikes_large_up, spikes_large_down, spikes_large_left, spikes_large_right, damage_shock_right, damage_shock_left;
 
     public static void init()
     {
@@ -46,10 +48,23 @@ public class Assets
         upslash_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/upslash_char_left.png");
         downslash_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/downslash_char_right.png");
         downslash_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/downslash_char_left.png");
-
         slash1_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash1_char_left.png");
         slash1_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash1_char_right.png");
         slash2_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash2_char_right.png");
         slash2_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/slash2_char_left.png");
+        spikes_small_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_small_up.png");
+        spikes_small_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_small_down.png");
+        spikes_small_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_small_left.png");
+        spikes_small_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_small_right.png");
+        spikes_medium_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_medium_up.png");
+        spikes_medium_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_medium_down.png");
+        spikes_medium_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_medium_left.png");
+        spikes_medium_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_medium_right.png");
+        spikes_large_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_large_up.png");
+        spikes_large_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_large_down.png");
+        spikes_large_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_large_left.png");
+        spikes_large_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/spikes_large_right.png");
+        damage_shock_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/damage_shock_right.png");
+        damage_shock_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/damage_shock_left.png");
     }
 }

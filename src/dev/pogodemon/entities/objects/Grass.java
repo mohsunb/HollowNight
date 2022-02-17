@@ -1,6 +1,7 @@
-package dev.pogodemon.entities;
+package dev.pogodemon.entities.objects;
 
 import dev.pogodemon.display.Assets;
+import dev.pogodemon.entities.StaticEntity;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 

@@ -2,9 +2,7 @@ package dev.pogodemon.entities.creatures;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
-import dev.pogodemon.entities.Entity;
 import dev.pogodemon.utils.Handler;
-import dev.pogodemon.world.Tile;
 
 import java.awt.*;
 
@@ -18,8 +16,24 @@ public class Player extends Creature
         bounds.y = 40;
         bounds.width = 44;
         bounds.height = 87;
+        health = 100;
 
         CREATURE_TYPE = 0; //Player
+    }
+
+    private float respawnX = 0;
+    private float respawnY = 0;
+
+    public void hazardRespawn()
+    {
+        setX(respawnX);
+        setY(respawnY);
+    }
+
+    public void updateRespawnPoint(float x, float y)
+    {
+        respawnX = x;
+        respawnY = y;
     }
 
     //slashing helper flags
@@ -43,6 +57,13 @@ public class Player extends Creature
     @Override
     public void update()
     {
+        if (cling_left || cling_right)
+        {
+            if (up_slashing)
+                up_slashing = false;
+            if (down_slashing)
+                down_slashing = false;
+        }
         if (attack_knockback)
         {
             if (facing_right)
@@ -76,6 +97,12 @@ public class Player extends Creature
                 pogo = false;
                 yMove = 0;
             }
+
+            if (!can_dash)
+                can_dash = true;
+
+            if (fall_distance > 0)
+                fall_distance = 0;
         }
 
         if (just_attacked && !slashing)
@@ -130,7 +157,7 @@ public class Player extends Creature
             slash_cooldown_timer++;
         }
 
-        if (slash_timer >= Launcher.framerate_limit * 0.35)
+        if (slash_timer >= Launcher.framerate_limit * 0.25)
         {
             slash_timer = 0;
             slashing = false;
@@ -157,7 +184,7 @@ public class Player extends Creature
             invulnerable_timer = 0;
         }
 
-        if (damage_shock_timer >= Launcher.framerate_limit * 0.2)
+        if (damage_shock_timer >= Launcher.framerate_limit * 0.25)
         {
             damage_shocked = false;
             damage_shock_timer = 0;
@@ -259,6 +286,10 @@ public class Player extends Creature
                 will_hard_fall = false;
             if (!fall_shocked)
                 fall_shocked = true;
+        }
+
+        if (fall_shocked)
+        {
             fall_shock_timer++;
             if (fall_shock_timer >= Launcher.framerate_limit * 0.8167)
             {
@@ -430,7 +461,8 @@ public class Player extends Creature
     @Override
     public void render(Graphics gfx)
     {
-        /*gfx.setColor(Color.white);
+        /*
+        gfx.setColor(Color.white);
         gfx.drawString("X: " + (int) x , 5, 15);
         gfx.drawString("Y: " + (int) y, 5, 30);
         gfx.drawString("xMove: " + (int) xMove , 5, 45);
@@ -449,6 +481,9 @@ public class Player extends Creature
         {
             if (fall_shocked)
                 gfx.drawImage(Assets.fall_shock_right, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
+
+            else if (damage_shocked)
+                gfx.drawImage(Assets.damage_shock_right, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset()), null);
 
             else if (dashing)
             {
@@ -499,6 +534,9 @@ public class Player extends Creature
         {
             if (fall_shocked)
                 gfx.drawImage(Assets.fall_shock_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
+
+            else if (damage_shocked)
+                gfx.drawImage(Assets.damage_shock_left, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset()), null);
 
             else if (dashing)
             {

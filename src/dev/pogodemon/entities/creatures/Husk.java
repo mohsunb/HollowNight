@@ -18,6 +18,7 @@ public class Husk extends Creature
         bounds.height = 105;
 
         is_harmful = true;
+        is_pogoable = true;
     }
 
     @Override

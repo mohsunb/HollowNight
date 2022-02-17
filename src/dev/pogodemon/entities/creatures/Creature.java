@@ -2,6 +2,7 @@ package dev.pogodemon.entities.creatures;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.entities.Entity;
+import dev.pogodemon.entities.HazardRespawnPoint;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -14,7 +15,7 @@ public abstract class Creature extends Entity
 
     protected float fall_distance = 0;
 
-    public static final int DEFAULT_HEALTH = 300;
+    public static final int DEFAULT_HEALTH = 100;
     public static final float DEFAULT_SPEED = 4.0f * 144 / Launcher.framerate_limit; // To make the movement speed independent of the framerate
 
     public static final float DEFAULT_WIDTH = Launcher.game_width / 24; // 1920 / 24 = 80
@@ -30,6 +31,7 @@ public abstract class Creature extends Entity
     protected boolean will_hard_fall = false;
     protected boolean fall_shocked = false;
     protected boolean damage_shocked = false;
+    protected boolean damage_shocked_right = false;
     protected boolean invulnerable = false;
 
     //Abilities (temporary, will be loaded off of a save file in the future)
@@ -69,10 +71,13 @@ public abstract class Creature extends Entity
         {
             if (damage_shocked)
             {
-                if (facing_right)
+                if (!damage_shocked_right)
                     xMove = -speedX;
                 else
+                {
                     xMove = speedX;
+                    facing_right = false;
+                }
             }
 
             if (CREATURE_TYPE == 1 || CREATURE_TYPE == 2)
@@ -92,11 +97,34 @@ public abstract class Creature extends Entity
             {
                 if (!invulnerable && checkEntityCollisions(xMove, yMove))
                 {
-                    if (getCollidingEntity(xMove, yMove).is_harmful && getCollidingEntity(xMove, yMove).doesExist())
+                    if (getCollidingEntity(xMove, yMove).is_hazard_respawn)
+                    {
+                        if (handler.getWorld().getEntityManager().getPlayer().getRespawnX() != getCollidingEntity(xMove, yMove).getRespawnX() || handler.getWorld().getEntityManager().getPlayer().getRespawnY() != getCollidingEntity(xMove, yMove).getRespawnY())
+                            handler.getWorld().getEntityManager().getPlayer().updateRespawnPoint(getCollidingEntity(xMove, yMove).getRespawnX(), getCollidingEntity(xMove, yMove).getRespawnY());
+                    }
+
+                    else if (getCollidingEntity(xMove, yMove).is_harmful && getCollidingEntity(xMove, yMove).doesExist())
                     {
                         health -= 20;
                         invulnerable = true;
-                        damage_shocked = true;
+
+                        if (getCollidingEntity(xMove, yMove).is_hazard)
+                        {
+                            handler.getWorld().getEntityManager().getPlayer().hazardRespawn();
+                            fall_shocked = true;
+                            dashing = false;
+                        }
+
+                        else
+                        {
+                            damage_shocked = true;
+                            if ((getX() + bounds.width * 0.5) <= (getCollidingEntity(xMove, yMove).getX() + getCollidingEntity(xMove, yMove).bounds.width * 0.5))
+                                damage_shocked_right = false;
+
+                            else
+                                damage_shocked_right = true;
+                        }
+
                     }
                 }
             }
@@ -113,15 +141,14 @@ public abstract class Creature extends Entity
                 Player player = handler.getWorld().getEntityManager().getPlayer();
                 if (player.slashing && !player.just_attacked)
                 {
-                    //System.out.println(getCollidingEntity(xMove, yMove) != null);
                     if (getCollidingEntity(xMove, yMove) != null)
                     {
                         getCollidingEntity(xMove, yMove).health -= player.nail_damage;
                         player.just_attacked = true;
-                        if (!handler.getWorld().getEntityManager().getPlayer().up_slashing && !handler.getWorld().getEntityManager().getPlayer().down_slashing)
+                        if (!handler.getWorld().getEntityManager().getPlayer().up_slashing && !handler.getWorld().getEntityManager().getPlayer().down_slashing && getCollidingEntity(xMove, yMove).has_knockback)
                             handler.getWorld().getEntityManager().getPlayer().attack_knockback = true;
 
-                        else if (handler.getWorld().getEntityManager().getPlayer().down_slashing)
+                        else if (handler.getWorld().getEntityManager().getPlayer().down_slashing && getCollidingEntity(xMove, yMove).is_pogoable)
                             handler.getWorld().getEntityManager().getPlayer().pogo = true;
                     }
                 }

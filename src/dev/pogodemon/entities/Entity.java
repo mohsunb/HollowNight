@@ -14,9 +14,13 @@ public abstract class Entity
     protected Handler handler;
     protected float x, y;
     protected float width, height;
-    protected Rectangle bounds;
+    public Rectangle bounds;
 
     public boolean is_harmful = false; //by default all entities don't do contact damage
+    public boolean is_hazard = false;
+    public boolean is_hazard_respawn = false;
+    public boolean is_pogoable = false;
+    public boolean has_knockback = true;
 
     public Entity(Handler handler, float x, float y, float width, float height)
     {
@@ -27,6 +31,26 @@ public abstract class Entity
         this.height = height;
 
         bounds = new Rectangle(0, 0, (int) width, (int) height);
+    }
+
+    //Hazard respawn points
+    protected float respawnX = 0;
+    protected float respawnY = 0;
+
+    public float getRespawnX()
+    {
+        if (is_hazard_respawn)
+            return respawnX;
+        else
+            return 0;
+    }
+
+    public float getRespawnY()
+    {
+        if (is_hazard_respawn)
+            return respawnY;
+        else
+            return 0;
     }
 
     public void removeEntity()

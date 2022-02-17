@@ -2,12 +2,8 @@ package dev.pogodemon.world;
 
 import dev.pogodemon.entities.Entity;
 import dev.pogodemon.entities.EntityManager;
-import dev.pogodemon.entities.Grass;
-import dev.pogodemon.entities.creatures.Creature;
-import dev.pogodemon.entities.creatures.Husk;
 import dev.pogodemon.entities.creatures.Player;
 import dev.pogodemon.utils.Handler;
-import dev.pogodemon.utils.Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
