@@ -29,6 +29,7 @@ public abstract class Creature extends Entity
     protected boolean grounded = false;
     protected boolean ceiling_collide = false;
     protected boolean will_hard_fall = false;
+    protected boolean superdash_shocked = false;
     protected boolean fall_shocked = false;
     protected boolean damage_shocked = false;
     protected boolean damage_shocked_right = false;
@@ -37,8 +38,14 @@ public abstract class Creature extends Entity
     //Abilities (temporary, will be loaded off of a save file in the future)
     protected boolean hasMothwingCloak = true;
     protected boolean hasMantisClaw = true;
+    protected boolean hasMonarchWings = true;
+    protected boolean hasCrystalHeart = true;
 
     //jumping helper dynamic flags
+    protected boolean double_jumping = false;
+    protected boolean can_double_jump = true;
+    protected boolean did_double_jump = false;
+    protected boolean illegal_double_jumping = false;
     protected boolean jumping = false;
     protected boolean illegal_jumping = false;
 
@@ -53,6 +60,9 @@ public abstract class Creature extends Entity
     protected boolean cling_left = false;
     protected boolean wall_jumping_right = false;
     protected boolean wall_jumping_left = false;
+
+    protected long minimum_superdash_timer = 0;
+    protected boolean superdash = false;
 
     public Creature(Handler handler, float x, float y, float width, float height)
     {
@@ -113,6 +123,7 @@ public abstract class Creature extends Entity
                             handler.getWorld().getEntityManager().getPlayer().hazardRespawn();
                             fall_shocked = true;
                             dashing = false;
+                            superdash = false;
                         }
 
                         else
@@ -176,7 +187,6 @@ public abstract class Creature extends Entity
 
             else
             {
-
                 if (CREATURE_TYPE == 0)
                 {
                     x = tx * Tile.TILE_WIDTH - bounds.x - bounds.width - 1;
@@ -186,12 +196,9 @@ public abstract class Creature extends Entity
                         facing_right = false;
                         cling_right = true;
                     }
-                }
 
-
-                else
-                {
-                    facing_right = !facing_right;
+                    if (minimum_superdash_timer == 0)
+                        superdash = false;
                 }
             }
         }
@@ -238,6 +245,9 @@ public abstract class Creature extends Entity
                     cling_left = true;
                     facing_right = true;
                 }
+
+                if (minimum_superdash_timer == 0)
+                    superdash = false;
             }
         }
     }

@@ -24,6 +24,9 @@ public class Player extends Creature
     private float respawnX = 0;
     private float respawnY = 0;
 
+    private boolean superdash_charged = false;
+    long superdash_charge_timer = 0;
+
     public void hazardRespawn()
     {
         setX(respawnX);
@@ -36,7 +39,6 @@ public class Player extends Creature
         respawnY = y;
     }
 
-    //slashing helper flags
     public int nail_damage = 5;
     public boolean alternative_slash_sprite = true; // = !self to change
     public boolean slashing = false;
@@ -53,10 +55,40 @@ public class Player extends Creature
     long damage_shock_timer = 0;
     long slash_cooldown_timer = 0;
     long slash_timer = 0;
+    long superdash_shock_timer = 0;
 
     @Override
     public void update()
     {
+        if (superdash_shocked)
+        {
+            superdash_shock_timer++;
+            if (superdash_shock_timer >= Launcher.framerate_limit * 0.3)
+            {
+                superdash_shocked = false;
+                superdash_shock_timer = 0;
+            }
+        }
+
+        if ((cling_left || cling_right) && (!superdash_charged || superdash_charge_timer == 0) && minimum_superdash_timer > 0)
+        {
+            superdash = false;
+            superdash_shocked = true;
+        }
+
+
+        if (superdash && minimum_superdash_timer < Launcher.framerate_limit * 0.1)
+            minimum_superdash_timer++;
+
+        if (!superdash)
+            minimum_superdash_timer = 0;
+
+        if (double_jumping)
+        {
+            fall_distance = 0;
+            will_hard_fall = false;
+        }
+
         if (cling_left || cling_right)
         {
             if (up_slashing)
@@ -64,6 +96,7 @@ public class Player extends Creature
             if (down_slashing)
                 down_slashing = false;
         }
+
         if (attack_knockback)
         {
             if (facing_right)
@@ -100,6 +133,9 @@ public class Player extends Creature
 
             if (!can_dash)
                 can_dash = true;
+
+            if (did_double_jump)
+                did_double_jump = false;
 
             if (fall_distance > 0)
                 fall_distance = 0;
@@ -226,12 +262,37 @@ public class Player extends Creature
             if (-speedY > DEFAULT_SPEED * 2 * 0.25 || yMove > DEFAULT_SPEED * 2 * 0.25)
             {
                 yMove = 0;
-                speedY = DEFAULT_SPEED * 2 * 0.25f;
+                if (superdash_shocked)
+                    speedY = 0;
+                else
+                    speedY = DEFAULT_SPEED * 2 * 0.25f;
             }
+
+            if (superdash_charge_timer > 0 || superdash_charged)
+            {
+                xMove = 0;
+                yMove = 0;
+                speedY = 0;
+            }
+
         }
 
         if (pogo)
             yMove = -5f;
+
+        if (superdash)
+        {
+            speedY = 0;
+            yMove = 0;
+
+            if (facing_right)
+                xMove = DEFAULT_SPEED * 2.51027861f;
+            else
+                xMove = -DEFAULT_SPEED * 2.51027861f;
+
+            if (damage_shocked)
+                superdash = false;
+        }
     }
 
     long dash_length_timer = 0;
@@ -241,7 +302,33 @@ public class Player extends Creature
 
     private void getInput()
     {
-        if (!dashing && !fall_shocked && !damage_shocked && !slashing && !slash_blocked && !illegal_slash && handler.getKeyManager().x)
+        if (hasCrystalHeart && (grounded || cling_right || cling_left) && !superdash_charged && handler.getKeyManager().s)
+        {
+            superdash_charge_timer++;
+            if (superdash_charge_timer >= Launcher.framerate_limit * 0.8)
+            {
+                superdash_charge_timer = 0;
+                superdash_charged = true;
+                minimum_superdash_timer++;
+            }
+        }
+
+        if (superdash_charge_timer > 0 && !handler.getKeyManager().s)
+            superdash_charge_timer = 0;
+
+        if (superdash_charged && !handler.getKeyManager().s)
+        {
+            superdash = true;
+            superdash_charged = false;
+        }
+
+        if (superdash && minimum_superdash_timer >= Launcher.framerate_limit * 0.1 && (handler.getKeyManager().s || handler.getKeyManager().z))
+        {
+            superdash = false;
+            superdash_shocked = true;
+        }
+
+        if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !fall_shocked && !damage_shocked && !slashing && !slash_blocked && !illegal_slash && handler.getKeyManager().x)
         {
             slashing = true;
             alternative_slash_sprite = !alternative_slash_sprite;
@@ -254,7 +341,7 @@ public class Player extends Creature
             illegal_slash = false;
 
         //So that player doesn't stop during dash
-        if(!dashing)
+        if(!dashing && !superdash)
             xMove = 0;
         if (!pogo)
             yMove = 0;
@@ -317,7 +404,7 @@ public class Player extends Creature
                     can_dash = true;
             }
 
-            if (!just_dashed && !dashing && can_dash && handler.getKeyManager().c)
+            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !just_dashed && !dashing && can_dash && handler.getKeyManager().c)
             {
                 dashing = true;
                 if (can_dash_twice)
@@ -331,14 +418,69 @@ public class Player extends Creature
                 speedY = 0;
             }
 
+            //Double jumping
+            if (grounded || cling_right || cling_left)
+            {
+                can_double_jump = false;
+                illegal_double_jumping = false;
+                did_double_jump = false;
+            }
+
+            if (hasMonarchWings && !grounded && !illegal_double_jumping && !handler.getKeyManager().z)
+                can_double_jump = true;
+
+            if (illegal_jumping && !handler.getKeyManager().z)
+                illegal_double_jumping = false;
+
+            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !grounded && !jumping && !did_double_jump && !illegal_double_jumping && can_double_jump && handler.getKeyManager().z)
+            {
+                double_jumping = true;
+                illegal_double_jumping = true;
+                did_double_jump = true;
+                speedY = 9f; // double jump initial speed
+                if (!dashing)
+                    yMove += -speedY;
+            }
+
+            else if (double_jumping && handler.getKeyManager().z && (speedY - 0.15) > 0)
+            {
+                yMove += -speedY;
+                speedY -= 0.15;
+                if (ceiling_collide)
+                {
+                    jumping = false;
+                    speedY = 0;
+                }
+            }
+
+            else if (double_jumping && !handler.getKeyManager().z && speedY != 0)
+            {
+                speedY = 0;
+            }
+
+            else if (double_jumping)
+            {
+                can_double_jump = false;
+                double_jumping = false;
+
+                if (!grounded && speedY <= (int) (DEFAULT_SPEED * 2))
+                    speedY += 0.2;
+
+                if (grounded || dashing)
+                    speedY = 0;
+
+                if (!dashing)
+                    yMove += speedY;
+            }
+
             //Jumping START
-            if (!grounded && !cling_left && !cling_right && !jumping && handler.getKeyManager().z)
+            if (superdash_charge_timer == 0 && !superdash_charged && !superdash && !grounded && !cling_left && !cling_right && !jumping && handler.getKeyManager().z)
                 illegal_jumping = true;
 
             if (illegal_jumping && (grounded || cling_right || cling_left) && !handler.getKeyManager().z)
                 illegal_jumping = false;
 
-            if (!illegal_jumping && (grounded || cling_right || cling_left) && !jumping && handler.getKeyManager().z)
+            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !illegal_jumping && (grounded || cling_right || cling_left) && !jumping && handler.getKeyManager().z)
             {
                 if (cling_left)
                 {
@@ -352,6 +494,10 @@ public class Player extends Creature
                 
                 illegal_jumping = true;
                 jumping = true;
+                illegal_double_jumping = true;
+
+                if (hasMonarchWings)
+                    can_double_jump = true;
                 
                 speedY = 10.0f; //Jumping initial speed
                 if (!dashing || !just_dashed)
@@ -411,26 +557,29 @@ public class Player extends Creature
             {
                 jumping = false;
 
-                int t = (int) (DEFAULT_SPEED * 2);
+                if (!superdash_shocked && !double_jumping && !superdash_charged && superdash_charge_timer == 0)
+                {
+                    int t = (int) (DEFAULT_SPEED * 2);
 
-                if (cling_left || cling_right)
-                    t = (int) (DEFAULT_SPEED * 2 * 0.25);
+                    if (cling_left || cling_right)
+                        t = (int) (DEFAULT_SPEED * 2 * 0.25);
 
-                if (!grounded && speedY <= t)
-                    speedY += 0.2;
+                    if (!grounded && speedY <= t)
+                        speedY += 0.2;
 
-                if (grounded || dashing)
-                    speedY = 0;
+                    if (grounded || dashing)
+                        speedY = 0;
 
-                if (!dashing)
-                    yMove += speedY;
+                    if (!dashing && !superdash)
+                        yMove += speedY;
+                }
             }
 
             if ((grounded || cling_right || cling_left) && !handler.getKeyManager().z)
                 illegal_jumping = false;
             //Jumping END
 
-            if (!dashing && handler.getKeyManager().right)
+            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && handler.getKeyManager().right)
             {
                 if (!slashing)
                 {
@@ -440,7 +589,7 @@ public class Player extends Creature
                 xMove += speedX;
             }
 
-            if (!dashing && handler.getKeyManager().left)
+            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && handler.getKeyManager().left)
             {
                 if (!slashing && !attack_knockback)
                 {
@@ -461,21 +610,44 @@ public class Player extends Creature
     @Override
     public void render(Graphics gfx)
     {
+        //gfx.setColor(Color.white);
+        //gfx.drawString("superdash_timer: " + (int) superdash_charge_timer , 5, 15);
+        //gfx.drawString("superdash_charged: " + superdash_charged, 5, 30);
+        //gfx.drawString("superdash: " + superdash, 5, 45);
+
         /*
         gfx.setColor(Color.white);
         gfx.drawString("X: " + (int) x , 5, 15);
         gfx.drawString("Y: " + (int) y, 5, 30);
-        gfx.drawString("xMove: " + (int) xMove , 5, 45);
-        gfx.drawString("yMove: " + (int) yMove , 5, 60);
-        gfx.drawString("speedX: " + (int) speedX, 5, 90);
-        gfx.drawString("speedY: " + (int) speedY, 5, 105);*/
+        */
 
         //Render player
-        if (hasMantisClaw && cling_left)
-            gfx.drawImage(Assets.cling_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset()), null);
+        if (cling_left)
+        {
+            if (superdash_charge_timer > 0)
+                gfx.drawImage(Assets.superdash_charge_wall_right, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 10), null);
+            else if (superdash_charged)
+            {
+                gfx.drawImage(Assets.superdash_crystals_wall_left, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() - 90), null);
+                gfx.drawImage(Assets.superdash_charge_wall_right, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 10), null);
+            }
+            else
+                gfx.drawImage(Assets.cling_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset()), null);
+        }
 
-        else if (hasMantisClaw && cling_right)
-            gfx.drawImage(Assets.cling_right, (int) (x - handler.getCamera().getxOffset() - 14), (int) (y - handler.getCamera().getyOffset()), null);
+        else if (cling_right)
+        {
+            if (superdash_charge_timer > 0)
+                gfx.drawImage(Assets.superdash_charge_wall_left, (int) (x - handler.getCamera().getxOffset() - 14), (int) (y - handler.getCamera().getyOffset() + 10), null);
+            else if (superdash_charged)
+            {
+                gfx.drawImage(Assets.superdash_crystals_wall_right, (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() - 90), null);
+                gfx.drawImage(Assets.superdash_charge_wall_left, (int) (x - handler.getCamera().getxOffset() - 14), (int) (y - handler.getCamera().getyOffset() + 10), null);
+            }
+            else
+                gfx.drawImage(Assets.cling_right, (int) (x - handler.getCamera().getxOffset() - 14), (int) (y - handler.getCamera().getyOffset()), null);
+
+        }
 
         else if (facing_right)
         {
@@ -488,6 +660,22 @@ public class Player extends Creature
             else if (dashing)
             {
                 gfx.drawImage(Assets.dash_right, (int) (x - handler.getCamera().getxOffset() - 4 - 111), (int) (y - handler.getCamera().getyOffset()), null);
+            }
+
+            else if (superdash_charge_timer > 0)
+            {
+                gfx.drawImage(Assets.superdash_charge_right, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset() + 15), null);
+            }
+
+            else if (superdash_charged)
+            {
+                gfx.drawImage(Assets.superdash_crystals_right, (int) (x - handler.getCamera().getxOffset() - 180), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                gfx.drawImage(Assets.superdash_charge_right, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset() + 15), null);
+            }
+
+            else if (superdash)
+            {
+                gfx.drawImage(Assets.superdash_right, (int) (x - handler.getCamera().getxOffset() - 710), (int) (y - handler.getCamera().getyOffset() - 150), null);
             }
 
             else if (slashing)
@@ -521,6 +709,9 @@ public class Player extends Creature
                     gfx.drawImage(Assets.walk_right, (int) (x - handler.getCamera().getxOffset() - 4 - 7), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
+            else if (double_jumping)
+                gfx.drawImage(Assets.wings_glow_right, (int) (x - handler.getCamera().getxOffset() - 140), (int) (y - handler.getCamera().getyOffset() - 20), null);
+
             else
             {
                 if (jumping)
@@ -541,6 +732,22 @@ public class Player extends Creature
             else if (dashing)
             {
                 gfx.drawImage(Assets.dash_left, (int) (x - handler.getCamera().getxOffset() - 4 + 1), (int) (y - handler.getCamera().getyOffset()), null);
+            }
+
+            else if (superdash_charge_timer > 0)
+            {
+                gfx.drawImage(Assets.superdash_charge_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 15), null);
+            }
+
+            else if (superdash_charged)
+            {
+                gfx.drawImage(Assets.superdash_crystals_left, (int) (x - handler.getCamera().getxOffset() - 175), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                gfx.drawImage(Assets.superdash_charge_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 15), null);
+            }
+
+            else if (superdash)
+            {
+                gfx.drawImage(Assets.superdash_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() - 150), null);
             }
 
             else if (slashing)
@@ -574,6 +781,9 @@ public class Player extends Creature
                     gfx.drawImage(Assets.walk_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
+            else if (double_jumping)
+                gfx.drawImage(Assets.wings_glow_left, (int) (x - handler.getCamera().getxOffset() - 80), (int) (y - handler.getCamera().getyOffset() - 20), null);
+
             else
             {
                 if (jumping)
@@ -605,10 +815,5 @@ public class Player extends Creature
     public boolean isFacingRight()
     {
         return facing_right;
-    }
-
-    public boolean isFacingLeft()
-    {
-        return !facing_right;
     }
 }
