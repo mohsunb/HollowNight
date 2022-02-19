@@ -2,12 +2,15 @@ package dev.pogodemon.entities.creatures;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
+import dev.pogodemon.entities.Creature;
 import dev.pogodemon.utils.Handler;
+import dev.pogodemon.world.Tile;
 
 import java.awt.*;
 
 public class Player extends Creature
 {
+    private int max_health;
     public Player(Handler handler, float x, float y)
     {
         super(handler, x, y, Creature.DEFAULT_WIDTH * 0.75f, Creature.DEFAULT_HEIGHT * 1.625f);
@@ -16,7 +19,8 @@ public class Player extends Creature
         bounds.y = 40;
         bounds.width = 44;
         bounds.height = 87;
-        health = 100;
+        health = 400;
+        max_health = health;
 
         CREATURE_TYPE = 0; //Player
     }
@@ -60,6 +64,51 @@ public class Player extends Creature
     @Override
     public void update()
     {
+        if (superdash)
+        {
+            if (xMove > 0)
+            {
+                int tx = (int) Math.floor((x + xMove + bounds.x + bounds.width) / Tile.TILE_WIDTH);
+                boolean bool = collisionWithTile(tx, (int) Math.floor((y + bounds.y) / Tile.TILE_HEIGHT))
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.TILE_HEIGHT))
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT))
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT));
+                if (bool)
+                {
+                    superdash = false;
+                    superdash_shocked = true;
+                }
+
+            }
+
+            else if (xMove < 0)
+            {
+                int tx = (int) Math.floor((x + xMove + bounds.x) / Tile.TILE_WIDTH);
+                boolean bool = collisionWithTile(tx, (int) Math.floor((y + bounds.y) / Tile.TILE_HEIGHT))
+                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.TILE_HEIGHT))
+                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT))
+                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
+                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT));
+                if (bool)
+                {
+                    superdash = false;
+                    superdash_shocked = true;
+                }
+            }
+        }
+
+        if (!can_shadow_dash && shadow_dash_cooldown > 0)
+        {
+            shadow_dash_cooldown++;
+
+            if (shadow_dash_cooldown >= Launcher.framerate_limit * 1.5)
+            {
+                shadow_dash_cooldown = 0;
+                can_shadow_dash = true;
+            }
+        }
+
         if (superdash_shocked)
         {
             superdash_shock_timer++;
@@ -357,6 +406,7 @@ public class Player extends Creature
             if (dash_length_timer >= Launcher.framerate_limit * 0.272)
             {
                 dashing = false;
+                shadow_dashing = false;
                 can_dash = false;
                 dash_length_timer = 0;
                 just_dashed = true;
@@ -402,11 +452,21 @@ public class Player extends Creature
             {
                 if (hasMothwingCloak)
                     can_dash = true;
+
+                if (hasShadeCloak && shadow_dash_cooldown == 0)
+                    can_shadow_dash = true;
             }
 
             if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !just_dashed && !dashing && can_dash && handler.getKeyManager().c)
             {
                 dashing = true;
+                if (can_shadow_dash)
+                {
+                    shadow_dashing = true;
+                    can_shadow_dash = false;
+                    shadow_dash_cooldown = 1;
+                }
+
                 if (can_dash_twice)
                     can_dash_twice = false;
 
@@ -437,7 +497,7 @@ public class Player extends Creature
                 double_jumping = true;
                 illegal_double_jumping = true;
                 did_double_jump = true;
-                speedY = 9f; // double jump initial speed
+                speedY = 10f; // double jump initial speed
                 if (!dashing)
                     yMove += -speedY;
             }
@@ -610,11 +670,6 @@ public class Player extends Creature
     @Override
     public void render(Graphics gfx)
     {
-        //gfx.setColor(Color.white);
-        //gfx.drawString("superdash_timer: " + (int) superdash_charge_timer , 5, 15);
-        //gfx.drawString("superdash_charged: " + superdash_charged, 5, 30);
-        //gfx.drawString("superdash: " + superdash, 5, 45);
-
         /*
         gfx.setColor(Color.white);
         gfx.drawString("X: " + (int) x , 5, 15);
@@ -659,7 +714,11 @@ public class Player extends Creature
 
             else if (dashing)
             {
-                gfx.drawImage(Assets.dash_right, (int) (x - handler.getCamera().getxOffset() - 4 - 111), (int) (y - handler.getCamera().getyOffset()), null);
+                if (shadow_dashing)
+                    gfx.drawImage(Assets.shadow_dash_right, (int) (x - handler.getCamera().getxOffset() - 730), (int) (y - handler.getCamera().getyOffset() - 110), null);
+
+                else
+                    gfx.drawImage(Assets.dash_right, (int) (x - handler.getCamera().getxOffset() - 4 - 111), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
             else if (superdash_charge_timer > 0)
@@ -710,7 +769,7 @@ public class Player extends Creature
             }
 
             else if (double_jumping)
-                gfx.drawImage(Assets.wings_glow_right, (int) (x - handler.getCamera().getxOffset() - 140), (int) (y - handler.getCamera().getyOffset() - 20), null);
+                gfx.drawImage(Assets.wings_right, (int) (x - handler.getCamera().getxOffset() - 140), (int) (y - handler.getCamera().getyOffset() - 20), null);
 
             else
             {
@@ -731,7 +790,10 @@ public class Player extends Creature
 
             else if (dashing)
             {
-                gfx.drawImage(Assets.dash_left, (int) (x - handler.getCamera().getxOffset() - 4 + 1), (int) (y - handler.getCamera().getyOffset()), null);
+                if (shadow_dashing)
+                    gfx.drawImage(Assets.shadow_dash_left, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset() - 110), null);
+                else
+                    gfx.drawImage(Assets.dash_left, (int) (x - handler.getCamera().getxOffset() - 4 + 1), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
             else if (superdash_charge_timer > 0)
@@ -782,7 +844,7 @@ public class Player extends Creature
             }
 
             else if (double_jumping)
-                gfx.drawImage(Assets.wings_glow_left, (int) (x - handler.getCamera().getxOffset() - 80), (int) (y - handler.getCamera().getyOffset() - 20), null);
+                gfx.drawImage(Assets.wings_left, (int) (x - handler.getCamera().getxOffset() - 80), (int) (y - handler.getCamera().getyOffset() - 20), null);
 
             else
             {
@@ -793,18 +855,26 @@ public class Player extends Creature
             }
         }
 
-        //Render player hitboxes (for testing purposes)
-        //gfx.setColor(Color.blue);
-        //gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
+        if (Launcher.show_hitboxes)
+        {
+            gfx.setColor(Color.blue);
+            gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
+        }
 
         //Render HUD
         gfx.drawImage(Assets.soul_vessel_hud, 90, 80, null);
 
-        for (int i = 0; i < DEFAULT_HEALTH / 20; i++)
+        for (int i = 0; i < max_health / 20; i++)
             gfx.drawImage(Assets.mask_empty, 50 * i + 200, 100, null);
 
         for (int i = 0; i < health / 20; i++)
             gfx.drawImage(Assets.mask_full, 50 * i + 200, 98, null);
+    }
+
+    @Override
+    public void hasBeenHit()
+    {
+
     }
 
     public boolean isSlashing()

@@ -1,5 +1,6 @@
 package dev.pogodemon.entities;
 
+import dev.pogodemon.Launcher;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -24,8 +25,15 @@ public class HazardRespawnPoint extends StaticEntity
     @Override
     public void render(Graphics gfx)
     {
-        //hitboxes
-        gfx.setColor(Color.blue);
-        gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
+        if (Launcher.show_hitboxes)
+        {
+            gfx.setColor(Color.blue);
+            gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
+        }
+    }
+
+    @Override
+    public void hasBeenHit() {
+
     }
 }

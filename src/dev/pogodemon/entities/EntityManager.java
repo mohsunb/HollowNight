@@ -1,7 +1,6 @@
 package dev.pogodemon.entities;
 
 import dev.pogodemon.entities.creatures.Player;
-import dev.pogodemon.entities.creatures.PlayerSlash;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;

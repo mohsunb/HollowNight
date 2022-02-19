@@ -1,8 +1,8 @@
 package dev.pogodemon.states;
 
 import dev.pogodemon.entities.HazardRespawnPoint;
-import dev.pogodemon.entities.creatures.Husk;
-import dev.pogodemon.entities.creatures.PlayerSlash;
+import dev.pogodemon.entities.creatures.WanderingHusk;
+import dev.pogodemon.entities.PlayerSlash;
 import dev.pogodemon.entities.objects.SpikesLarge;
 import dev.pogodemon.entities.objects.SpikesMedium;
 import dev.pogodemon.utils.Handler;
@@ -17,10 +17,10 @@ public class GameState extends State
     public GameState(Handler handler)
     {
         super(handler);
-        kings_pass = new World(handler,"kings_pass.png", 3200, 4751);
+        kings_pass = new World(handler,"kings_pass.png", 2000, 4751);
         handler.setWorld(kings_pass);
 
-        kings_pass.addEntity(new Husk(handler, 3300, 4680));
+        kings_pass.addEntity(new WanderingHusk(handler, 3300, 4680, 300, 600));
 
         kings_pass.addEntity(new SpikesLarge(handler, 960, 3300, 0));
 

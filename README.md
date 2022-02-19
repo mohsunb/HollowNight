@@ -5,6 +5,11 @@ An attempt at remaking "Hollow Knight" from Team Cherry for a project aimed at i
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
 The game currently only works at 1920x1080 resolution at 144FPS locked as the game breaks otherwise. A fix to this will be issued in the future.
 
+## Update 19-Feb-2022: v0.0.6
+* Added shadow dash
+* Added "Wandering Husk" enemy with proper idle and combat AI
+* Hitboxes can now be toggled in "Launcher.java"
+
 ## Update 18-Feb-2022: v0.0.5
 * Added double jump ability
 * Double jump resets upon 'pogo's
@@ -27,6 +32,7 @@ The game currently only works at 1920x1080 resolution at 144FPS locked as the ga
 * Added ability to damage and kill entities
 * Horizontal slashing sprites now alternate
 * Added ability to pogo (downslash and get pushed up)
+* Dash resets upon 'pogo's
 
 ## Update 14-Feb-2022: v0.0.2
 * Refined player movement and dash speed

@@ -3,7 +3,6 @@ package dev.pogodemon;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.display.Camera;
 import dev.pogodemon.display.Display;
-import dev.pogodemon.entities.creatures.Player;
 import dev.pogodemon.input.KeyManager;
 import dev.pogodemon.states.GameState;
 import dev.pogodemon.states.State;

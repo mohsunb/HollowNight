@@ -2,8 +2,6 @@ package dev.pogodemon.entities;
 
 import dev.pogodemon.utils.Handler;
 
-import java.awt.*;
-
 public abstract class StaticEntity extends Entity
 {
 

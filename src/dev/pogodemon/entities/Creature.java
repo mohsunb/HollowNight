@@ -1,8 +1,7 @@
-package dev.pogodemon.entities.creatures;
+package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
-import dev.pogodemon.entities.Entity;
-import dev.pogodemon.entities.HazardRespawnPoint;
+import dev.pogodemon.entities.creatures.Player;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -37,6 +36,7 @@ public abstract class Creature extends Entity
 
     //Abilities (temporary, will be loaded off of a save file in the future)
     protected boolean hasMothwingCloak = true;
+    protected boolean hasShadeCloak = true;
     protected boolean hasMantisClaw = true;
     protected boolean hasMonarchWings = true;
     protected boolean hasCrystalHeart = true;
@@ -52,6 +52,9 @@ public abstract class Creature extends Entity
     //dashing helper dynamic flags
     protected boolean can_dash = false;
     protected boolean dashing = false;
+    protected boolean shadow_dashing = false;
+    protected boolean can_shadow_dash = false;
+    protected long shadow_dash_cooldown = 0;
     protected boolean just_dashed = false;
     protected boolean can_dash_twice = false;
 
@@ -115,18 +118,24 @@ public abstract class Creature extends Entity
 
                     else if (getCollidingEntity(xMove, yMove).is_harmful && getCollidingEntity(xMove, yMove).doesExist())
                     {
-                        health -= 20;
-                        invulnerable = true;
+                        if (!shadow_dashing && !getCollidingEntity(xMove, yMove).is_hazard)
+                        {
+                            health -= 20;
+                            invulnerable = true;
+                        }
 
                         if (getCollidingEntity(xMove, yMove).is_hazard)
                         {
+                            health -= 20;
+                            invulnerable = true;
                             handler.getWorld().getEntityManager().getPlayer().hazardRespawn();
                             fall_shocked = true;
                             dashing = false;
+                            shadow_dashing = false;
                             superdash = false;
                         }
 
-                        else
+                        else if (!shadow_dashing)
                         {
                             damage_shocked = true;
                             if ((getX() + bounds.width * 0.5) <= (getCollidingEntity(xMove, yMove).getX() + getCollidingEntity(xMove, yMove).bounds.width * 0.5))
@@ -155,6 +164,7 @@ public abstract class Creature extends Entity
                     if (getCollidingEntity(xMove, yMove) != null)
                     {
                         getCollidingEntity(xMove, yMove).health -= player.nail_damage;
+                        getCollidingEntity(xMove, yMove).hasBeenHit();
                         player.just_attacked = true;
                         if (!handler.getWorld().getEntityManager().getPlayer().up_slashing && !handler.getWorld().getEntityManager().getPlayer().down_slashing && getCollidingEntity(xMove, yMove).has_knockback)
                             handler.getWorld().getEntityManager().getPlayer().attack_knockback = true;
@@ -197,8 +207,8 @@ public abstract class Creature extends Entity
                         cling_right = true;
                     }
 
-                    if (minimum_superdash_timer == 0)
-                        superdash = false;
+                    //if (minimum_superdash_timer == 0)
+                    //    superdash = false;
                 }
             }
         }
@@ -245,9 +255,6 @@ public abstract class Creature extends Entity
                     cling_left = true;
                     facing_right = true;
                 }
-
-                if (minimum_superdash_timer == 0)
-                    superdash = false;
             }
         }
     }

@@ -1,11 +1,8 @@
 package dev.pogodemon.entities;
 
-import dev.pogodemon.Game;
-import dev.pogodemon.entities.creatures.PlayerSlash;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
-import java.util.Iterator;
 
 public abstract class Entity
 {
@@ -67,7 +64,7 @@ public abstract class Entity
     {
         for (Entity e : handler.getWorld().getEntityManager().getEntities())
         {
-           if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this))
+           if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this) || !e.doesExist())
                 continue;
 
             if (e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset)))
@@ -82,7 +79,7 @@ public abstract class Entity
         Entity entity = null;
         for (Entity e : handler.getWorld().getEntityManager().getEntities())
         {
-            if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this))
+            if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this) || !e.doesExist())
                 continue;
 
             if (e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset)))
@@ -142,4 +139,6 @@ public abstract class Entity
     public abstract void update();
 
     public abstract void render(Graphics gfx);
+
+    public abstract void hasBeenHit();
 }
