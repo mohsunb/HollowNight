@@ -2,8 +2,6 @@ package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
-import dev.pogodemon.entities.Creature;
-import dev.pogodemon.entities.creatures.Player;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -17,7 +15,6 @@ public class PlayerSlash extends Creature
         super(handler, x, y, Creature.DEFAULT_WIDTH, Creature.DEFAULT_HEIGHT);
         player = handler.getWorld().getEntityManager().getPlayer();
         CREATURE_TYPE = -1;
-        is_harmful = false;
     }
 
     @Override
@@ -152,6 +149,11 @@ public class PlayerSlash extends Creature
     @Override
     public void hasBeenHit()
     {
+
+    }
+
+    @Override
+    public void playerContact() {
 
     }
 }

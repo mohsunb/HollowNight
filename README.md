@@ -3,7 +3,14 @@
 An attempt at remaking "Hollow Knight" from Team Cherry for a project aimed at improving my OOP/Java skills.
 
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
-The game currently only works at 1920x1080 resolution at 144FPS locked as the game breaks otherwise. A fix to this will be issued in the future.
+You can change the launch options in the main class. The game currently only works ***properly*** at 1920x1080 resolution, locked at 144FPS as the game physics malfunction otherwise. A fix to this will be issued in the future.
+
+## Update 22-Feb-2022: v0.0.7
+* Added "Crawlid" enemy with proper wandering AI
+* Implemented Geo system
+* Improved the implementation of loading worlds (rooms)
+* Improved the implementation of player getting hit
+* Improved the implementation of entities getting hit by player
 
 ## Update 19-Feb-2022: v0.0.6
 * Added shadow dash

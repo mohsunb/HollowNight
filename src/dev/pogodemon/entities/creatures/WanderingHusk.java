@@ -3,6 +3,7 @@ package dev.pogodemon.entities.creatures;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
+import dev.pogodemon.entities.Player;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -40,7 +41,7 @@ public class WanderingHusk extends Creature
         this.agro_range = agro_range;
         this.de_agro_range = de_agro_range;
 
-        is_harmful = true;
+        
         is_pogoable = true;
     }
 
@@ -235,9 +236,29 @@ public class WanderingHusk extends Creature
     @Override
     public void hasBeenHit()
     {
+        Player player = handler.getWorld().getEntityManager().getPlayer();
+        health -= player.nail_damage;
+
         if (attacking)
             attacking = false;
         if (!handler.getWorld().getEntityManager().getPlayer().up_slashing && !handler.getWorld().getEntityManager().getPlayer().down_slashing)
             hit_knockback = true;
+    }
+
+    @Override
+    public void playerContact()
+    {
+        Player player = handler.getWorld().getEntityManager().getPlayer();
+        if (!player.invulnerable && !player.shadow_dashing)
+        {
+            player.health -= 20;
+            player.invulnerable = true;
+            player.damage_shocked = true;
+            if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))
+                player.damage_shocked_right = false;
+
+            else
+                player.damage_shocked_right = true;
+        }
     }
 }

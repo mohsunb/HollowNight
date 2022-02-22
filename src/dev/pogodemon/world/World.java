@@ -2,7 +2,7 @@ package dev.pogodemon.world;
 
 import dev.pogodemon.entities.Entity;
 import dev.pogodemon.entities.EntityManager;
-import dev.pogodemon.entities.creatures.Player;
+import dev.pogodemon.entities.Player;
 import dev.pogodemon.utils.Handler;
 
 import javax.imageio.ImageIO;

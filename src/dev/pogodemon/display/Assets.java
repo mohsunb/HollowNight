@@ -1,5 +1,6 @@
 package dev.pogodemon.display;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Assets
@@ -15,10 +16,29 @@ public class Assets
             , superdash_charge_wall_left, superdash_charge_wall_right, superdash_crystals_right, superdash_crystals_left
             , superdash_crystals_wall_right, superdash_crystals_wall_left, shadow_dash_right, shadow_dash_left, wandering_husk_idle_right
             , wandering_husk_idle_left, wandering_husk_walk_right, wandering_husk_walk_left, wandering_husk_attack_right
-            , wandering_husk_attack_left, wandering_husk_dead_right, wandering_husk_dead_left;
+            , wandering_husk_attack_left, wandering_husk_dead_right, wandering_husk_dead_left, crawlid_right, crawlid_left, crawlid_dead_right
+            , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large;
+
+    //Flip an image horizontally instead of creating two images
+    /*public static BufferedImage mirror(BufferedImage image)
+    {
+        BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D gg = newImage.createGraphics();
+        gg.drawImage(image, image.getHeight(), 0, -image.getWidth(), image.getHeight(), null);
+        gg.dispose();
+        return newImage;
+    }*/
 
     public static void init()
     {
+        geo_small = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_small.png");
+        geo_medium = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_medium.png");
+        geo_large = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_large.png");
+        geo_hud = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/geo_hud.png");
+        crawlid_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/crawlid/crawlid_right.png");
+        crawlid_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/crawlid/crawlid_left.png");
+        crawlid_dead_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/crawlid/crawlid_dead_right.png");
+        crawlid_dead_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/crawlid/crawlid_dead_left.png");
         wandering_husk_idle_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/wandering_husk/husk_idle_right.png");
         wandering_husk_idle_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/wandering_husk/husk_idle_left.png");
         wandering_husk_walk_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/wandering_husk/husk_walk_right.png");

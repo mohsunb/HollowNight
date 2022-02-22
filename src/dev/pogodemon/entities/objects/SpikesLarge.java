@@ -3,8 +3,8 @@ package dev.pogodemon.entities.objects;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.StaticEntity;
+import dev.pogodemon.entities.Player;
 import dev.pogodemon.utils.Handler;
-import dev.pogodemon.world.Tile;
 
 import java.awt.*;
 
@@ -15,8 +15,6 @@ public class SpikesLarge extends StaticEntity
     {
         super(handler, x, y, 0, 0);
         this.facing = facing;
-        is_harmful = true;
-        is_hazard = true;
         is_pogoable = true;
 
         if (facing == 0 || facing == 2)
@@ -61,7 +59,14 @@ public class SpikesLarge extends StaticEntity
     }
 
     @Override
-    public void hasBeenHit() {
+    public void hasBeenHit()
+    {
 
+    }
+
+    @Override
+    public void playerContact()
+    {
+        handler.getWorld().getEntityManager().getPlayer().hazardRespawn();
     }
 }

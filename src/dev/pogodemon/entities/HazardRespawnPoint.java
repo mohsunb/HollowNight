@@ -12,9 +12,10 @@ public class HazardRespawnPoint extends StaticEntity
         super(handler, x, y, width, height);
         this.respawnX = respawnX;
         this.respawnY = respawnY;
-        is_hazard_respawn = true;
         has_knockback = false;
     }
+
+
 
     @Override
     public void update()
@@ -33,7 +34,16 @@ public class HazardRespawnPoint extends StaticEntity
     }
 
     @Override
-    public void hasBeenHit() {
+    public void hasBeenHit()
+    {
 
+    }
+
+    @Override
+    public void playerContact()
+    {
+        Player player = handler.getWorld().getEntityManager().getPlayer();
+        if (player.getRespawnX() != getRespawnX() || player.getRespawnY() != getRespawnY())
+            player.updateRespawnPoint(getRespawnX(), getRespawnY());
     }
 }

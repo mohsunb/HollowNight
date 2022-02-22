@@ -1,8 +1,7 @@
-package dev.pogodemon.entities.creatures;
+package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
-import dev.pogodemon.entities.Creature;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -11,6 +10,11 @@ import java.awt.*;
 public class Player extends Creature
 {
     private int max_health;
+    private int geo = 1444;
+    private int geo_buffer = 0;
+    private boolean has_buffered_geo;
+    private int geo_buffer_timer;
+
     public Player(Handler handler, float x, float y)
     {
         super(handler, x, y, Creature.DEFAULT_WIDTH * 0.75f, Creature.DEFAULT_HEIGHT * 1.625f);
@@ -19,7 +23,7 @@ public class Player extends Creature
         bounds.y = 40;
         bounds.width = 44;
         bounds.height = 87;
-        health = 400;
+        health = 100;
         max_health = health;
 
         CREATURE_TYPE = 0; //Player
@@ -35,6 +39,12 @@ public class Player extends Creature
     {
         setX(respawnX);
         setY(respawnY);
+        health -= 20;
+        invulnerable = true;
+        fall_shocked = true;
+        dashing = false;
+        shadow_dashing = false;
+        superdash = false;
     }
 
     public void updateRespawnPoint(float x, float y)
@@ -64,6 +74,23 @@ public class Player extends Creature
     @Override
     public void update()
     {
+        if (has_buffered_geo)
+        {
+            geo_buffer_timer++;
+            if (geo_buffer_timer >= Launcher.framerate_limit * 104 / 60)
+            {
+                has_buffered_geo = false;
+                geo += geo_buffer;
+                geo_buffer_timer = 0;
+            }
+        }
+
+        if (ceiling_collide)
+        {
+            pogo = false;
+            pogo_timer = 0;
+        }
+
         if (superdash)
         {
             if (xMove > 0)
@@ -670,11 +697,11 @@ public class Player extends Creature
     @Override
     public void render(Graphics gfx)
     {
-        /*
+
         gfx.setColor(Color.white);
         gfx.drawString("X: " + (int) x , 5, 15);
         gfx.drawString("Y: " + (int) y, 5, 30);
-        */
+
 
         //Render player
         if (cling_left)
@@ -862,19 +889,51 @@ public class Player extends Creature
         }
 
         //Render HUD
+
+        //Geo
+        gfx.drawImage(Assets.geo_hud, 223, 165, null);
+        gfx.setColor(Color.white);
+        gfx.setFont(new Font("Arial", Font.PLAIN, 45));
+        gfx.drawString(Integer.toString(geo), 290, 220);
+        if (has_buffered_geo)
+            gfx.drawString((geo_buffer > 0 ? "+" : " -") + Math.abs(geo_buffer), 290, 270);
+
         gfx.drawImage(Assets.soul_vessel_hud, 90, 80, null);
 
         for (int i = 0; i < max_health / 20; i++)
-            gfx.drawImage(Assets.mask_empty, 50 * i + 200, 100, null);
+            gfx.drawImage(Assets.mask_empty, 60 * i + 235, 105, null);
 
         for (int i = 0; i < health / 20; i++)
-            gfx.drawImage(Assets.mask_full, 50 * i + 200, 98, null);
+            gfx.drawImage(Assets.mask_full, 60 * i + 235, 103, null);
     }
 
     @Override
     public void hasBeenHit()
     {
+        //bruh
+    }
 
+    @Override
+    public void playerContact()
+    {
+        //bruh indeed
+    }
+
+    public int getGeo()
+    {
+        return geo;
+    }
+
+    public void addGeo(int i)
+    {
+        geo_buffer += i;
+        has_buffered_geo = true;
+        geo_buffer_timer = 0;
+    }
+
+    public void removeGeo(int i)
+    {
+        addGeo(-i);
     }
 
     public boolean isSlashing()

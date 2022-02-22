@@ -12,10 +12,6 @@ public abstract class Entity
     protected float x, y;
     protected float width, height;
     public Rectangle bounds;
-
-    public boolean is_harmful = false; //by default all entities don't do contact damage
-    public boolean is_hazard = false;
-    public boolean is_hazard_respawn = false;
     public boolean is_pogoable = false;
     public boolean has_knockback = true;
 
@@ -36,18 +32,12 @@ public abstract class Entity
 
     public float getRespawnX()
     {
-        if (is_hazard_respawn)
-            return respawnX;
-        else
-            return 0;
+        return respawnX;
     }
 
     public float getRespawnY()
     {
-        if (is_hazard_respawn)
-            return respawnY;
-        else
-            return 0;
+        return respawnY;
     }
 
     public void removeEntity()
@@ -141,4 +131,6 @@ public abstract class Entity
     public abstract void render(Graphics gfx);
 
     public abstract void hasBeenHit();
+
+    public abstract void playerContact();
 }

@@ -38,4 +38,9 @@ public class Grass extends StaticEntity
     public void hasBeenHit() {
 
     }
+
+    @Override
+    public void playerContact() {
+
+    }
 }

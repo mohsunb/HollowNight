@@ -1,7 +1,6 @@
 package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
-import dev.pogodemon.entities.creatures.Player;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -22,17 +21,17 @@ public abstract class Creature extends Entity
 
     protected int CREATURE_TYPE = 1;    // 0 -> Player
                                         // 1 -> Mob
-                                        // 2 -> Miscellaneous (e.g: geo)
+                                        // 2 -> Geo
                                         // -1 -> Player slash
 
     protected boolean grounded = false;
     protected boolean ceiling_collide = false;
     protected boolean will_hard_fall = false;
     protected boolean superdash_shocked = false;
-    protected boolean fall_shocked = false;
-    protected boolean damage_shocked = false;
-    protected boolean damage_shocked_right = false;
-    protected boolean invulnerable = false;
+    public boolean fall_shocked = false;
+    public boolean damage_shocked = false;
+    public boolean damage_shocked_right = false;
+    public boolean invulnerable = false;
 
     //Abilities (temporary, will be loaded off of a save file in the future)
     protected boolean hasMothwingCloak = true;
@@ -51,8 +50,8 @@ public abstract class Creature extends Entity
 
     //dashing helper dynamic flags
     protected boolean can_dash = false;
-    protected boolean dashing = false;
-    protected boolean shadow_dashing = false;
+    public boolean dashing = false;
+    public boolean shadow_dashing = false;
     protected boolean can_shadow_dash = false;
     protected long shadow_dash_cooldown = 0;
     protected boolean just_dashed = false;
@@ -65,12 +64,11 @@ public abstract class Creature extends Entity
     protected boolean wall_jumping_left = false;
 
     protected long minimum_superdash_timer = 0;
-    protected boolean superdash = false;
+    public boolean superdash = false;
 
     public Creature(Handler handler, float x, float y, float width, float height)
     {
         super(handler, x, y, width, height);
-        is_harmful = true; //by default all creatures deal damage
         this.health = DEFAULT_HEALTH;
         this.speedX = DEFAULT_SPEED;
         this.speedY = 0;
@@ -85,11 +83,17 @@ public abstract class Creature extends Entity
             if (damage_shocked)
             {
                 if (!damage_shocked_right)
+                {
                     xMove = -speedX;
+                    if (!facing_right)
+                        facing_right = true;
+                }
+
                 else
                 {
                     xMove = speedX;
-                    facing_right = false;
+                    if (facing_right)
+                        facing_right = false;
                 }
             }
 
@@ -104,49 +108,12 @@ public abstract class Creature extends Entity
 
                 yMove += speedY;
             }
-
-            //Contact damage to player
+            
+                        
             if (CREATURE_TYPE == 0)
             {
-                if (!invulnerable && checkEntityCollisions(xMove, yMove))
-                {
-                    if (getCollidingEntity(xMove, yMove).is_hazard_respawn)
-                    {
-                        if (handler.getWorld().getEntityManager().getPlayer().getRespawnX() != getCollidingEntity(xMove, yMove).getRespawnX() || handler.getWorld().getEntityManager().getPlayer().getRespawnY() != getCollidingEntity(xMove, yMove).getRespawnY())
-                            handler.getWorld().getEntityManager().getPlayer().updateRespawnPoint(getCollidingEntity(xMove, yMove).getRespawnX(), getCollidingEntity(xMove, yMove).getRespawnY());
-                    }
-
-                    else if (getCollidingEntity(xMove, yMove).is_harmful && getCollidingEntity(xMove, yMove).doesExist())
-                    {
-                        if (!shadow_dashing && !getCollidingEntity(xMove, yMove).is_hazard)
-                        {
-                            health -= 20;
-                            invulnerable = true;
-                        }
-
-                        if (getCollidingEntity(xMove, yMove).is_hazard)
-                        {
-                            health -= 20;
-                            invulnerable = true;
-                            handler.getWorld().getEntityManager().getPlayer().hazardRespawn();
-                            fall_shocked = true;
-                            dashing = false;
-                            shadow_dashing = false;
-                            superdash = false;
-                        }
-
-                        else if (!shadow_dashing)
-                        {
-                            damage_shocked = true;
-                            if ((getX() + bounds.width * 0.5) <= (getCollidingEntity(xMove, yMove).getX() + getCollidingEntity(xMove, yMove).bounds.width * 0.5))
-                                damage_shocked_right = false;
-
-                            else
-                                damage_shocked_right = true;
-                        }
-
-                    }
-                }
+                if (checkEntityCollisions(xMove, yMove))
+                    getCollidingEntity(xMove, yMove).playerContact();
             }
 
             moveX();
@@ -163,14 +130,14 @@ public abstract class Creature extends Entity
                 {
                     if (getCollidingEntity(xMove, yMove) != null)
                     {
-                        getCollidingEntity(xMove, yMove).health -= player.nail_damage;
                         getCollidingEntity(xMove, yMove).hasBeenHit();
                         player.just_attacked = true;
-                        if (!handler.getWorld().getEntityManager().getPlayer().up_slashing && !handler.getWorld().getEntityManager().getPlayer().down_slashing && getCollidingEntity(xMove, yMove).has_knockback)
-                            handler.getWorld().getEntityManager().getPlayer().attack_knockback = true;
 
-                        else if (handler.getWorld().getEntityManager().getPlayer().down_slashing && getCollidingEntity(xMove, yMove).is_pogoable)
-                            handler.getWorld().getEntityManager().getPlayer().pogo = true;
+                        if (!player.up_slashing && !player.down_slashing && getCollidingEntity(xMove, yMove).has_knockback)
+                            player.attack_knockback = true;
+
+                        else if (player.down_slashing && getCollidingEntity(xMove, yMove).is_pogoable)
+                            player.pogo = true;
                     }
                 }
             }
@@ -206,9 +173,6 @@ public abstract class Creature extends Entity
                         facing_right = false;
                         cling_right = true;
                     }
-
-                    //if (minimum_superdash_timer == 0)
-                    //    superdash = false;
                 }
             }
         }
