@@ -19,10 +19,8 @@ public abstract class Creature extends Entity
     public static final float DEFAULT_WIDTH = Launcher.game_width / 24; // 1920 / 24 = 80
     public static final float DEFAULT_HEIGHT = (float) (Launcher.game_height / 13.5); // 1080 / 13.5 = 80
 
-    protected int CREATURE_TYPE = 1;    // 0 -> Player
-                                        // 1 -> Mob
-                                        // 2 -> Geo
-                                        // -1 -> Player slash
+    // 0 -> Player; // 1 -> Mob; 2 -> Geo; -1 -> Player slash
+    protected int CREATURE_TYPE = 1;
 
     protected boolean grounded = false;
     protected boolean ceiling_collide = false;
@@ -78,74 +76,53 @@ public abstract class Creature extends Entity
 
     public void move()
     {
-        if (CREATURE_TYPE != -1)
+        if (this != handler.getWorld().getEntityManager().getPlayer() && hasGravity()) //Implementation of gravity
         {
-            if (damage_shocked)
+            yMove = 0;
+            if (!grounded && speedY <= DEFAULT_SPEED * 4)
+                speedY += 0.2;
+
+            if (grounded)
             {
-                if (!damage_shocked_right)
+                if (CREATURE_TYPE == 2) // geo bounce mechanic
                 {
-                    xMove = -speedX;
-                    if (!facing_right)
-                        facing_right = true;
+                    if (speedY - 2 < 0)
+                        speedY = 0;
+                    else
+                    {
+                        speedY -= 2;
+                        speedY *= -1;
+                    }
+
+                    if (xMove > 0)
+                    {
+                        if (xMove - 0.3 < 0)
+                            xMove = 0;
+                        xMove -= 0.3;
+                    }
+
+                    else if (xMove < 0)
+                    {
+                        if (xMove + 0.3 > 0)
+                            xMove = 0;
+                        xMove += 0.3;
+                    }
                 }
 
                 else
-                {
-                    xMove = speedX;
-                    if (facing_right)
-                        facing_right = false;
-                }
-            }
-
-            if (CREATURE_TYPE == 1 || CREATURE_TYPE == 2)
-            {
-                yMove = 0;
-                if (!grounded && speedY <= DEFAULT_SPEED * 2)
-                    speedY += 0.1;
-
-                if (grounded)
                     speedY = 0;
-
-                yMove += speedY;
-            }
-            
-                        
-            if (CREATURE_TYPE == 0)
-            {
-                if (checkEntityCollisions(xMove, yMove))
-                    getCollidingEntity(xMove, yMove).playerContact();
             }
 
-            moveX();
-            moveY();
+            yMove += speedY;
         }
 
-        //Player's Slash
-        if (CREATURE_TYPE == -1)
-        {
-            if (checkEntityCollisions(xMove, yMove))
-            {
-                Player player = handler.getWorld().getEntityManager().getPlayer();
-                if (player.slashing && !player.just_attacked)
-                {
-                    if (getCollidingEntity(xMove, yMove) != null)
-                    {
-                        getCollidingEntity(xMove, yMove).hasBeenHit();
-                        player.just_attacked = true;
-
-                        if (!player.up_slashing && !player.down_slashing && getCollidingEntity(xMove, yMove).has_knockback)
-                            player.attack_knockback = true;
-
-                        else if (player.down_slashing && getCollidingEntity(xMove, yMove).is_pogoable)
-                            player.pogo = true;
-                    }
-                }
-            }
-        }
+        moveX();
+        moveY();
     }
 
     public void moveX()
     {
+        Player player = handler.getWorld().getEntityManager().getPlayer();
         if (xMove > 0)
         {
             int tx = (int) Math.floor((x + xMove + bounds.x + bounds.width) / Tile.TILE_WIDTH);
@@ -156,19 +133,25 @@ public abstract class Creature extends Entity
                     && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)))
             {
                 x += xMove;
-                if (cling_left)
-                    cling_left = false;
-                if (cling_right)
-                    cling_right = false;
+                if (this == player)
+                {
+                    if (cling_left)
+                        cling_left = false;
+                    if (cling_right)
+                        cling_right = false;
+                }
             }
 
             else
             {
-                if (CREATURE_TYPE == 0)
+                if (CREATURE_TYPE == 2) //geo bounce mechanic
+                    xMove *= -1;
+
+                else
                 {
                     x = tx * Tile.TILE_WIDTH - bounds.x - bounds.width - 1;
 
-                    if (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) && !jumping && !grounded && !dashing && hasMantisClaw)
+                    if (this == player && collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) && !jumping && !grounded && !dashing && hasMantisClaw)
                     {
                         facing_right = false;
                         cling_right = true;
@@ -179,18 +162,21 @@ public abstract class Creature extends Entity
 
         else if (xMove == 0)
         {
-            if (cling_right)
+            if (this == player)
             {
-                int tx = (int) Math.floor((x + xMove + bounds.x + bounds.width + 1) / Tile.TILE_WIDTH);
-                if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)))
-                    cling_right = false;
-            }
+                if (cling_right)
+                {
+                    int tx = (int) Math.floor((x + xMove + bounds.x + bounds.width + 1) / Tile.TILE_WIDTH);
+                    if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)))
+                        cling_right = false;
+                }
 
-            else if (cling_left)
-            {
-                int tx = (int) Math.floor((x + xMove + bounds.x - 1) / Tile.TILE_WIDTH);
-                if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)))
-                    cling_left = false;
+                else if (cling_left)
+                {
+                    int tx = (int) Math.floor((x + xMove + bounds.x - 1) / Tile.TILE_WIDTH);
+                    if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)))
+                        cling_left = false;
+                }
             }
         }
 
@@ -204,20 +190,29 @@ public abstract class Creature extends Entity
                     && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)))
             {
                 x += xMove;
-                if (cling_right)
-                    cling_right = false;
-                if (cling_left)
-                    cling_left = false;
+                if (this == player)
+                {
+                    if (cling_right)
+                        cling_right = false;
+                    if (cling_left)
+                        cling_left = false;
+                }
             }
 
             else
             {
-                x = tx * Tile.TILE_WIDTH + Tile.TILE_WIDTH - bounds.x;
+                if (CREATURE_TYPE == 2) //geo bounce mechanic
+                    xMove *= -1;
 
-                if (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) && !jumping  && !grounded && !dashing && hasMantisClaw)
+                else
                 {
-                    cling_left = true;
-                    facing_right = true;
+                    x = tx * Tile.TILE_WIDTH + Tile.TILE_WIDTH - bounds.x;
+
+                    if (this == player && collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) && !jumping  && !grounded && !dashing && hasMantisClaw)
+                    {
+                        cling_left = true;
+                        facing_right = true;
+                    }
                 }
             }
         }
@@ -225,6 +220,8 @@ public abstract class Creature extends Entity
 
     public void moveY()
     {
+        Player player = handler.getWorld().getEntityManager().getPlayer();
+
         if (yMove < 0)
         {
             int ty = (int) Math.floor((y + yMove + bounds.y) / Tile.TILE_HEIGHT);
@@ -256,7 +253,7 @@ public abstract class Creature extends Entity
                 grounded = false;
                 ceiling_collide = false;
 
-                if (cling_left || cling_right)
+                if (this == player && (cling_left || cling_right))
                     yMove += speedY * 0.25;
 
                 else
@@ -266,14 +263,17 @@ public abstract class Creature extends Entity
 
         else
         {
-            
-            if (!will_hard_fall && fall_distance < 1600)
-                fall_distance += yMove;
-            else
+            if (this == player)
             {
-                will_hard_fall = true;
-                fall_distance = 0;
+                if (!will_hard_fall && fall_distance < 1600)
+                    fall_distance += yMove;
+                else
+                {
+                    will_hard_fall = true;
+                    fall_distance = 0;
+                }
             }
+
             int ty = (int) Math.floor((y + yMove + bounds.y + bounds.height) / Tile.TILE_HEIGHT);
             if (!collisionWithTile((int) Math.floor((x + bounds.x) / Tile.TILE_WIDTH), ty)
                     && !collisionWithTile((int) Math.floor((x + bounds.x + bounds.width) / Tile.TILE_WIDTH), ty)

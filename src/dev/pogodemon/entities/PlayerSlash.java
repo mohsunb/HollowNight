@@ -3,12 +3,16 @@ package dev.pogodemon.entities;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.utils.Handler;
+import dev.pogodemon.world.Tile;
 
 import java.awt.*;
 
 public class PlayerSlash extends Creature
 {
     private Player player;
+    private boolean hit_wall = false;
+    private long hit_wall_timer = 0;
+
 
     public PlayerSlash(Handler handler, float x, float y)
     {
@@ -20,6 +24,42 @@ public class PlayerSlash extends Creature
     @Override
     public void update()
     {
+        if (hit_wall)
+        {
+            hit_wall_timer++;
+            if (hit_wall_timer >= Launcher.framerate_limit * 0.41)
+            {
+                hit_wall = false;
+                hit_wall_timer = 0;
+            }
+        }
+
+        if (exists && !player.down_slashing && !player.up_slashing && !hit_wall) // wall knockback
+        {
+            if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT))
+            {
+                player.attack_knockback = true;
+                hit_wall = true;
+            }
+        }
+
         if (player.isFacingRight())
         {
             if (!player.down_slashing && !player.up_slashing)
@@ -80,15 +120,30 @@ public class PlayerSlash extends Creature
         {
             x = player.getX();
             y = player.getY();
+
+            if (checkEntityCollisions(xMove, yMove))
+            {
+                Player player = handler.getWorld().getEntityManager().getPlayer();
+                if (!player.just_attacked && getCollidingEntity(xMove, yMove) != null)
+                {
+                    for (Entity e : getCollidingEntities(xMove, yMove))
+                        e.hasBeenHit();
+                    player.just_attacked = true;
+
+                    if (!player.up_slashing && !player.down_slashing && getCollidingEntity(xMove, yMove).has_knockback)
+                        player.attack_knockback = true;
+
+                    else if (player.down_slashing && getCollidingEntity(xMove, yMove).is_pogoable)
+                        player.pogo = true;
+                }
+            }
         }
 
-        else if (x != 0 && y != 0)
+        else if (getX() != 0 && getY() != 0)
         {
-            x = 0;
-            y = 0;
+            setX(0);
+            setY(0);
         }
-
-        move();
     }
 
     @Override
@@ -153,7 +208,8 @@ public class PlayerSlash extends Creature
     }
 
     @Override
-    public void playerContact() {
+    public void playerContact()
+    {
 
     }
 }

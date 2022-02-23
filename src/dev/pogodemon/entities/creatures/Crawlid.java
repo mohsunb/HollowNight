@@ -3,14 +3,20 @@ package dev.pogodemon.entities.creatures;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
+import dev.pogodemon.entities.Geo;
 import dev.pogodemon.entities.Player;
 import dev.pogodemon.utils.Handler;
+import dev.pogodemon.world.World;
 
 import java.awt.*;
 
 public class Crawlid extends Creature
 {
     private float xRangeMin, xRangeMax;
+
+    private boolean hit_knockback = false;
+    private long hit_knockback_timer = 0;
+
     public Crawlid(Handler handler, float x, float y, float xRangeMin, float xRangeMax)
     {
         super(handler, x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -19,7 +25,6 @@ public class Crawlid extends Creature
         this.xRangeMin = xRangeMin;
         this.xRangeMax = xRangeMax;
 
-        
         is_pogoable = true;
     }
 
@@ -30,20 +35,43 @@ public class Crawlid extends Creature
         {
             move();
 
+            if (hit_knockback)
+            {
+                hit_knockback_timer++;
+                if (hit_knockback_timer >= Launcher.framerate_limit * 0.2)
+                {
+                    hit_knockback_timer = 0;
+                    hit_knockback = false;
+                }
+
+                float s = DEFAULT_SPEED * 0.46f;
+                if (handler.getWorld().getEntityManager().getPlayer().isFacingRight())
+                    xMove = s;
+                else
+                    xMove = -s;
+            }
+
             if (getX() + bounds.width * 0.5 >= xRangeMax - bounds.width * 0.5)
                 facing_right = false;
             else if (getX() + bounds.width * 0.5 <= xRangeMin + bounds.width * 0.5)
                 facing_right = true;
 
-            speedX = DEFAULT_SPEED * 0.4f;
-            if (facing_right)
-                xMove = speedX;
-            else
-                xMove = -speedX;
+            if (!hit_knockback)
+            {
+                speedX = DEFAULT_SPEED * 0.4f;
+                if (facing_right)
+                    xMove = speedX;
+                else
+                    xMove = -speedX;
+            }
 
-            if (health <= 0)
+
+            if (health <= 0) // death
             {
                 exists = false;
+                World world = handler.getWorld();
+                world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+                world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
                 facing_right = !handler.getWorld().getEntityManager().getPlayer().isFacingRight();
             }
         }
@@ -80,6 +108,9 @@ public class Crawlid extends Creature
     {
         Player player = handler.getWorld().getEntityManager().getPlayer();
         health -= player.nail_damage;
+
+        if (!handler.getWorld().getEntityManager().getPlayer().up_slashing && !handler.getWorld().getEntityManager().getPlayer().down_slashing)
+            hit_knockback = true;
     }
 
     @Override

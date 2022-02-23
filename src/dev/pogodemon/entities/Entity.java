@@ -3,10 +3,11 @@ package dev.pogodemon.entities;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class Entity
 {
-    public int health;
+    public int health = 1;
     protected boolean exists = true;
     protected Handler handler;
     protected float x, y;
@@ -14,6 +15,7 @@ public abstract class Entity
     public Rectangle bounds;
     public boolean is_pogoable = false;
     public boolean has_knockback = true;
+    protected boolean gravity = true;
 
     public Entity(Handler handler, float x, float y, float width, float height)
     {
@@ -81,6 +83,20 @@ public abstract class Entity
         return entity;
     }
 
+    public ArrayList<Entity> getCollidingEntities(float xOffset, float yOffset)
+    {
+        ArrayList<Entity> entities = new ArrayList<Entity>();
+        for (Entity e : handler.getWorld().getEntityManager().getEntities())
+        {
+            if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this) || !e.doesExist())
+                continue;
+
+            if (e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset)))
+                entities.add(e);
+        }
+        return entities;
+    }
+
     public Rectangle getCollisionBounds(float xOffset, float yOffset)
     {
         return new Rectangle((int) (x + bounds.x + xOffset), (int) (y + bounds.y + yOffset), bounds.width, bounds.height);
@@ -124,6 +140,28 @@ public abstract class Entity
     public void setHeight(float height)
     {
         this.height = height;
+    }
+
+    public boolean hasGravity()
+    {
+        return gravity;
+    }
+
+    public void enableGravity()
+    {
+        if (!gravity)
+            gravity = true;
+    }
+
+    public void disableGravity()
+    {
+        if (gravity)
+            gravity = false;
+    }
+
+    public void toggleGravity()
+    {
+        gravity = !gravity;
     }
 
     public abstract void update();

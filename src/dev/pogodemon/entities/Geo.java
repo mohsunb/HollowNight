@@ -6,6 +6,7 @@ import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.WorldLoader;
 
 import java.awt.*;
+import java.util.Random;
 
 public class Geo extends Creature
 {
@@ -42,6 +43,11 @@ public class Geo extends Creature
             bounds.width = 30;
             bounds.height = 30;
         }
+
+        Random rand = new Random();
+        speedX = DEFAULT_SPEED;
+        xMove = (float) Math.floor(Math.pow(-1, rand.nextInt(0, 2)) * rand.nextInt(0, 101) * 0.01 * speedX);
+        speedY = -rand.nextInt(1, 11);
     }
 
     @Override

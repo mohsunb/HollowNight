@@ -24,6 +24,11 @@ public class EntityManager
         return entities;
     }
 
+    public void setEntities(ArrayList<Entity> e)
+    {
+        entities = e;
+    }
+
     public void addEntity(Entity e)
     {
         entities.add(e);

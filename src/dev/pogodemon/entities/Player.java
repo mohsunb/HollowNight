@@ -14,7 +14,7 @@ public class Player extends Creature
     private int geo_buffer = 0;
     private boolean has_buffered_geo;
     private int geo_buffer_timer;
-
+    
     public Player(Handler handler, float x, float y)
     {
         super(handler, x, y, Creature.DEFAULT_WIDTH * 0.75f, Creature.DEFAULT_HEIGHT * 1.625f);
@@ -27,30 +27,6 @@ public class Player extends Creature
         max_health = health;
 
         CREATURE_TYPE = 0; //Player
-    }
-
-    private float respawnX = 0;
-    private float respawnY = 0;
-
-    private boolean superdash_charged = false;
-    long superdash_charge_timer = 0;
-
-    public void hazardRespawn()
-    {
-        setX(respawnX);
-        setY(respawnY);
-        health -= 20;
-        invulnerable = true;
-        fall_shocked = true;
-        dashing = false;
-        shadow_dashing = false;
-        superdash = false;
-    }
-
-    public void updateRespawnPoint(float x, float y)
-    {
-        respawnX = x;
-        respawnY = y;
     }
 
     public int nail_damage = 5;
@@ -71,9 +47,53 @@ public class Player extends Creature
     long slash_timer = 0;
     long superdash_shock_timer = 0;
 
+    private boolean superdash_charged = false;
+    long superdash_charge_timer = 0;
+
+    private float respawnX = 0;
+    private float respawnY = 0;
+
+    public void hazardRespawn()
+    {
+        setX(respawnX);
+        setY(respawnY);
+        health -= 20;
+        invulnerable = true;
+        fall_shocked = true;
+        dashing = false;
+        shadow_dashing = false;
+        superdash = false;
+    }
+
+    public void updateRespawnPoint(float x, float y)
+    {
+        respawnX = x;
+        respawnY = y;
+    }
+
     @Override
     public void update()
     {
+        if (damage_shocked)
+        {
+            if (!damage_shocked_right)
+            {
+                xMove = -speedX;
+                if (!facing_right)
+                    facing_right = true;
+            }
+
+            else
+            {
+                xMove = speedX;
+                if (facing_right)
+                    facing_right = false;
+            }
+        }
+
+        if (checkEntityCollisions(xMove, yMove))
+            getCollidingEntity(xMove, yMove).playerContact();
+
         if (has_buffered_geo)
         {
             geo_buffer_timer++;
@@ -82,6 +102,7 @@ public class Player extends Creature
                 has_buffered_geo = false;
                 geo += geo_buffer;
                 geo_buffer_timer = 0;
+                geo_buffer = 0;
             }
         }
 
@@ -175,15 +196,12 @@ public class Player extends Creature
 
         if (attack_knockback)
         {
+            float s = DEFAULT_SPEED * 0.46f;
             if (facing_right)
-            {
-                handler.getKeyManager().left = true;
-            }
+                xMove = -s;
 
             else
-            {
-                handler.getKeyManager().right = true;
-            }
+                xMove = s;
         }
 
         if (attack_knockback)
@@ -417,7 +435,7 @@ public class Player extends Creature
             illegal_slash = false;
 
         //So that player doesn't stop during dash
-        if(!dashing && !superdash)
+        if(!dashing && !superdash && !damage_shocked && !attack_knockback)
             xMove = 0;
         if (!pogo)
             yMove = 0;
@@ -561,23 +579,19 @@ public class Player extends Creature
             }
 
             //Jumping START
-            if (superdash_charge_timer == 0 && !superdash_charged && !superdash && !grounded && !cling_left && !cling_right && !jumping && handler.getKeyManager().z)
+            if (((superdash_charge_timer == 0 && !superdash_charged && !superdash && !grounded && !cling_left && !cling_right && !jumping) || dashing) && handler.getKeyManager().z)
                 illegal_jumping = true;
 
             if (illegal_jumping && (grounded || cling_right || cling_left) && !handler.getKeyManager().z)
                 illegal_jumping = false;
 
-            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !illegal_jumping && (grounded || cling_right || cling_left) && !jumping && handler.getKeyManager().z)
+            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !illegal_jumping && (grounded || cling_right || cling_left) && !jumping && handler.getKeyManager().z)
             {
                 if (cling_left)
-                {
                     wall_jumping_right = true;
-                }
 
                 else if (cling_right)
-                {
                     wall_jumping_left = true;
-                }
                 
                 illegal_jumping = true;
                 jumping = true;
@@ -666,7 +680,7 @@ public class Player extends Creature
                 illegal_jumping = false;
             //Jumping END
 
-            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && handler.getKeyManager().right)
+            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !attack_knockback && handler.getKeyManager().right)
             {
                 if (!slashing)
                 {
@@ -676,9 +690,9 @@ public class Player extends Creature
                 xMove += speedX;
             }
 
-            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && handler.getKeyManager().left)
+            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !attack_knockback && handler.getKeyManager().left)
             {
-                if (!slashing && !attack_knockback)
+                if (!slashing)
                 {
                     if(facing_right)
                         facing_right = false;

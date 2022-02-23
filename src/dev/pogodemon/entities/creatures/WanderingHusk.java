@@ -3,8 +3,10 @@ package dev.pogodemon.entities.creatures;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
+import dev.pogodemon.entities.Geo;
 import dev.pogodemon.entities.Player;
 import dev.pogodemon.utils.Handler;
+import dev.pogodemon.world.World;
 
 import java.awt.*;
 import java.util.Random;
@@ -41,7 +43,6 @@ public class WanderingHusk extends Creature
         this.agro_range = agro_range;
         this.de_agro_range = de_agro_range;
 
-        
         is_pogoable = true;
     }
 
@@ -63,10 +64,12 @@ public class WanderingHusk extends Creature
                     hit_knockback_timer = 0;
                     hit_knockback = false;
                 }
+
+                float s = DEFAULT_SPEED * 0.46f;
                 if (facing_right)
-                    xMove = -DEFAULT_SPEED;
+                    xMove = -s;
                 else
-                    xMove = DEFAULT_SPEED;
+                    xMove = s;
             }
 
             if (agro && !attacking)
@@ -176,8 +179,14 @@ public class WanderingHusk extends Creature
                     || player.getY() > getY() + bounds.height))
                 agro = false;
 
-            if (health <= 0)
+            if (health <= 0) // death;
+            {
                 exists = false;
+                World world = handler.getWorld();
+                world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+                world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+                world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+            }
         }
 
         else

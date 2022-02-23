@@ -12,6 +12,7 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class World
 {
@@ -20,6 +21,9 @@ public class World
     private int spawnX, spawnY;
     private int[][] tiles;
     private EntityManager entityManager;
+
+    private String copyPath;
+    private int copySpawnX, copySpawnY;
 
     public World(Handler handler, String path, int spawnX, int spawnY)
     {
@@ -48,9 +52,11 @@ public class World
         return entityManager;
     }
 
-    public void addEntity(Entity e)
+    public void spawnEntity(Entity e)
     {
-        entityManager.addEntity(e);
+        ArrayList<Entity> list = new ArrayList<Entity>(getEntityManager().getEntities());
+        list.add(e);
+        getEntityManager().setEntities(list);
     }
 
     public void update()
