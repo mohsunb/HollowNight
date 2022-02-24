@@ -17,7 +17,9 @@ public class Assets
             , superdash_crystals_wall_right, superdash_crystals_wall_left, shadow_dash_right, shadow_dash_left, wandering_husk_idle_right
             , wandering_husk_idle_left, wandering_husk_walk_right, wandering_husk_walk_left, wandering_husk_attack_right
             , wandering_husk_attack_left, wandering_husk_dead_right, wandering_husk_dead_left, crawlid_right, crawlid_left, crawlid_dead_right
-            , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large;
+            , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large, geo_deposit_up, geo_deposit_down, geo_deposit_left, geo_deposit_right
+            , geo_deposit_broken_up, geo_deposit_broken_down, geo_deposit_broken_left, geo_deposit_broken_right, vengefly_idle_right
+            , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left;
 
     //Flip an image horizontally instead of creating two images
     /*public static BufferedImage mirror(BufferedImage image)
@@ -31,6 +33,18 @@ public class Assets
 
     public static void init()
     {
+        vengefly_idle_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_right.png");
+        vengefly_idle_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_left.png");
+        vengefly_agro_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_agro_right.png");
+        vengefly_agro_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_agro_left.png");
+        geo_deposit_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_up.png");
+        geo_deposit_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_down.png");
+        geo_deposit_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_left.png");
+        geo_deposit_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_right.png");
+        geo_deposit_broken_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_broken_up.png");
+        geo_deposit_broken_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_broken_down.png");
+        geo_deposit_broken_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_broken_left.png");
+        geo_deposit_broken_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_broken_right.png");
         geo_small = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_small.png");
         geo_medium = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_medium.png");
         geo_large = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_large.png");

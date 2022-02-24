@@ -3,7 +3,8 @@ package dev.pogodemon.world;
 import dev.pogodemon.entities.HazardRespawnPoint;
 import dev.pogodemon.entities.PlayerSlash;
 import dev.pogodemon.entities.creatures.Crawlid;
-import dev.pogodemon.entities.creatures.WanderingHusk;
+import dev.pogodemon.entities.creatures.Vengefly;
+import dev.pogodemon.entities.objects.GeoDeposit;
 import dev.pogodemon.entities.objects.SpikesLarge;
 import dev.pogodemon.entities.objects.SpikesMedium;
 import dev.pogodemon.utils.Handler;
@@ -18,8 +19,17 @@ public class WorldLoader
 
     public World KingsPass()
     {
-        World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4751);
+        World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4680);
         handler.setWorld(kings_pass);
+
+        kings_pass.spawnEntity(new Vengefly(handler, 6890, 3232, 500, 1500));
+        kings_pass.spawnEntity(new Vengefly(handler, 4900, 2700, 500, 1500));
+        kings_pass.spawnEntity(new Vengefly(handler, 6658, 2300, 500, 1500));
+
+        kings_pass.spawnEntity(new GeoDeposit(handler, 950, 4800, 0));
+        kings_pass.spawnEntity(new GeoDeposit(handler, 12245, 5200, 0));
+        kings_pass.spawnEntity(new GeoDeposit(handler, 8230, 1720, 0));
+        kings_pass.spawnEntity(new GeoDeposit(handler, 4821, 2280, 0));
 
         kings_pass.spawnEntity(new Crawlid(handler, 7350, 4680, 6924, 8354));
         kings_pass.spawnEntity(new Crawlid(handler, 8733, 4680, 8673, 9668));

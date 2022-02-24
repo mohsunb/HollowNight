@@ -10,7 +10,7 @@ import java.awt.*;
 public class Player extends Creature
 {
     private int max_health;
-    private int geo = 1444;
+    private int geo = 100;
     private int geo_buffer = 0;
     private boolean has_buffered_geo;
     private int geo_buffer_timer;
@@ -92,7 +92,10 @@ public class Player extends Creature
         }
 
         if (checkEntityCollisions(xMove, yMove))
-            getCollidingEntity(xMove, yMove).playerContact();
+        {
+            for (Entity e : getCollidingEntities(xMove, yMove))
+                e.playerContact();
+        }
 
         if (has_buffered_geo)
         {
@@ -435,7 +438,7 @@ public class Player extends Creature
             illegal_slash = false;
 
         //So that player doesn't stop during dash
-        if(!dashing && !superdash && !damage_shocked && !attack_knockback)
+        if (!dashing && !superdash && !damage_shocked && !attack_knockback)
             xMove = 0;
         if (!pogo)
             yMove = 0;
@@ -514,6 +517,9 @@ public class Player extends Creature
 
                 if (can_dash_twice)
                     can_dash_twice = false;
+
+                if (attack_knockback)
+                    attack_knockback = false;
 
                 if (facing_right)
                     xMove += DEFAULT_SPEED * 2.51027861;
@@ -711,10 +717,9 @@ public class Player extends Creature
     @Override
     public void render(Graphics gfx)
     {
-
+        //Coordinates
         gfx.setColor(Color.white);
-        gfx.drawString("X: " + (int) x , 5, 15);
-        gfx.drawString("Y: " + (int) y, 5, 30);
+        gfx.drawString("X: " + (int) getX() + "  Y: " + (int) getY(), 5, 15);
 
 
         //Render player
