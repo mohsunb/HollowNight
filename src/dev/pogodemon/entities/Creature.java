@@ -16,8 +16,8 @@ public abstract class Creature extends Entity
     public static final int DEFAULT_HEALTH = 100;
     public static final float DEFAULT_SPEED = 4.0f * 144 / Launcher.framerate_limit; // To make the movement speed independent of the framerate
 
-    public static final float DEFAULT_WIDTH = Launcher.game_width / 24; // 1920 / 24 = 80
-    public static final float DEFAULT_HEIGHT = (float) (Launcher.game_height / 13.5); // 1080 / 13.5 = 80
+    public static final float DEFAULT_WIDTH = Launcher.game_width / 24F; // 1920 / 24 = 80
+    public static final float DEFAULT_HEIGHT = Launcher.game_height / 13.5F; // 1080 / 13.5 = 80
 
     // 0 -> Player; // 1 -> Mob; 2 -> Geo; -1 -> Player slash
     protected int CREATURE_TYPE = 1;
@@ -80,32 +80,32 @@ public abstract class Creature extends Entity
         {
             yMove = 0;
             if (!grounded && speedY <= DEFAULT_SPEED * 4)
-                speedY += 0.2;
+                speedY += DEFAULT_SPEED * 0.05  * 144 / Launcher.framerate_limit;
 
             if (grounded)
             {
                 if (CREATURE_TYPE == 2) // geo bounce mechanic
                 {
-                    if (speedY - 2 < 0)
+                    if (speedY - DEFAULT_SPEED * 0.5 < 0)
                         speedY = 0;
                     else
                     {
-                        speedY -= 2;
+                        speedY -= DEFAULT_SPEED * 0.5;
                         speedY *= -1;
                     }
 
                     if (xMove > 0)
                     {
-                        if (xMove - 0.3 < 0)
+                        if (xMove - DEFAULT_SPEED * 0.075 < 0)
                             xMove = 0;
-                        xMove -= 0.3;
+                        xMove -= DEFAULT_SPEED * 0.075;
                     }
 
                     else if (xMove < 0)
                     {
-                        if (xMove + 0.3 > 0)
+                        if (xMove + DEFAULT_SPEED * 0.075 > 0)
                             xMove = 0;
-                        xMove += 0.3;
+                        xMove += DEFAULT_SPEED * 0.075;
                     }
                 }
 
@@ -237,7 +237,10 @@ public abstract class Creature extends Entity
             else
             {
                 grounded = false;
-                ceiling_collide = true;
+                if (CREATURE_TYPE == 2)
+                    speedY *= -1;
+                else
+                    ceiling_collide = true;
                 y = ty * Tile.TILE_HEIGHT + Tile.TILE_HEIGHT - bounds.y;
             }
 

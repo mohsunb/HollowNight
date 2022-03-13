@@ -375,7 +375,7 @@ public class Player extends Creature
         }
 
         if (pogo)
-            yMove = -5f;
+            yMove = -DEFAULT_SPEED * 1.25F;
 
         if (superdash)
         {
@@ -548,15 +548,15 @@ public class Player extends Creature
                 double_jumping = true;
                 illegal_double_jumping = true;
                 did_double_jump = true;
-                speedY = 10f; // double jump initial speed
+                speedY = DEFAULT_SPEED * 2.5F; // double jump initial speed
                 if (!dashing)
                     yMove += -speedY;
             }
 
-            else if (double_jumping && handler.getKeyManager().z && (speedY - 0.15) > 0)
+            else if (double_jumping && handler.getKeyManager().z && (speedY - DEFAULT_SPEED * 0.0375 * 144 / Launcher.framerate_limit) > 0)
             {
                 yMove += -speedY;
-                speedY -= 0.15;
+                speedY -= DEFAULT_SPEED * 0.0375 * 144 / Launcher.framerate_limit;
                 if (ceiling_collide)
                 {
                     jumping = false;
@@ -575,7 +575,7 @@ public class Player extends Creature
                 double_jumping = false;
 
                 if (!grounded && speedY <= (int) (DEFAULT_SPEED * 2))
-                    speedY += 0.2;
+                    speedY += DEFAULT_SPEED * 0.05  * 144 / Launcher.framerate_limit;
 
                 if (grounded || dashing)
                     speedY = 0;
@@ -606,15 +606,15 @@ public class Player extends Creature
                 if (hasMonarchWings)
                     can_double_jump = true;
                 
-                speedY = 10.0f; //Jumping initial speed
+                speedY = DEFAULT_SPEED * 2.5F; //Jumping initial speed
                 if (!dashing || !just_dashed)
                     yMove += -speedY;
             }
 
-            else if (jumping && handler.getKeyManager().z && (speedY - 0.15) > 0)
+            else if (jumping && handler.getKeyManager().z && (speedY - DEFAULT_SPEED * 0.0375 * 144 / Launcher.framerate_limit) > 0)
             {
                 yMove += -speedY;
-                speedY -= 0.15;
+                speedY -= DEFAULT_SPEED * 0.0375 * 144 / Launcher.framerate_limit;
 
                 if (ceiling_collide)
                 {
@@ -672,7 +672,7 @@ public class Player extends Creature
                         t = (int) (DEFAULT_SPEED * 2 * 0.25);
 
                     if (!grounded && speedY <= t)
-                        speedY += 0.2;
+                        speedY += DEFAULT_SPEED * 0.05  * 144 / Launcher.framerate_limit;
 
                     if (grounded || dashing)
                         speedY = 0;
@@ -720,7 +720,6 @@ public class Player extends Creature
         //Coordinates
         gfx.setColor(Color.white);
         gfx.drawString("X: " + (int) getX() + "  Y: " + (int) getY(), 5, 15);
-
 
         //Render player
         if (cling_left)
@@ -946,7 +945,8 @@ public class Player extends Creature
     public void addGeo(int i)
     {
         geo_buffer += i;
-        has_buffered_geo = true;
+        if (!has_buffered_geo)
+            has_buffered_geo = true;
         geo_buffer_timer = 0;
     }
 

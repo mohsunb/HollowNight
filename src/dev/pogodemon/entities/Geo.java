@@ -47,7 +47,7 @@ public class Geo extends Creature
         Random rand = new Random();
         speedX = DEFAULT_SPEED;
         xMove = (float) Math.floor(Math.pow(-1, rand.nextInt(0, 2)) * rand.nextInt(0, 101) * 0.01 * speedX);
-        speedY = -rand.nextInt(1, 11);
+        speedY = -rand.nextInt(1, 11) * DEFAULT_SPEED / 4.0F;
     }
 
     @Override

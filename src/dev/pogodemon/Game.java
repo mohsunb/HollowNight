@@ -116,7 +116,8 @@ public class Game implements Runnable
             //FPS counter
             if (timer >= 1_000_000_000)
             {
-                //System.out.println("FPS: " + ticks);
+                if (Launcher.log_fps)
+                    System.out.println("FPS: " + ticks);
                 ticks = 0;
                 timer = 0;
             }

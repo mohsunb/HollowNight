@@ -5,6 +5,12 @@ An attempt at remaking "Hollow Knight" from Team Cherry for a project aimed at i
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
 You can change the launch options in the main class. The game currently only works ***properly*** at 1920x1080 resolution, locked at 144FPS as the game physics malfunction otherwise. I will **try** to fix this in the future.
 
+## Update 13-Mar-2022: v0.1.0
+(I was busy playing Elden Ring, so expect more frequent updates now that I have finished it)
+* Game now works properly in a wide range of framerate options: Tested 36-288, it is recommended to choose a framerate that only differs from 144 by factors of two (e.g. 72)
+* Refined flying enemy vertical knockback
+* Refined geo physics
+
 ## Update 24-Feb-2022: v0.0.9
 * Added "Vengefly" enemy with proper combat AI
 * Added geo deposits

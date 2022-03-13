@@ -2,7 +2,10 @@ package dev.pogodemon;
 
 public class Launcher
 {
-    public static boolean show_hitboxes = false;
+    //Mainly for debugging purposes
+    public static boolean show_hitboxes = true;
+    public static boolean log_fps = true;
+
     public static final int game_width = 1920;
     public static final int game_height = 1080;
     public static final int framerate_limit = 144; // Game breaks if the framerate doesn't match the limit. So, log the fps if something feels off.

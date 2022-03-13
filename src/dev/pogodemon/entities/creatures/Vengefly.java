@@ -93,9 +93,9 @@ public class Vengefly extends Creature
                 else if (hit_knockback_left)
                     xMove = -s;
                 else if (hit_knockback_up)
-                    yMove = -s;
+                    yMove = -2 * s;
                 else
-                    yMove = s;
+                    yMove = 2 * s;
             }
 
             if (agro && (Math.sqrt(Math.pow(getX() - player.getX(), 2) + Math.pow(getY() + bounds.height * 0.5 - player.getY() - player.bounds.height * 0.5, 2)) >= de_agro_range))
