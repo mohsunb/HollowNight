@@ -29,6 +29,11 @@ public class Player extends Creature
         CREATURE_TYPE = 0; //Player
     }
 
+    public boolean looking_up = false;
+    public boolean looking_down = false;
+    private int looking_up_timer = 0;
+    private int looking_down_timer = 0;
+
     public int nail_damage = 5;
     public boolean alternative_slash_sprite = true; // = !self to change
     public boolean slashing = false;
@@ -45,10 +50,11 @@ public class Player extends Creature
     long damage_shock_timer = 0;
     long slash_cooldown_timer = 0;
     long slash_timer = 0;
-    long superdash_shock_timer = 0;
 
+    long superdash_shock_timer = 0;
     private boolean superdash_charged = false;
     long superdash_charge_timer = 0;
+    private boolean illegal_superdash = false;
 
     private float respawnX = 0;
     private float respawnY = 0;
@@ -163,6 +169,14 @@ public class Player extends Creature
         if (superdash_shocked)
         {
             superdash_shock_timer++;
+            if (!superdash_charged && superdash_charge_timer == 0 && !cling_left && !cling_right)
+            {
+                if (isFacingRight())
+                    xMove = DEFAULT_SPEED;
+                else
+                    xMove = -DEFAULT_SPEED;
+            }
+
             if (superdash_shock_timer >= Launcher.framerate_limit * 0.3)
             {
                 superdash_shocked = false;
@@ -309,7 +323,15 @@ public class Player extends Creature
             invulnerable_timer++;
 
         if (damage_shocked)
+        {
             damage_shock_timer++;
+            if (looking_up)
+                looking_up = false;
+
+            if (looking_down)
+                looking_down = false;
+        }
+
 
         if (invulnerable_timer >= Launcher.framerate_limit * 1.3)
         {
@@ -341,7 +363,7 @@ public class Player extends Creature
         getInput();
         move();
 
-        handler.getCamera().centerOnEntity(this);
+        //handler.getCamera().centerOnEntity(this);
 
         //wall cling reset
         if (grounded || dashing)
@@ -399,7 +421,45 @@ public class Player extends Creature
 
     private void getInput()
     {
-        if (hasCrystalHeart && (grounded || cling_right || cling_left) && !superdash_charged && handler.getKeyManager().s)
+        if (!looking_up && grounded && !superdash_shocked && !damage_shocked && !fall_shocked && xMove == 0 && handler.getKeyManager().up)
+        {
+            looking_up_timer++;
+            if (looking_up_timer >= Launcher.framerate_limit * 0.5)
+            {
+                looking_up_timer = 0;
+                looking_up = true;
+            }
+        }
+
+        if (!looking_down && grounded && !superdash_shocked && !damage_shocked && !fall_shocked && xMove == 0 && handler.getKeyManager().down)
+        {
+            looking_down_timer++;
+            if (looking_down_timer >= Launcher.framerate_limit * 0.5)
+            {
+                looking_down_timer = 0;
+                looking_down = true;
+            }
+        }
+
+        if (looking_up_timer > 0 && !looking_up && !handler.getKeyManager().up)
+            looking_up_timer = 0;
+
+        if (looking_down_timer > 0 && !looking_down && !handler.getKeyManager().down)
+            looking_down_timer = 0;
+        
+        if (looking_up && (!handler.getKeyManager().up || slashing || dashing || jumping || double_jumping))
+            looking_up = false;
+
+        if (looking_down && (!handler.getKeyManager().down || slashing || dashing || jumping || double_jumping))
+            looking_down = false;
+
+        if (hasCrystalHeart && ((!grounded && !cling_left && !cling_right) || superdash_shocked || superdash) && handler.getKeyManager().s)
+            illegal_superdash = true;
+
+        if (illegal_superdash && !handler.getKeyManager().s)
+            illegal_superdash = false;
+
+        if (hasCrystalHeart && (grounded || cling_right || cling_left) && !illegal_superdash &&!superdash_charged && handler.getKeyManager().s)
         {
             superdash_charge_timer++;
             if (superdash_charge_timer >= Launcher.framerate_limit * 0.8)
@@ -437,8 +497,8 @@ public class Player extends Creature
         if (!handler.getKeyManager().x)
             illegal_slash = false;
 
-        //So that player doesn't stop during dash
-        if (!dashing && !superdash && !damage_shocked && !attack_knockback)
+        //So that player doesn't stop during various events
+        if (!dashing && !superdash && !damage_shocked && !superdash_shocked && !attack_knockback)
             xMove = 0;
         if (!pogo)
             yMove = 0;
@@ -725,10 +785,19 @@ public class Player extends Creature
         if (cling_left)
         {
             if (superdash_charge_timer > 0)
+            {
+                if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.75)
+                    gfx.drawImage(Assets.superdash_crystals_wall_left_3, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() - 90), null);
+                else if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.5)
+                    gfx.drawImage(Assets.superdash_crystals_wall_left_2, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() - 90), null);
+                else if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.25)
+                    gfx.drawImage(Assets.superdash_crystals_wall_left_1, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() - 90), null);
                 gfx.drawImage(Assets.superdash_charge_wall_right, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 10), null);
+
+            }
             else if (superdash_charged)
             {
-                gfx.drawImage(Assets.superdash_crystals_wall_left, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() - 90), null);
+                gfx.drawImage(Assets.superdash_crystals_wall_left_4, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() - 90), null);
                 gfx.drawImage(Assets.superdash_charge_wall_right, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 10), null);
             }
             else
@@ -738,10 +807,18 @@ public class Player extends Creature
         else if (cling_right)
         {
             if (superdash_charge_timer > 0)
+            {
+                if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.75)
+                    gfx.drawImage(Assets.superdash_crystals_wall_right_3, (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() - 90), null);
+                else if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.5)
+                    gfx.drawImage(Assets.superdash_crystals_wall_right_2, (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() - 90), null);
+                else if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.25)
+                    gfx.drawImage(Assets.superdash_crystals_wall_right_1, (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() - 90), null);
                 gfx.drawImage(Assets.superdash_charge_wall_left, (int) (x - handler.getCamera().getxOffset() - 14), (int) (y - handler.getCamera().getyOffset() + 10), null);
+            }
             else if (superdash_charged)
             {
-                gfx.drawImage(Assets.superdash_crystals_wall_right, (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() - 90), null);
+                gfx.drawImage(Assets.superdash_crystals_wall_right_4, (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() - 90), null);
                 gfx.drawImage(Assets.superdash_charge_wall_left, (int) (x - handler.getCamera().getxOffset() - 14), (int) (y - handler.getCamera().getyOffset() + 10), null);
             }
             else
@@ -751,7 +828,16 @@ public class Player extends Creature
 
         else if (facing_right)
         {
-            if (fall_shocked)
+            if (looking_up)
+                gfx.drawImage(Assets.player_up_right, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset()), null);
+
+            else if (looking_down)
+                gfx.drawImage(Assets.player_down_right, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset()), null);
+
+            else if (!superdash && superdash_shocked)
+                gfx.drawImage(Assets.superdash_shocked_right, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
+
+            else if (fall_shocked)
                 gfx.drawImage(Assets.fall_shock_right, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
 
             else if (damage_shocked)
@@ -768,12 +854,18 @@ public class Player extends Creature
 
             else if (superdash_charge_timer > 0)
             {
+                if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.75)
+                    gfx.drawImage(Assets.superdash_crystals_right_3, (int) (x - handler.getCamera().getxOffset() - 180), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                else if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.5)
+                    gfx.drawImage(Assets.superdash_crystals_right_2, (int) (x - handler.getCamera().getxOffset() - 180), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                else if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.25)
+                    gfx.drawImage(Assets.superdash_crystals_right_1, (int) (x - handler.getCamera().getxOffset() - 180), (int) (y - handler.getCamera().getyOffset() + 20), null);
                 gfx.drawImage(Assets.superdash_charge_right, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset() + 15), null);
             }
 
             else if (superdash_charged)
             {
-                gfx.drawImage(Assets.superdash_crystals_right, (int) (x - handler.getCamera().getxOffset() - 180), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                gfx.drawImage(Assets.superdash_crystals_right_4, (int) (x - handler.getCamera().getxOffset() - 180), (int) (y - handler.getCamera().getyOffset() + 20), null);
                 gfx.drawImage(Assets.superdash_charge_right, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset() + 15), null);
             }
 
@@ -827,7 +919,16 @@ public class Player extends Creature
 
         else
         {
-            if (fall_shocked)
+            if (looking_up)
+                gfx.drawImage(Assets.player_up_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset()), null);
+
+            else if (looking_down)
+                gfx.drawImage(Assets.player_down_left, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset()), null);
+
+            else if (!superdash && superdash_shocked)
+                gfx.drawImage(Assets.superdash_shocked_left, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset()), null);
+
+            else if (fall_shocked)
                 gfx.drawImage(Assets.fall_shock_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
 
             else if (damage_shocked)
@@ -843,12 +944,18 @@ public class Player extends Creature
 
             else if (superdash_charge_timer > 0)
             {
+                if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.75)
+                    gfx.drawImage(Assets.superdash_crystals_left_3, (int) (x - handler.getCamera().getxOffset() - 175), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                else if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.5)
+                    gfx.drawImage(Assets.superdash_crystals_left_2, (int) (x - handler.getCamera().getxOffset() - 175), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                else if (superdash_charge_timer >= Launcher.framerate_limit * 0.8 * 0.25)
+                    gfx.drawImage(Assets.superdash_crystals_left_1, (int) (x - handler.getCamera().getxOffset() - 175), (int) (y - handler.getCamera().getyOffset() + 20), null);
                 gfx.drawImage(Assets.superdash_charge_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 15), null);
             }
 
             else if (superdash_charged)
             {
-                gfx.drawImage(Assets.superdash_crystals_left, (int) (x - handler.getCamera().getxOffset() - 175), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                gfx.drawImage(Assets.superdash_crystals_left_4, (int) (x - handler.getCamera().getxOffset() - 175), (int) (y - handler.getCamera().getyOffset() + 20), null);
                 gfx.drawImage(Assets.superdash_charge_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 15), null);
             }
 

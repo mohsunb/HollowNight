@@ -23,7 +23,7 @@ public abstract class Creature extends Entity
     protected int CREATURE_TYPE = 1;
 
     protected boolean grounded = false;
-    protected boolean ceiling_collide = false;
+    public boolean ceiling_collide = false;
     protected boolean will_hard_fall = false;
     protected boolean superdash_shocked = false;
     public boolean fall_shocked = false;
@@ -64,6 +64,10 @@ public abstract class Creature extends Entity
     protected long minimum_superdash_timer = 0;
     public boolean superdash = false;
 
+    private boolean crawling = false;
+
+    protected boolean hit_knockback = false;
+
     public Creature(Handler handler, float x, float y, float width, float height)
     {
         super(handler, x, y, width, height);
@@ -72,6 +76,33 @@ public abstract class Creature extends Entity
         this.speedY = 0;
         xMove = 0;
         yMove = 0;
+    }
+
+    public boolean isCrawling()
+    {
+        return crawling;
+    }
+
+    public void toggleCrawling()
+    {
+        crawling = !crawling;
+    }
+
+    public void setCrawling()
+    {
+        if (!crawling)
+            crawling = true;
+    }
+
+    public void setNotCrawling()
+    {
+        if (crawling)
+            crawling = false;
+    }
+
+    public void changeDirection()
+    {
+        facing_right = !facing_right;
     }
 
     public void move()
@@ -132,14 +163,23 @@ public abstract class Creature extends Entity
                     && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
                     && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)))
             {
-                x += xMove;
-                if (this == player)
+                if (!isCrawling())
                 {
-                    if (cling_left)
-                        cling_left = false;
-                    if (cling_right)
-                        cling_right = false;
+                    x += xMove;
+                    if (this == player)
+                    {
+                        if (cling_left)
+                            cling_left = false;
+                        if (cling_right)
+                            cling_right = false;
+                    }
                 }
+
+                else if (grounded && !hit_knockback && !collisionWithTile((int) Math.floor((x + bounds.x + bounds.width + xMove) / Tile.TILE_WIDTH), (int) Math.floor((y + bounds.y + bounds.height + 1) / Tile.TILE_HEIGHT)))
+                    changeDirection();
+
+                else
+                    x += xMove;
             }
 
             else
@@ -149,7 +189,11 @@ public abstract class Creature extends Entity
 
                 else
                 {
-                    x = tx * Tile.TILE_WIDTH - bounds.x - bounds.width - 1;
+                    if (isCrawling())
+                        changeDirection();
+
+                    else
+                        x = tx * Tile.TILE_WIDTH - bounds.x - bounds.width - 1;
 
                     if (this == player && collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) && !jumping && !grounded && !dashing && hasMantisClaw)
                     {
@@ -189,14 +233,23 @@ public abstract class Creature extends Entity
                     && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
                     && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)))
             {
-                x += xMove;
-                if (this == player)
+                if (!isCrawling())
                 {
-                    if (cling_right)
-                        cling_right = false;
-                    if (cling_left)
-                        cling_left = false;
+                    x += xMove;
+                    if (this == player)
+                    {
+                        if (cling_right)
+                            cling_right = false;
+                        if (cling_left)
+                            cling_left = false;
+                    }
                 }
+
+                else if (grounded && !hit_knockback  && !collisionWithTile((int) Math.floor((x + bounds.x + xMove) / Tile.TILE_WIDTH), (int) Math.floor((y + bounds.y + bounds.height + 1) / Tile.TILE_HEIGHT)))
+                    changeDirection();
+
+                else
+                    x += xMove;
             }
 
             else
@@ -206,7 +259,11 @@ public abstract class Creature extends Entity
 
                 else
                 {
-                    x = tx * Tile.TILE_WIDTH + Tile.TILE_WIDTH - bounds.x;
+                    if (isCrawling())
+                        changeDirection();
+
+                    else
+                        x = tx * Tile.TILE_WIDTH + Tile.TILE_WIDTH - bounds.x;
 
                     if (this == player && collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) && !jumping  && !grounded && !dashing && hasMantisClaw)
                     {
@@ -240,7 +297,17 @@ public abstract class Creature extends Entity
                 if (CREATURE_TYPE == 2)
                     speedY *= -1;
                 else
-                    ceiling_collide = true;
+                {
+                    if (CREATURE_TYPE == 0)
+                    {
+                        if (!handler.getWorld().getEntityManager().getPlayer().pogo)
+                            ceiling_collide = true;
+                    }
+
+                    else
+                        ceiling_collide = true;
+                }
+
                 y = ty * Tile.TILE_HEIGHT + Tile.TILE_HEIGHT - bounds.y;
             }
 

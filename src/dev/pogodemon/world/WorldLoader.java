@@ -1,9 +1,12 @@
 package dev.pogodemon.world;
 
+import dev.pogodemon.entities.CameraFocusPoint;
 import dev.pogodemon.entities.HazardRespawnPoint;
 import dev.pogodemon.entities.PlayerSlash;
+import dev.pogodemon.entities.VerticalCameraLock;
 import dev.pogodemon.entities.creatures.Crawlid;
 import dev.pogodemon.entities.creatures.Vengefly;
+import dev.pogodemon.entities.creatures.WanderingHusk;
 import dev.pogodemon.entities.objects.GeoDeposit;
 import dev.pogodemon.entities.objects.SpikesLarge;
 import dev.pogodemon.entities.objects.SpikesMedium;
@@ -19,7 +22,7 @@ public class WorldLoader
 
     public World KingsPass()
     {
-        World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4680);
+        World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4680); // 2000 4680
         handler.setWorld(kings_pass);
 
         kings_pass.spawnEntity(new Vengefly(handler, 6890, 3232, 500, 1500));
@@ -31,10 +34,10 @@ public class WorldLoader
         kings_pass.spawnEntity(new GeoDeposit(handler, 8230, 1720, 0));
         kings_pass.spawnEntity(new GeoDeposit(handler, 4821, 2280, 0));
 
-        kings_pass.spawnEntity(new Crawlid(handler, 7350, 4680, 6924, 8354));
-        kings_pass.spawnEntity(new Crawlid(handler, 8733, 4680, 8673, 9668));
-        kings_pass.spawnEntity(new Crawlid(handler, 11645, 5100, 10600, 11833));
-        kings_pass.spawnEntity(new Crawlid(handler, 6438, 1200, 6032, 6793));
+        kings_pass.spawnEntity(new Crawlid(handler, 7350, 4680));
+        kings_pass.spawnEntity(new Crawlid(handler, 8733, 4680));
+        kings_pass.spawnEntity(new Crawlid(handler, 11645, 5100));
+        kings_pass.spawnEntity(new Crawlid(handler, 6438, 1200));
 
         kings_pass.spawnEntity(new SpikesLarge(handler, 960, 3300, 0));
 
@@ -88,6 +91,13 @@ public class WorldLoader
         kings_pass.spawnEntity(new HazardRespawnPoint(handler, 13360, 2880, 160, 320, 13420, 3071));
         kings_pass.spawnEntity(new HazardRespawnPoint(handler, 13920, 2880, 320, 320, 14063, 3071));
         kings_pass.spawnEntity(new HazardRespawnPoint(handler, 11720, 1880, 440, 320, 12025, 2071));
+
+        kings_pass.spawnEntity(new VerticalCameraLock(handler, 720, 4520, 9400, 520));
+        kings_pass.spawnEntity(new VerticalCameraLock(handler, 12400, 2800, 1800, 600));
+        kings_pass.spawnEntity(new VerticalCameraLock(handler, 10400, 2500, 1200, 400));
+        kings_pass.spawnEntity(new VerticalCameraLock(handler, 7677, 3200, 1500, 300));
+        kings_pass.spawnEntity(new VerticalCameraLock(handler, 10000, 880, 5000, 300));
+        kings_pass.spawnEntity(new VerticalCameraLock(handler, 7300, 900, 1520, 300));
 
         kings_pass.spawnEntity(new PlayerSlash(handler, handler.getWorld().getEntityManager().getPlayer().getX(), handler.getWorld().getEntityManager().getPlayer().getY()));
 

@@ -3,8 +3,8 @@ package dev.pogodemon;
 public class Launcher
 {
     //Mainly for debugging purposes
-    public static boolean show_hitboxes = true;
-    public static boolean log_fps = true;
+    public static boolean show_hitboxes = false;
+    public static boolean log_fps = false;
 
     public static final int game_width = 1920;
     public static final int game_height = 1080;

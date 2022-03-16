@@ -12,20 +12,20 @@ import java.awt.*;
 
 public class Crawlid extends Creature
 {
-    private float xRangeMin, xRangeMax;
-
-    private boolean hit_knockback = false;
+    private boolean hit_knockback_up = false;
+    private boolean hit_knockback_down = false;
+    private boolean hit_knockback_left = false;
+    private boolean hit_knockback_right = false;
     private long hit_knockback_timer = 0;
 
-    public Crawlid(Handler handler, float x, float y, float xRangeMin, float xRangeMax)
+    public Crawlid(Handler handler, float x, float y)
     {
         super(handler, x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         CREATURE_TYPE = 1;
         health = 10;
-        this.xRangeMin = xRangeMin;
-        this.xRangeMax = xRangeMax;
 
         is_pogoable = true;
+        setCrawling();
     }
 
     @Override
@@ -42,23 +42,36 @@ public class Crawlid extends Creature
                 {
                     hit_knockback_timer = 0;
                     hit_knockback = false;
+
+                    if (hit_knockback_up)
+                        hit_knockback_up = false;
+
+                    else if (hit_knockback_down)
+                        hit_knockback_down = false;
+
+                    else if (hit_knockback_left)
+                        hit_knockback_left = false;
+
+                    else
+                        hit_knockback_right = false;
+                    xMove = 0;
+                    yMove = 0;
                 }
 
-                float s = DEFAULT_SPEED * 0.46f;
-                if (handler.getWorld().getEntityManager().getPlayer().isFacingRight())
+                float s = DEFAULT_SPEED * 0.92f;
+                if (hit_knockback_right)
                     xMove = s;
-                else
+                else if (hit_knockback_left)
                     xMove = -s;
+                else if (hit_knockback_up)
+                    yMove = -s;
+                else
+                    yMove = s;
             }
-
-            if (getX() + bounds.width * 0.5 >= xRangeMax - bounds.width * 0.5)
-                facing_right = false;
-            else if (getX() + bounds.width * 0.5 <= xRangeMin + bounds.width * 0.5)
-                facing_right = true;
 
             if (!hit_knockback)
             {
-                speedX = DEFAULT_SPEED * 0.4f;
+                speedX = DEFAULT_SPEED * 0.4f; // crawling speed
                 if (facing_right)
                     xMove = speedX;
                 else
@@ -98,7 +111,7 @@ public class Crawlid extends Creature
 
         if (Launcher.show_hitboxes)
         {
-            gfx.setColor(Color.blue);
+            gfx.setColor(Color.red);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
@@ -109,8 +122,23 @@ public class Crawlid extends Creature
         Player player = handler.getWorld().getEntityManager().getPlayer();
         health -= player.nail_damage;
 
-        if (!handler.getWorld().getEntityManager().getPlayer().up_slashing && !handler.getWorld().getEntityManager().getPlayer().down_slashing)
-            hit_knockback = true;
+        hit_knockback = true;
+        if (!player.up_slashing && !player.down_slashing)
+        {
+            if (player.isFacingRight())
+                hit_knockback_right = true;
+            else
+                hit_knockback_left = true;
+        }
+
+        else if (player.up_slashing)
+        {
+            player.ceiling_collide = true;
+            hit_knockback_up = true;
+        }
+
+        else
+            hit_knockback_down = true;
     }
 
     @Override

@@ -17,6 +17,8 @@ public abstract class Entity
     public boolean has_knockback = true;
     protected boolean gravity = true;
 
+    public boolean is_camera_lock = false;
+
     public Entity(Handler handler, float x, float y, float width, float height)
     {
         this.handler = handler;

@@ -9,14 +9,17 @@ public class EntityManager
 {
     private Handler handler;
     private Player player;
+    private CameraFocusPoint cam;
     private ArrayList<Entity> entities;
 
-    public EntityManager(Handler handler, Player player)
+    public EntityManager(Handler handler, Player player, CameraFocusPoint cam)
     {
         this.handler = handler;
         this.player = player;
+        this.cam = cam;
         entities = new ArrayList<Entity>();
         addEntity(player);
+        addEntity(cam);
     }
 
     public ArrayList<Entity> getEntities()
@@ -56,6 +59,11 @@ public class EntityManager
 
     public Player getPlayer() {
         return player;
+    }
+
+    public CameraFocusPoint getPlayerCamera()
+    {
+        return cam;
     }
 
     public void setPlayer(Player player) {

@@ -15,8 +15,6 @@ public class HazardRespawnPoint extends StaticEntity
         has_knockback = false;
     }
 
-
-
     @Override
     public void update()
     {

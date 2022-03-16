@@ -1,5 +1,6 @@
 package dev.pogodemon.world;
 
+import dev.pogodemon.entities.CameraFocusPoint;
 import dev.pogodemon.entities.Entity;
 import dev.pogodemon.entities.EntityManager;
 import dev.pogodemon.entities.Player;
@@ -39,7 +40,7 @@ public class World
         }
 
         this.handler = handler;
-        entityManager = new EntityManager(handler, new Player(handler, 0, 0));
+        entityManager = new EntityManager(handler, new Player(handler, 0, 0), new CameraFocusPoint(handler));
 
         loadWorldFromImage(path, spawnX, spawnY);
 

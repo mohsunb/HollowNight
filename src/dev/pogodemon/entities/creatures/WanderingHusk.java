@@ -13,7 +13,6 @@ import java.util.Random;
 
 public class WanderingHusk extends Creature
 {
-    private boolean hit_knockback = false;
     private long hit_knockback_timer = 0;
 
     private boolean agro = false;
@@ -65,7 +64,7 @@ public class WanderingHusk extends Creature
                     hit_knockback = false;
                 }
 
-                float s = DEFAULT_SPEED * 0.46f;
+                float s = DEFAULT_SPEED * 0.92f;
                 if (facing_right)
                     xMove = -s;
                 else
@@ -171,13 +170,23 @@ public class WanderingHusk extends Creature
                     && player.getX() + player.bounds.width * 0.5 <= getX() + bounds.width * 0.5 + agro_range
                     && player.getY() + player.bounds.height >= getY()
                     && player.getY() <= getY() + bounds.height)
+            {
+                if (isCrawling())
+                    setNotCrawling();
                 agro = true;
+            }
+
 
             if (agro && (player.getX() + player.bounds.width * 0.5 < getX() + bounds.width * 0.5 - de_agro_range
                     || player.getX() + player.bounds.width * 0.5 > getX() + bounds.width * 0.5 + de_agro_range
                     || player.getY() + player.bounds.height < getY()
                     || player.getY() > getY() + bounds.height))
+            {
                 agro = false;
+                if (!isCrawling())
+                    setCrawling();
+            }
+
 
             if (health <= 0) // death;
             {
@@ -237,7 +246,7 @@ public class WanderingHusk extends Creature
 
         if (Launcher.show_hitboxes)
         {
-            gfx.setColor(Color.blue);
+            gfx.setColor(Color.red);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
@@ -250,7 +259,7 @@ public class WanderingHusk extends Creature
 
         if (attacking)
             attacking = false;
-        if (!handler.getWorld().getEntityManager().getPlayer().up_slashing && !handler.getWorld().getEntityManager().getPlayer().down_slashing)
+        if (!player.up_slashing && !player.down_slashing)
             hit_knockback = true;
     }
 

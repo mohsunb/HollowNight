@@ -16,7 +16,6 @@ public class Vengefly extends Creature
     private boolean agro = false;
     private float agro_range, de_agro_range;
 
-    private boolean hit_knockback = false;
     private boolean hit_knockback_up = false;
     private boolean hit_knockback_down = false;
     private boolean hit_knockback_left = false;
@@ -87,15 +86,15 @@ public class Vengefly extends Creature
                     yMove = 0;
                 }
 
-                float s = DEFAULT_SPEED * 0.46f;
+                float s = DEFAULT_SPEED * 0.92f;
                 if (hit_knockback_right)
                     xMove = s;
                 else if (hit_knockback_left)
                     xMove = -s;
                 else if (hit_knockback_up)
-                    yMove = -2 * s;
+                    yMove = -s;
                 else
-                    yMove = 2 * s;
+                    yMove = s;
             }
 
             if (agro && (Math.sqrt(Math.pow(getX() - player.getX(), 2) + Math.pow(getY() + bounds.height * 0.5 - player.getY() - player.bounds.height * 0.5, 2)) >= de_agro_range))
@@ -104,7 +103,7 @@ public class Vengefly extends Creature
             else if (Math.sqrt(Math.pow(getX() + bounds.width * 0.5 - player.getX() - player.bounds.width * 0.5, 2) + Math.pow(getY() - player.getY(), 2)) <= agro_range)
                 agro = true;
 
-            float sp = DEFAULT_SPEED * 0.5f;
+            float sp = DEFAULT_SPEED * 0.5f; // movement speed
             if (agro && !hit_knockback)
             {
                 if (getX() + bounds.x + bounds.width * 0.5 < player.getX() + player.bounds.x + player.bounds.width * 0.5 - 10)
@@ -178,7 +177,7 @@ public class Vengefly extends Creature
 
         if (Launcher.show_hitboxes)
         {
-            gfx.setColor(Color.blue);
+            gfx.setColor(Color.red);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
@@ -186,7 +185,6 @@ public class Vengefly extends Creature
     @Override
     public void hasBeenHit()
     {
-        Player player = handler.getWorld().getEntityManager().getPlayer();
         health -= player.nail_damage;
         hit_knockback = true;
         if (!player.up_slashing && !player.down_slashing)
@@ -198,7 +196,11 @@ public class Vengefly extends Creature
         }
 
         else if (player.up_slashing)
+        {
+            player.ceiling_collide = true;
             hit_knockback_up = true;
+        }
+
         else
             hit_knockback_down = true;
     }
@@ -206,7 +208,6 @@ public class Vengefly extends Creature
     @Override
     public void playerContact()
     {
-        Player player = handler.getWorld().getEntityManager().getPlayer();
         if (!player.invulnerable && !player.shadow_dashing)
         {
             player.health -= 20;

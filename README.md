@@ -3,11 +3,23 @@
 An attempt at remaking "Hollow Knight" from Team Cherry for a project aimed at improving my OOP/Java skills.
 
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
-You can change the launch options in the main class. The game currently only works ***properly*** at 1920x1080 resolution, locked at 144FPS as the game physics malfunction otherwise. I will **try** to fix this in the future.
+You can change the launch options in the main class. The game currently only works at 1920x1080 resolution. I will try to add resolution scaling in the future.
+
+## Update 16-Mar-2022: v0.1.1
+* Up-slashing enemies now stops jumping
+* Fixed a bug where you could buffer a super-dash when not permitted to
+* Vastly improved the AI of crawling enemies
+* Refined general enemy knockback
+* Added charging animation to super-dash
+* Player now has some momentum after finishing super-dash
+* Added post superdash player sprite
+* Added camera lag effect
+* Player can now look up or down by holding corresponding buttons
+* Added King's Pass camera locks
 
 ## Update 13-Mar-2022: v0.1.0
 (I was busy playing Elden Ring, so expect more frequent updates now that I have finished it)
-* Game now works properly in a wide range of framerate options: Tested 36-288, it is recommended to choose a framerate that only differs from 144 by factors of two (e.g. 72)
+* Game now works properly in a wide range of framerate options: Tested [36 -> 288], it is recommended to choose a framerate that only differs from 144 by factors of two (e.g. 72)
 * Refined flying enemy vertical knockback
 * Refined geo physics
 

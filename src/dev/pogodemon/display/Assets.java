@@ -1,6 +1,5 @@
 package dev.pogodemon.display;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Assets
@@ -13,23 +12,19 @@ public class Assets
             , spikes_small_down, spikes_small_left, spikes_medium_up, spikes_medium_right, spikes_medium_down, spikes_medium_left
             , spikes_large_up, spikes_large_down, spikes_large_left, spikes_large_right, damage_shock_right, damage_shock_left
             , wings_right, wings_left, superdash_right, superdash_left, superdash_charge_right, superdash_charge_left
-            , superdash_charge_wall_left, superdash_charge_wall_right, superdash_crystals_right, superdash_crystals_left
-            , superdash_crystals_wall_right, superdash_crystals_wall_left, shadow_dash_right, shadow_dash_left, wandering_husk_idle_right
+            , superdash_charge_wall_left, superdash_charge_wall_right, superdash_shocked_right, superdash_shocked_left
+
+            , superdash_crystals_right_1, superdash_crystals_right_2, superdash_crystals_right_3, superdash_crystals_right_4
+            , superdash_crystals_left_1, superdash_crystals_left_2, superdash_crystals_left_3, superdash_crystals_left_4
+            , superdash_crystals_wall_right_1, superdash_crystals_wall_right_2, superdash_crystals_wall_right_3, superdash_crystals_wall_right_4
+            , superdash_crystals_wall_left_1, superdash_crystals_wall_left_2, superdash_crystals_wall_left_3, superdash_crystals_wall_left_4
+
+            , shadow_dash_right, shadow_dash_left, wandering_husk_idle_right
             , wandering_husk_idle_left, wandering_husk_walk_right, wandering_husk_walk_left, wandering_husk_attack_right
             , wandering_husk_attack_left, wandering_husk_dead_right, wandering_husk_dead_left, crawlid_right, crawlid_left, crawlid_dead_right
             , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large, geo_deposit_up, geo_deposit_down, geo_deposit_left, geo_deposit_right
             , geo_deposit_broken_up, geo_deposit_broken_down, geo_deposit_broken_left, geo_deposit_broken_right, vengefly_idle_right
-            , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left;
-
-    //Flip an image horizontally instead of creating two images
-    /*public static BufferedImage mirror(BufferedImage image)
-    {
-        BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D gg = newImage.createGraphics();
-        gg.drawImage(image, image.getHeight(), 0, -image.getWidth(), image.getHeight(), null);
-        gg.dispose();
-        return newImage;
-    }*/
+            , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left, player_up_right, player_up_left, player_down_right, player_down_left;
 
     public static void init()
     {
@@ -63,16 +58,35 @@ public class Assets
         wandering_husk_dead_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/wandering_husk/husk_dead_left.png");
         shadow_dash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/shadow_dash_right.png");
         shadow_dash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/shadow_dash_left.png");
-        superdash_crystals_wall_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/superdash_crystals_wall_right.png");
-        superdash_crystals_wall_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/superdash_crystals_wall_left.png");
-        superdash_crystals_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/superdash_crystals_right.png");
-        superdash_crystals_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/superdash_crystals_left.png");
+
+        superdash_crystals_wall_right_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/wall/superdash_crystals_wall_right_1.png");
+        superdash_crystals_wall_right_2 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/wall/superdash_crystals_wall_right_2.png");
+        superdash_crystals_wall_right_3 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/wall/superdash_crystals_wall_right_3.png");
+        superdash_crystals_wall_right_4 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/wall/superdash_crystals_wall_right_4.png");
+
+        superdash_crystals_wall_left_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/left/wall/superdash_crystals_wall_left_1.png");
+        superdash_crystals_wall_left_2 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/left/wall/superdash_crystals_wall_left_2.png");
+        superdash_crystals_wall_left_3 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/left/wall/superdash_crystals_wall_left_3.png");
+        superdash_crystals_wall_left_4 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/left/wall/superdash_crystals_wall_left_4.png");
+
+        superdash_crystals_right_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/superdash_crystals_right_1.png");
+        superdash_crystals_right_2 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/superdash_crystals_right_2.png");
+        superdash_crystals_right_3 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/superdash_crystals_right_3.png");
+        superdash_crystals_right_4 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/superdash_crystals_right_4.png");
+
+        superdash_crystals_left_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/left/superdash_crystals_left_1.png");
+        superdash_crystals_left_2 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/left/superdash_crystals_left_2.png");
+        superdash_crystals_left_3 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/left/superdash_crystals_left_3.png");
+        superdash_crystals_left_4 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/left/superdash_crystals_left_4.png");
+
         superdash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/superdash_right.png");
         superdash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/superdash_left.png");
         superdash_charge_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/superdash_charge_right.png");
         superdash_charge_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/superdash_charge_left.png");
         superdash_charge_wall_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/superdash_charge_wall_left.png");
         superdash_charge_wall_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/superdash_charge_wall_right.png");
+        superdash_shocked_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/superdash_shocked_right.png");
+        superdash_shocked_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/superdash_shocked_left.png");
         player_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_right.png");
         player_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_left.png");
         tile_collision = ImageLoader.loadImage("/dev/pogodemon/assets/textures/tile_collision.png");
@@ -125,5 +139,9 @@ public class Assets
         damage_shock_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/damage_shock_left.png");
         wings_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/wings_right.png");
         wings_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/wings_left.png");
+        player_up_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_up_right.png");
+        player_up_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_up_left.png");
+        player_down_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_down_right.png");
+        player_down_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_down_left.png");
     }
 }

@@ -130,10 +130,21 @@ public class PlayerSlash extends Creature
                         e.hasBeenHit();
                     player.just_attacked = true;
 
-                    if (!player.up_slashing && !player.down_slashing && getCollidingEntity(xMove, yMove).has_knockback)
+                    boolean bool1 = false;
+                    boolean bool2 = false;
+                    for (Entity e : getCollidingEntities(xMove, yMove))
+                    {
+                        if (e.is_pogoable)
+                            bool1 = true;
+
+                        if (e.has_knockback)
+                            bool2 = true;
+                    }
+
+                    if (!player.up_slashing && !player.down_slashing && bool2)
                         player.attack_knockback = true;
 
-                    else if (player.down_slashing && getCollidingEntity(xMove, yMove).is_pogoable)
+                    else if (player.down_slashing && bool1)
                         player.pogo = true;
                 }
             }

@@ -91,7 +91,7 @@ public class Game implements Runnable
     {
         init();
 
-        double timePerTick = 1_000_000_000 / Launcher.framerate_limit;
+        double timePerTick = 1e9D / Launcher.framerate_limit;
         double delta = 0;
         long now;
         long lastTime = System.nanoTime();

@@ -53,7 +53,7 @@ public class SpikesLarge extends StaticEntity
 
         if (Launcher.show_hitboxes)
         {
-            gfx.setColor(Color.blue);
+            gfx.setColor(Color.red);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
