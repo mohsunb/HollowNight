@@ -13,12 +13,12 @@ public class PlayerSlash extends Creature
     private boolean hit_wall = false;
     private long hit_wall_timer = 0;
 
-
     public PlayerSlash(Handler handler, float x, float y)
     {
         super(handler, x, y, Creature.DEFAULT_WIDTH, Creature.DEFAULT_HEIGHT);
         player = handler.getWorld().getEntityManager().getPlayer();
         CREATURE_TYPE = -1;
+        can_be_killed = false;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class PlayerSlash extends Creature
                 bounds.x = -55;
                 bounds.y = 0;
                 bounds.width = 170;
-                bounds.height = 230;
+                bounds.height = 300;
             }
         }
 
@@ -110,7 +110,7 @@ public class PlayerSlash extends Creature
                 bounds.x = -55;
                 bounds.y = 0;
                 bounds.width = 170;
-                bounds.height = 230;
+                bounds.height = 300;
             }
         }
 

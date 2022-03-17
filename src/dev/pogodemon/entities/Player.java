@@ -2,6 +2,7 @@ package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
+import dev.pogodemon.display.SpriteSheet;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -14,6 +15,9 @@ public class Player extends Creature
     private int geo_buffer = 0;
     private boolean has_buffered_geo;
     private int geo_buffer_timer;
+
+    private int soul = 0;
+    private int max_soul = 99;
     
     public Player(Handler handler, float x, float y)
     {
@@ -25,6 +29,7 @@ public class Player extends Creature
         bounds.height = 87;
         health = 100;
         max_health = health;
+        can_be_killed = false;
 
         CREATURE_TYPE = 0; //Player
     }
@@ -61,6 +66,8 @@ public class Player extends Creature
 
     public void hazardRespawn()
     {
+        xMove = 0;
+        yMove = 0;
         setX(respawnX);
         setY(respawnY);
         health -= 20;
@@ -75,6 +82,13 @@ public class Player extends Creature
     {
         respawnX = x;
         respawnY = y;
+    }
+
+    public void addSoul(int s)
+    {
+        soul += s;
+        if (soul > max_soul)
+            soul = max_soul;
     }
 
     @Override
@@ -130,7 +144,7 @@ public class Player extends Creature
                     || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.TILE_HEIGHT))
                     || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT))
                     || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
-                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT));
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)) || checkEntityMoveCollisions(xMove + 2, 0);
                 if (bool)
                 {
                     superdash = false;
@@ -146,7 +160,7 @@ public class Player extends Creature
                         || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.TILE_HEIGHT))
                         || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT))
                         || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
-                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT));
+                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)) || checkEntityMoveCollisions(xMove - 2, 0);
                 if (bool)
                 {
                     superdash = false;
@@ -753,6 +767,10 @@ public class Player extends Creature
                     if(!facing_right)
                         facing_right = true;
                 }
+                if (looking_down)
+                    looking_down = false;
+                if (looking_up)
+                    looking_up = false;
                 xMove += speedX;
             }
 
@@ -763,6 +781,10 @@ public class Player extends Creature
                     if(facing_right)
                         facing_right = false;
                 }
+                if (looking_down)
+                    looking_down = false;
+                if (looking_up)
+                    looking_up = false;
                 xMove += -speedX;
             }
         }
@@ -1015,6 +1037,19 @@ public class Player extends Creature
 
         //Render HUD
 
+        //Soul
+        gfx.drawImage(Assets.soul_vessel_hud_up, 90, 80, null);
+        if (soul >= 33)
+            gfx.setColor(Color.white);
+        else
+            gfx.setColor(Color.lightGray);
+        gfx.drawImage(Assets.soul_vessel_hud_down, 90, 80, null);
+        gfx.fillOval(105, 110, 103, 103);
+        if (soul < max_soul)
+            gfx.drawImage(new SpriteSheet(Assets.soul_vessel_hud_down).crop(14, 30, 106, (int) (105 - Math.floor(105D/max_soul * soul))), 104, 110, null);
+        if (soul >= 55)
+            gfx.drawImage(Assets.soul_vessel_hud_middle, 115, 165, null);
+
         //Geo
         gfx.drawImage(Assets.geo_hud, 223, 165, null);
         gfx.setColor(Color.white);
@@ -1023,8 +1058,7 @@ public class Player extends Creature
         if (has_buffered_geo)
             gfx.drawString((geo_buffer > 0 ? "+" : " -") + Math.abs(geo_buffer), 290, 270);
 
-        gfx.drawImage(Assets.soul_vessel_hud, 90, 80, null);
-
+        //Masks
         for (int i = 0; i < max_health / 20; i++)
             gfx.drawImage(Assets.mask_empty, 60 * i + 235, 105, null);
 

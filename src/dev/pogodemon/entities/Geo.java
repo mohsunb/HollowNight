@@ -3,13 +3,13 @@ package dev.pogodemon.entities;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.utils.Handler;
-import dev.pogodemon.world.WorldLoader;
 
 import java.awt.*;
 import java.util.Random;
 
 public class Geo extends Creature
 {
+    private boolean can_be_collected = false;
     private int size = 0; // 0 -> 1 geo; 1 -> 5; 2 -> 25;
 
     public Geo(Handler handler, float x, float y, int size)
@@ -17,8 +17,8 @@ public class Geo extends Creature
         super(handler, x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         this.size = size;
         CREATURE_TYPE = 2;
-        is_pogoable = false;
         has_knockback = false;
+        can_be_killed = false;
 
         if (size == 1)
         {
@@ -53,8 +53,26 @@ public class Geo extends Creature
     @Override
     public void update()
     {
+        Player player = handler.getWorld().getEntityManager().getPlayer();
         if (exists)
+        {
+            if (!can_be_collected)
+            {
+                boolean bool = false;
+                for (Entity e : player.getCollidingEntities(player.xMove, player.yMove))
+                    if (e.equals(this))
+                    {
+                        bool = true;
+                        break;
+                    }
+
+                if (!bool)
+                    can_be_collected = true;
+            }
+
             move();
+        }
+
 
         else if (getX() != 0 || getY() != 0)
         {
@@ -110,7 +128,10 @@ public class Geo extends Creature
     @Override
     public void playerContact()
     {
-        handler.getWorld().getEntityManager().getPlayer().addGeo(getCount());
-        exists = false;
+        if (can_be_collected)
+        {
+            handler.getWorld().getEntityManager().getPlayer().addGeo(getCount());
+            exists = false;
+        }
     }
 }

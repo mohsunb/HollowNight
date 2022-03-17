@@ -1,9 +1,27 @@
 # Hollow Night
 
-An attempt at remaking "Hollow Knight" from Team Cherry for a project aimed at improving my OOP/Java skills.
+An attempt at remaking **Hollow Knight** from **Team Cherry** for a project aimed at improving my OOP/Java skills. All assets were made in GIMP. For starting the project I used the "2D Game Programming on Java Tutorial" by ***CodeNMore*** on **YouTube**.
 
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
 You can change the launch options in the main class. The game currently only works at 1920x1080 resolution. I will try to add resolution scaling in the future.
+
+## Update 17-Mar-2022: v0.1.2
+* Fixed a bug with camera lock system
+* Refined camera system
+* Completely reimplemented hazard system
+* Fixed a bug with hazard respawn system where player would not be grounded afterwards
+* Added fully functional stalagmites
+* Added a missing geo deposit to King's Pass
+* Geo mechanics have been refined
+* Implemented solid entity collision detection system
+* Solid entities can now be treated as tiles (parts of the map)
+* Implemented proper soul mechanics
+* Added Geo chests (items coming soon)
+* Downslash hitbox size increased to improve pogo-ing
+* Added collapsing floors
+* Added breakable walls
+* Refined King's Pass collision map
+* Fixed a bugged hazard respawn point in King's Pass
 
 ## Update 16-Mar-2022: v0.1.1
 * Up-slashing enemies now stops jumping

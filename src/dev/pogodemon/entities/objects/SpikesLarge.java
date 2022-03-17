@@ -3,7 +3,6 @@ package dev.pogodemon.entities.objects;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.StaticEntity;
-import dev.pogodemon.entities.Player;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -53,7 +52,7 @@ public class SpikesLarge extends StaticEntity
 
         if (Launcher.show_hitboxes)
         {
-            gfx.setColor(Color.red);
+            gfx.setColor(Color.blue);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
@@ -67,6 +66,6 @@ public class SpikesLarge extends StaticEntity
     @Override
     public void playerContact()
     {
-        handler.getWorld().getEntityManager().getPlayer().hazardRespawn();
+
     }
 }

@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 public class Assets
 {
     public static BufferedImage player_right, player_left, tile_collision, tile_empty, grass, mask_full, mask_empty
-            , soul_vessel_hud, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left, fall_shock_right
+            , soul_vessel_hud_up, soul_vessel_hud_down, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left, fall_shock_right
             , fall_shock_left, cling_right, cling_left, slash1_right, slash1_left, slash2_right, slash2_left, upslash_right, upslash_left
             , downslash_right, downslash_left, upslash_char_right, upslash_char_left, downslash_char_right, downslash_char_left
             , slash1_char_left, slash1_char_right, slash2_char_right, slash2_char_left, spikes_small_up, spikes_small_right
@@ -24,7 +24,8 @@ public class Assets
             , wandering_husk_attack_left, wandering_husk_dead_right, wandering_husk_dead_left, crawlid_right, crawlid_left, crawlid_dead_right
             , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large, geo_deposit_up, geo_deposit_down, geo_deposit_left, geo_deposit_right
             , geo_deposit_broken_up, geo_deposit_broken_down, geo_deposit_broken_left, geo_deposit_broken_right, vengefly_idle_right
-            , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left, player_up_right, player_up_left, player_down_right, player_down_left;
+            , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left, player_up_right, player_up_left, player_down_right, player_down_left
+            , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open, soul_vessel_hud_middle, breakable_wall_generic_right, breakable_wall_generic_left;
 
     public static void init()
     {
@@ -94,7 +95,8 @@ public class Assets
         grass = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/grass.png");
         mask_full = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/mask_full.png");
         mask_empty = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/mask_empty.png");
-        soul_vessel_hud = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_hud.png");
+        soul_vessel_hud_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_hud_up.png");
+        soul_vessel_hud_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_hud_down.png");
         dash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/dash_right.png");
         dash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/dash_left.png");
         walk_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/walk_right.png");
@@ -143,5 +145,13 @@ public class Assets
         player_up_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_up_left.png");
         player_down_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_down_right.png");
         player_down_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_down_left.png");
+        stalagmite = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/stalagmite/stalagmite.png");
+        stalagmite_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/stalagmite/stalagmite_right.png");
+        stalagmite_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/stalagmite/stalagmite_left.png");
+        chest = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/chest/chest.png");
+        chest_open = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/chest/chest_open.png");
+        soul_vessel_hud_middle = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_hud_middle.png");
+        breakable_wall_generic_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/breakable_wall_generic_right.png");
+        breakable_wall_generic_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/breakable_wall_generic_left.png");
     }
 }

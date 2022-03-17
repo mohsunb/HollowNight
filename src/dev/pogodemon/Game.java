@@ -31,6 +31,8 @@ public class Game implements Runnable
     public String title;
     private int width, height;
 
+    public static int uptime = 0;
+
     public Game(String title, int width, int height, boolean full_screen)
     {
         this.title = title;
@@ -118,6 +120,7 @@ public class Game implements Runnable
             {
                 if (Launcher.log_fps)
                     System.out.println("FPS: " + ticks);
+                uptime++;
                 ticks = 0;
                 timer = 0;
             }

@@ -261,6 +261,8 @@ public class WanderingHusk extends Creature
             attacking = false;
         if (!player.up_slashing && !player.down_slashing)
             hit_knockback = true;
+
+        player.addSoul(11);
     }
 
     @Override

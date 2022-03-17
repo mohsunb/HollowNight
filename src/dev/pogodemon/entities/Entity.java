@@ -9,6 +9,7 @@ public abstract class Entity
 {
     public int health = 1;
     protected boolean exists = true;
+    protected boolean can_be_killed = true;
     protected Handler handler;
     protected float x, y;
     protected float width, height;
@@ -16,6 +17,7 @@ public abstract class Entity
     public boolean is_pogoable = false;
     public boolean has_knockback = true;
     protected boolean gravity = true;
+    protected boolean solid = false;
 
     public boolean is_camera_lock = false;
 
@@ -28,6 +30,17 @@ public abstract class Entity
         this.height = height;
 
         bounds = new Rectangle(0, 0, (int) width, (int) height);
+    }
+
+    public boolean isSolid()
+    {
+        return solid;
+    }
+
+    public void setSolid(boolean bool)
+    {
+        if (solid != bool)
+            solid = bool;
     }
 
     //Hazard respawn points
@@ -49,6 +62,12 @@ public abstract class Entity
         exists = false;
     }
 
+    public void kill()
+    {
+        if (can_be_killed)
+            health = -1;
+    }
+
     public boolean doesExist()
     {
         return exists;
@@ -66,6 +85,37 @@ public abstract class Entity
         }
 
         return false;
+    }
+
+    public boolean checkEntityMoveCollisions(float xOffset, float yOffset)
+    {
+        for (Entity e : handler.getWorld().getEntityManager().getEntities())
+        {
+            if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this) || !e.doesExist() || !e.isSolid())
+                continue;
+
+            if (e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset)))
+                return true;
+        }
+
+        return false;
+    }
+
+    public Entity getCollidingSolidEntity(float xOffset, float yOffset)
+    {
+        Entity entity = null;
+        for (Entity e : handler.getWorld().getEntityManager().getEntities())
+        {
+            if (e.equals(handler.getWorld().getEntityManager().getPlayer()) || e.equals(this) || !e.doesExist() || !e.isSolid())
+                continue;
+
+            if (e.getCollisionBounds(0f, 0f).intersects(getCollisionBounds(xOffset, yOffset)))
+            {
+                entity = e;
+                break;
+            }
+        }
+        return entity;
     }
 
     public Entity getCollidingEntity(float xOffset, float yOffset)
@@ -164,6 +214,16 @@ public abstract class Entity
     public void toggleGravity()
     {
         gravity = !gravity;
+    }
+
+    public float getCenterX()
+    {
+        return getX() + bounds.x + bounds.width * 0.5F;
+    }
+
+    public float getCenterY()
+    {
+        return getY() + bounds.y + bounds.height * 0.5F;
     }
 
     public abstract void update();

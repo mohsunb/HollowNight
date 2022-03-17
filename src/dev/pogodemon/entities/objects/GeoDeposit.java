@@ -17,7 +17,7 @@ public class GeoDeposit extends Creature
     public GeoDeposit(Handler handler, float x, float y, int facing)
     {
         super(handler, x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-
+        can_be_killed = false;
         has_knockback = false;
         is_pogoable = true;
         health = handler.getWorld().getEntityManager().getPlayer().nail_damage * 5;

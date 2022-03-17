@@ -42,7 +42,7 @@ public class SpikesMedium extends StaticEntity
 
         if (Launcher.show_hitboxes)
         {
-            gfx.setColor(Color.red);
+            gfx.setColor(Color.blue);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
@@ -56,6 +56,6 @@ public class SpikesMedium extends StaticEntity
     @Override
     public void playerContact()
     {
-        handler.getWorld().getEntityManager().getPlayer().hazardRespawn();
+
     }
 }

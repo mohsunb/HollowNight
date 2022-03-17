@@ -139,6 +139,8 @@ public class Crawlid extends Creature
 
         else
             hit_knockback_down = true;
+
+        player.addSoul(11);
     }
 
     @Override

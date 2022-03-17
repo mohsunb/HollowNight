@@ -10,10 +10,10 @@ import java.awt.*;
 
 public class Grass extends StaticEntity
 {
-
     public Grass(Handler handler, float x, float y)
     {
         super(handler, x, y, Tile.TILE_WIDTH, Tile.TILE_HEIGHT * 2);
+        can_be_killed = false;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Grass extends StaticEntity
 
         if (Launcher.show_hitboxes)
         {
-            gfx.setColor(Color.red);
+            gfx.setColor(Color.blue);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }

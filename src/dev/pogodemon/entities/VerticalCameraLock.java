@@ -18,21 +18,19 @@ public class VerticalCameraLock extends StaticEntity
     @Override
     public void update()
     {
-        if (handler.getWorld().getEntityManager().getPlayer().grounded)
-        {
-            boolean bool = false;
-            for (Entity e : handler.getWorld().getEntityManager().getPlayer().getCollidingEntities(0, 0))
-                if (e.is_camera_lock)
-                {
-                    bool = true;
-                    break;
-                }
-            if (bool)
-                handler.getWorld().getEntityManager().getPlayerCamera().lock();
+        Player player = handler.getWorld().getEntityManager().getPlayer();
+        boolean bool = false;
+        for (Entity e : handler.getWorld().getEntityManager().getPlayer().getCollidingEntities(0, 0))
+            if (e.is_camera_lock)
+            {
+                bool = true;
+                break;
+            }
+        if (player.grounded && bool)
+            handler.getWorld().getEntityManager().getPlayerCamera().lock();
 
-            else
-                handler.getWorld().getEntityManager().getPlayerCamera().unlock();
-        }
+        else if (!bool)
+            handler.getWorld().getEntityManager().getPlayerCamera().unlock();
     }
 
     @Override
