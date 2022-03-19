@@ -82,7 +82,7 @@ public class Geo extends Creature
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (exists)
         {
@@ -122,6 +122,11 @@ public class Geo extends Creature
     @Override
     public void hasBeenHit()
     {
+
+    }
+
+    @Override
+    public void fireballHit() {
 
     }
 

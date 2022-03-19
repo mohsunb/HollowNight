@@ -17,7 +17,7 @@ public class BreakableWallKingsPass extends BreakableWall
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (exists)
         {
@@ -32,6 +32,16 @@ public class BreakableWallKingsPass extends BreakableWall
                 gfx.setColor(Color.blue);
                 gfx.drawRect((int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
             }
+        }
+    }
+
+    @Override
+    public void fireballHit()
+    {
+        if (!was_just_fireball_hit)
+        {
+            was_just_fireball_hit = true;
+            health = 0;
         }
     }
 }

@@ -35,6 +35,19 @@ public class GeoDeposit extends Creature
     {
         if (exists)
         {
+            if (was_just_fireball_hit)
+            {
+                fireball_timer++;
+                if (fireball_timer >= Launcher.framerate_limit * 0.15)
+                {
+                    was_just_fireball_hit = false;
+                    fireball_timer = 0;
+                }
+            }
+
+            if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
+                was_just_attacked = false;
+
             if (health <= 0) // death
             {
                 exists = false;
@@ -45,7 +58,7 @@ public class GeoDeposit extends Creature
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (exists)
         {
@@ -81,12 +94,31 @@ public class GeoDeposit extends Creature
     @Override
     public void hasBeenHit()
     {
-        Player player = handler.getWorld().getEntityManager().getPlayer();
-        health -= player.nail_damage;
+        if (!was_just_attacked)
+        {
+            was_just_attacked = true;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            health -= player.nail_damage;
 
-        World world = handler.getWorld();
-        world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
-        world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+            World world = handler.getWorld();
+            world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+            world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+        }
+    }
+
+    @Override
+    public void fireballHit()
+    {
+        if (!was_just_fireball_hit)
+        {
+            was_just_fireball_hit = true;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            health -= player.nail_damage;
+
+            World world = handler.getWorld();
+            world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+            world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+        }
     }
 
     @Override

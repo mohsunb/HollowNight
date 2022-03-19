@@ -37,6 +37,9 @@ public class Stalagmite extends Creature
 
         if (exists)
         {
+            if (was_just_attacked && !player.slashing)
+                was_just_attacked = false;
+
             if (triggered)
             {
                 timer++;
@@ -109,7 +112,7 @@ public class Stalagmite extends Creature
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (exists)
         {
@@ -143,26 +146,35 @@ public class Stalagmite extends Creature
     @Override
     public void hasBeenHit()
     {
-        Player player = handler.getWorld().getEntityManager().getPlayer();
-        if (!falling)
-            falling = true;
-
-        if (!diagonal && !player.up_slashing && !player.down_slashing)
+        if (!was_just_attacked)
         {
-            diagonal = true;
-            facing_right = player.isFacingRight();
+            was_just_attacked = true;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            if (!falling)
+                falling = true;
+
+            if (!diagonal && !player.up_slashing && !player.down_slashing)
+            {
+                diagonal = true;
+                facing_right = player.isFacingRight();
+            }
+
+            if (impact)
+            {
+                if (player.down_slashing)
+                    player.pogo = true;
+
+                if (!player.down_slashing && !player.up_slashing)
+                    player.attack_knockback = true;
+
+                exists = false;
+            }
         }
+    }
 
-        if (impact)
-        {
-            if (player.down_slashing)
-                player.pogo = true;
+    @Override
+    public void fireballHit() {
 
-            if (!player.down_slashing && !player.up_slashing)
-                player.attack_knockback = true;
-
-            exists = false;
-        }
     }
 
     @Override

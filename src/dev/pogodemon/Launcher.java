@@ -18,9 +18,10 @@ public class Launcher
     }
 
     //Note for future: being able to shadow dash through solid entities (e.g: shade gate, great husk sentry)
-
-    /*if (isSolid() && handler.getWorld().getEntityManager().getPlayer().shadow_dashing && handler.getWorld().getEntityManager().getPlayer().dashing)
+    /*
+    if (isSolid() && handler.getWorld().getEntityManager().getPlayer().shadow_dashing && handler.getWorld().getEntityManager().getPlayer().dashing)
         setSolid(false);
     else if (!isSolid() && !handler.getWorld().getEntityManager().getPlayer().dashing)
-        setSolid(true);*/
+        setSolid(true);
+     */
 }

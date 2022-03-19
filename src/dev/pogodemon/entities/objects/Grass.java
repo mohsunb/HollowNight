@@ -23,7 +23,7 @@ public class Grass extends StaticEntity
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         gfx.drawImage(Assets.grass, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), (int) width, (int) height, null);
 
@@ -35,7 +35,13 @@ public class Grass extends StaticEntity
     }
 
     @Override
-    public void hasBeenHit() {
+    public void hasBeenHit()
+    {
+
+    }
+
+    @Override
+    public void fireballHit() {
 
     }
 

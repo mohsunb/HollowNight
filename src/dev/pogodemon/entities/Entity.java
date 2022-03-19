@@ -18,8 +18,10 @@ public abstract class Entity
     public boolean has_knockback = true;
     protected boolean gravity = true;
     protected boolean solid = false;
-
+    public boolean was_just_attacked = false;
     public boolean is_camera_lock = false;
+    protected boolean was_just_fireball_hit = false;
+    protected int fireball_timer = 0;
 
     public Entity(Handler handler, float x, float y, float width, float height)
     {
@@ -228,9 +230,11 @@ public abstract class Entity
 
     public abstract void update();
 
-    public abstract void render(Graphics gfx);
+    public abstract void render(Graphics2D gfx);
 
     public abstract void hasBeenHit();
+
+    public abstract void fireballHit();
 
     public abstract void playerContact();
 }

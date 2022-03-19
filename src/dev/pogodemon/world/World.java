@@ -60,12 +60,26 @@ public class World
         getEntityManager().setEntities(list);
     }
 
+    public void removeEntity(Entity e)
+    {
+        ArrayList<Entity> list = new ArrayList<Entity>(getEntityManager().getEntities());
+        for (Entity et : getEntityManager().getEntities())
+        {
+            if (et.equals(e))
+            {
+                list.remove(e);
+                break;
+            }
+        }
+        getEntityManager().setEntities(list);
+    }
+
     public void update()
     {
         entityManager.update();
     }
 
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         int xStart = (int) Math.max(0, handler.getCamera().getxOffset() / Tile.TILE_WIDTH);
         int xEnd = (int) Math.min(width, (handler.getCamera().getxOffset() + handler.getWidth()) / Tile.TILE_WIDTH + 1);

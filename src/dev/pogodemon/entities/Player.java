@@ -7,6 +7,8 @@ import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 
 public class Player extends Creature
 {
@@ -16,8 +18,23 @@ public class Player extends Creature
     private boolean has_buffered_geo;
     private int geo_buffer_timer;
 
-    private int soul = 0;
-    private int max_soul = 99;
+    private int heal_buffer_timer = 0;
+    private boolean healing = false;
+    private int heal_timer = 0;
+    private boolean post_heal = false;
+    private int post_heal_timer = 0;
+    private boolean illegal_heal = false;
+    private int heal_counter = 0;
+    private boolean can_heal = false;
+
+    private float soul = 0;
+    private float max_soul = 99;
+
+    private boolean fireball_knockback = false;
+    private int fireball_knockback_timer = 0;
+    private boolean fireball_blocked = false;
+    private int fireball_cooldown_timer = 0;
+    private boolean illegal_fireball = false;
     
     public Player(Handler handler, float x, float y)
     {
@@ -39,15 +56,19 @@ public class Player extends Creature
     private int looking_up_timer = 0;
     private int looking_down_timer = 0;
 
+    private boolean render_black_sprite = false;
+    private int black_sprite_timer = 0;
+
     public int nail_damage = 5;
+    public int fireball_damage = 15;
     public boolean alternative_slash_sprite = true; // = !self to change
     public boolean slashing = false;
     private boolean slash_blocked = false;
     private boolean illegal_slash = false;
     public boolean down_slashing = false;
     public boolean up_slashing = false;
-    public boolean just_attacked = false;
     public boolean attack_knockback = false;
+    public boolean just_knocked_back = false;
     public boolean pogo = false;
     long attack_knockback_timer = 0;
     long pogo_timer = 0;
@@ -70,12 +91,14 @@ public class Player extends Creature
         yMove = 0;
         setX(respawnX);
         setY(respawnY);
+        handler.getWorld().getEntityManager().getPlayerCamera().clearCameraQueue();
         health -= 20;
         invulnerable = true;
         fall_shocked = true;
         dashing = false;
         shadow_dashing = false;
         superdash = false;
+        pogo = false;
     }
 
     public void updateRespawnPoint(float x, float y)
@@ -84,7 +107,7 @@ public class Player extends Creature
         respawnY = y;
     }
 
-    public void addSoul(int s)
+    public void addSoul(float s)
     {
         soul += s;
         if (soul > max_soul)
@@ -94,21 +117,88 @@ public class Player extends Creature
     @Override
     public void update()
     {
+        if (fireball_knockback)
+        {
+            fireball_knockback_timer++;
+            if (fireball_knockback_timer >= Launcher.framerate_limit * 0.3)
+            {
+                fireball_knockback_timer = 0;
+                fireball_knockback = false;
+            }
+        }
+
+        if (fireball_blocked)
+        {
+            fireball_cooldown_timer++;
+            if (fireball_cooldown_timer >= Launcher.framerate_limit * 0.25)
+            {
+                fireball_cooldown_timer = 0;
+                fireball_blocked = false;
+            }
+        }
+
+        if (fall_shocked && !illegal_heal && handler.getKeyManager().a)
+            illegal_heal = true;
+
+        if (healing && !grounded)
+        {
+            healing = false;
+            illegal_heal = true;
+        }
+        if (Math.ceil(soul) >= 33 && !can_heal && !healing)
+            can_heal = true;
+
+        if (!healing && heal_buffer_timer == 0 && Math.ceil(soul) < 33)
+            can_heal = false;
+
+        //collapsing floor superdash buffer bug fix
+        if (superdash_charge_timer > 0 && !(grounded || cling_right || cling_left))
+        {
+            superdash_charge_timer = 0;
+            illegal_superdash = true;
+        }
+
+        //invulnerability visual effect
+        if (invulnerable)
+        {
+            black_sprite_timer++;
+            if (black_sprite_timer >= Launcher.framerate_limit * 0.1)
+            {
+                black_sprite_timer = 0;
+                render_black_sprite = !render_black_sprite;
+            }
+        }
+
+        else if (render_black_sprite)
+            render_black_sprite = false;
+
         if (damage_shocked)
         {
             if (!damage_shocked_right)
             {
-                xMove = -speedX;
+                xMove = -speedX * 1.5F;
                 if (!facing_right)
                     facing_right = true;
             }
 
             else
             {
-                xMove = speedX;
+                xMove = speedX * 1.5F;
                 if (facing_right)
                     facing_right = false;
             }
+        }
+
+        if (fireball_knockback)
+
+        {
+            if (isFacingRight())
+                xMove = -DEFAULT_SPEED * 0.15F;
+            else
+                xMove = DEFAULT_SPEED * 0.15F;
+            if (jumping)
+                jumping = false;
+            yMove = 0;
         }
 
         if (checkEntityCollisions(xMove, yMove))
@@ -225,18 +315,19 @@ public class Player extends Creature
                 down_slashing = false;
         }
 
+        if (just_knocked_back && !slashing)
+            just_knocked_back = false;
+
         if (attack_knockback)
         {
+            just_knocked_back = true;
             float s = DEFAULT_SPEED * 0.46f;
             if (facing_right)
                 xMove = -s;
 
             else
                 xMove = s;
-        }
 
-        if (attack_knockback)
-        {
             attack_knockback_timer++;
             if (attack_knockback_timer >= Launcher.framerate_limit * 0.2)
             {
@@ -265,9 +356,6 @@ public class Player extends Creature
             if (fall_distance > 0)
                 fall_distance = 0;
         }
-
-        if (just_attacked && !slashing)
-            just_attacked = false;
 
         if (!handler.getKeyManager().x && !slashing)
         {
@@ -377,8 +465,6 @@ public class Player extends Creature
         getInput();
         move();
 
-        //handler.getCamera().centerOnEntity(this);
-
         //wall cling reset
         if (grounded || dashing)
         {
@@ -435,7 +521,87 @@ public class Player extends Creature
 
     private void getInput()
     {
-        if (!looking_up && grounded && !superdash_shocked && !damage_shocked && !fall_shocked && xMove == 0 && handler.getKeyManager().up)
+        if (!illegal_fireball && !fireball_blocked && !dashing && !superdash && superdash_charge_timer == 0 && !superdash_charged && !fall_shocked && !damage_shocked && !post_heal && handler.getKeyManager().f)
+        {
+            if (Math.ceil(soul) >= 33 && (slash_timer == 0 || slash_timer >= Launcher.framerate_limit * 0.125F))
+            {
+                handler.getWorld().spawnEntity(new Fireball(handler, getCenterX(), getCenterY(), false, isFacingRight()));
+                soul -= 33;
+                fireball_blocked = true;
+                fireball_knockback = true;
+                if (slashing) // nail cancel
+                    slashing = false;
+            }
+            illegal_fireball = true;
+        }
+
+        if (illegal_fireball && !handler.getKeyManager().f)
+            illegal_fireball = false;
+
+        if (!fireball_knockback && can_heal && !illegal_heal && grounded && !dashing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !fall_shocked && !damage_shocked && handler.getKeyManager().a)
+        {
+            if (!healing)
+            {
+                heal_buffer_timer++;
+                if (heal_buffer_timer >= Launcher.framerate_limit * 0.25F)
+                {
+                    heal_buffer_timer = 0;
+                    healing = true;
+                }
+            }
+
+            else
+            {
+                if (!post_heal)
+                    post_heal = true;
+
+                soul -= 33F / Launcher.framerate_limit / 0.891F;
+                if (soul < 0)
+                    soul = 0;
+
+                heal_timer++;
+                if (heal_timer >= Launcher.framerate_limit * 0.891F)
+                {
+                    heal_timer = 0;
+                    if (health < max_health)
+                        health += 20;
+                    heal_counter++;
+                    if (heal_counter == 3 || Math.ceil(soul) < 33 || health >= max_health)
+                    {
+                        heal_counter = 0;
+                        healing = false;
+                        illegal_heal = true;
+                    }
+                }
+            }
+        }
+
+        if (!grounded && handler.getKeyManager().a)
+            illegal_heal = true;
+
+        if (!handler.getKeyManager().a)
+        {
+            heal_buffer_timer = 0;
+            heal_timer = 0;
+            if (illegal_heal)
+                illegal_heal = false;
+            if (healing)
+                healing = false;
+        }
+
+        if (post_heal && !healing)
+        {
+            if (!illegal_heal)
+                illegal_heal = true;
+            post_heal_timer++;
+            if (post_heal_timer >= Launcher.framerate_limit * 0.25F)
+            {
+                post_heal_timer = 0;
+                post_heal = false;
+            }
+        }
+
+        if (!fireball_knockback && !post_heal && !healing && !looking_up && grounded && !superdash_shocked && !damage_shocked && !fall_shocked && xMove == 0 && handler.getKeyManager().up)
         {
             looking_up_timer++;
             if (looking_up_timer >= Launcher.framerate_limit * 0.5)
@@ -445,7 +611,7 @@ public class Player extends Creature
             }
         }
 
-        if (!looking_down && grounded && !superdash_shocked && !damage_shocked && !fall_shocked && xMove == 0 && handler.getKeyManager().down)
+        if (!fireball_knockback && !looking_down && grounded && !superdash_shocked && !damage_shocked && !fall_shocked && xMove == 0 && handler.getKeyManager().down)
         {
             looking_down_timer++;
             if (looking_down_timer >= Launcher.framerate_limit * 0.5)
@@ -473,7 +639,7 @@ public class Player extends Creature
         if (illegal_superdash && !handler.getKeyManager().s)
             illegal_superdash = false;
 
-        if (hasCrystalHeart && (grounded || cling_right || cling_left) && !illegal_superdash &&!superdash_charged && handler.getKeyManager().s)
+        if (!post_heal && !healing && hasCrystalHeart && (grounded || cling_right || cling_left) && !illegal_superdash &&!superdash_charged && handler.getKeyManager().s)
         {
             superdash_charge_timer++;
             if (superdash_charge_timer >= Launcher.framerate_limit * 0.8)
@@ -499,7 +665,7 @@ public class Player extends Creature
             superdash_shocked = true;
         }
 
-        if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !fall_shocked && !damage_shocked && !slashing && !slash_blocked && !illegal_slash && handler.getKeyManager().x)
+        if (!fireball_knockback && !post_heal && !healing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !fall_shocked && !damage_shocked && !slashing && !slash_blocked && !illegal_slash && handler.getKeyManager().x)
         {
             slashing = true;
             alternative_slash_sprite = !alternative_slash_sprite;
@@ -512,7 +678,7 @@ public class Player extends Creature
             illegal_slash = false;
 
         //So that player doesn't stop during various events
-        if (!dashing && !superdash && !damage_shocked && !superdash_shocked && !attack_knockback)
+        if (!fireball_knockback && !dashing && !superdash && !damage_shocked && !superdash_shocked && !attack_knockback)
             xMove = 0;
         if (!pogo)
             yMove = 0;
@@ -568,7 +734,7 @@ public class Player extends Creature
             }
         }
 
-        if (!fall_shocked && !damage_shocked)
+        if (!fireball_knockback && !fall_shocked && !damage_shocked)
         {
             if (!dashing && !can_dash && (grounded || can_dash_twice) && !handler.getKeyManager().c)
             {
@@ -579,7 +745,7 @@ public class Player extends Creature
                     can_shadow_dash = true;
             }
 
-            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !just_dashed && !dashing && can_dash && handler.getKeyManager().c)
+            if (!post_heal && !healing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !just_dashed && !dashing && can_dash && handler.getKeyManager().c)
             {
                 dashing = true;
                 if (can_shadow_dash)
@@ -665,7 +831,7 @@ public class Player extends Creature
             if (illegal_jumping && (grounded || cling_right || cling_left) && !handler.getKeyManager().z)
                 illegal_jumping = false;
 
-            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !illegal_jumping && (grounded || cling_right || cling_left) && !jumping && handler.getKeyManager().z)
+            if (!post_heal && !healing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !illegal_jumping && (grounded || cling_right || cling_left) && !jumping && handler.getKeyManager().z)
             {
                 if (cling_left)
                     wall_jumping_right = true;
@@ -760,7 +926,7 @@ public class Player extends Creature
                 illegal_jumping = false;
             //Jumping END
 
-            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !attack_knockback && handler.getKeyManager().right)
+            if (!post_heal && !healing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !attack_knockback && handler.getKeyManager().right)
             {
                 if (!slashing)
                 {
@@ -774,7 +940,7 @@ public class Player extends Creature
                 xMove += speedX;
             }
 
-            if (!superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !attack_knockback && handler.getKeyManager().left)
+            if (!post_heal && !healing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !attack_knockback && handler.getKeyManager().left)
             {
                 if (!slashing)
                 {
@@ -791,13 +957,11 @@ public class Player extends Creature
 
         //Quit game (for quick debugging)
         if (handler.getKeyManager().q)
-        {
             System.exit(0);
-        }
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         //Coordinates
         gfx.setColor(Color.white);
@@ -850,7 +1014,18 @@ public class Player extends Creature
 
         else if (facing_right)
         {
-            if (looking_up)
+            if (fireball_knockback)
+                gfx.drawImage(Assets.spell_char_right, (int) (x - handler.getCamera().getxOffset() - 140), (int) (y - handler.getCamera().getyOffset() - 220), null);
+
+            else if (healing)
+            {
+                BufferedImage out = new BufferedImage(Assets.heal_right.getWidth(), Assets.heal_right.getHeight(), BufferedImage.TRANSLUCENT);
+                RescaleOp rescaleOp = new RescaleOp(1f, 255 * heal_timer / (Launcher.framerate_limit * 0.891F), null);
+                rescaleOp.filter(Assets.heal_right, out);
+                gfx.drawImage(out, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 5), null);
+            }
+
+            else if (looking_up)
                 gfx.drawImage(Assets.player_up_right, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset()), null);
 
             else if (looking_down)
@@ -863,7 +1038,7 @@ public class Player extends Creature
                 gfx.drawImage(Assets.fall_shock_right, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
 
             else if (damage_shocked)
-                gfx.drawImage(Assets.damage_shock_right, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset()), null);
+                gfx.drawImage(blackSprite(Assets.damage_shock_right), (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset()), null);
 
             else if (dashing)
             {
@@ -871,7 +1046,7 @@ public class Player extends Creature
                     gfx.drawImage(Assets.shadow_dash_right, (int) (x - handler.getCamera().getxOffset() - 730), (int) (y - handler.getCamera().getyOffset() - 110), null);
 
                 else
-                    gfx.drawImage(Assets.dash_right, (int) (x - handler.getCamera().getxOffset() - 4 - 111), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.dash_right), (int) (x - handler.getCamera().getxOffset() - 4 - 111), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
             else if (superdash_charge_timer > 0)
@@ -900,31 +1075,31 @@ public class Player extends Creature
             {
                 if (up_slashing)
                 {
-                    gfx.drawImage(Assets.upslash_char_right, (int) (x - handler.getCamera().getxOffset() - 43), (int) (y - handler.getCamera().getyOffset() + 30), null);
+                    gfx.drawImage(blackSprite(Assets.upslash_char_right), (int) (x - handler.getCamera().getxOffset() - 43), (int) (y - handler.getCamera().getyOffset() + 30), null);
                 }
 
                 else if (down_slashing)
                 {
-                    gfx.drawImage(Assets.downslash_char_right, (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() + 8), null);
+                    gfx.drawImage(blackSprite(Assets.downslash_char_right), (int) (x - handler.getCamera().getxOffset() - 55), (int) (y - handler.getCamera().getyOffset() + 8), null);
                 }
 
                 else if (alternative_slash_sprite)
                 {
-                    gfx.drawImage(Assets.slash1_char_right, (int) (x - handler.getCamera().getxOffset() - 35), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.slash1_char_right), (int) (x - handler.getCamera().getxOffset() - 35), (int) (y - handler.getCamera().getyOffset()), null);
                 }
                 else
                 {
-                    gfx.drawImage(Assets.slash2_char_right, (int) (x - handler.getCamera().getxOffset() - 35), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.slash2_char_right), (int) (x - handler.getCamera().getxOffset() - 35), (int) (y - handler.getCamera().getyOffset()), null);
                 }
             }
 
             else if (grounded)
             {
                 if (xMove == 0)
-                    gfx.drawImage(Assets.player_right, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.player_right), (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset()), null);
 
                 else
-                    gfx.drawImage(Assets.walk_right, (int) (x - handler.getCamera().getxOffset() - 4 - 7), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.walk_right), (int) (x - handler.getCamera().getxOffset() - 4 - 7), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
             else if (double_jumping)
@@ -941,7 +1116,18 @@ public class Player extends Creature
 
         else
         {
-            if (looking_up)
+            if (fireball_knockback)
+                gfx.drawImage(Assets.spell_char_left, (int) (x - handler.getCamera().getxOffset() - 200), (int) (y - handler.getCamera().getyOffset() - 220), null);
+
+            else if (healing)
+            {
+                BufferedImage out = new BufferedImage(Assets.heal_left.getWidth(), Assets.heal_left.getHeight(), BufferedImage.TRANSLUCENT);
+                RescaleOp rescaleOp = new RescaleOp(1f, 255 * heal_timer / (Launcher.framerate_limit * 0.891F), null);
+                rescaleOp.filter(Assets.heal_left, out);
+                gfx.drawImage(out, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 5), null);
+            }
+
+            else if (looking_up)
                 gfx.drawImage(Assets.player_up_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset()), null);
 
             else if (looking_down)
@@ -951,17 +1137,17 @@ public class Player extends Creature
                 gfx.drawImage(Assets.superdash_shocked_left, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset()), null);
 
             else if (fall_shocked)
-                gfx.drawImage(Assets.fall_shock_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                gfx.drawImage(blackSprite(Assets.fall_shock_left), (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
 
             else if (damage_shocked)
-                gfx.drawImage(Assets.damage_shock_left, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset()), null);
+                gfx.drawImage(blackSprite(blackSprite(Assets.damage_shock_left)), (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset()), null);
 
             else if (dashing)
             {
                 if (shadow_dashing)
                     gfx.drawImage(Assets.shadow_dash_left, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset() - 110), null);
                 else
-                    gfx.drawImage(Assets.dash_left, (int) (x - handler.getCamera().getxOffset() - 4 + 1), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.dash_left), (int) (x - handler.getCamera().getxOffset() - 4 + 1), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
             else if (superdash_charge_timer > 0)
@@ -982,39 +1168,37 @@ public class Player extends Creature
             }
 
             else if (superdash)
-            {
                 gfx.drawImage(Assets.superdash_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() - 150), null);
-            }
 
             else if (slashing)
             {
                 if (up_slashing)
                 {
-                    gfx.drawImage(Assets.upslash_char_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 30), null);
+                    gfx.drawImage(blackSprite(Assets.upslash_char_left), (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 30), null);
                 }
 
                 else if (down_slashing)
                 {
-                    gfx.drawImage(Assets.downslash_char_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 8), null);
+                    gfx.drawImage(blackSprite(Assets.downslash_char_left), (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 8), null);
                 }
 
                 else if (alternative_slash_sprite)
                 {
-                    gfx.drawImage(Assets.slash1_char_left, (int) (x - handler.getCamera().getxOffset() - 11), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.slash1_char_left), (int) (x - handler.getCamera().getxOffset() - 11), (int) (y - handler.getCamera().getyOffset()), null);
                 }
                 else
                 {
-                    gfx.drawImage(Assets.slash2_char_left, (int) (x - handler.getCamera().getxOffset() - 8), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.slash2_char_left), (int) (x - handler.getCamera().getxOffset() - 8), (int) (y - handler.getCamera().getyOffset()), null);
                 }
             }
 
             else if (grounded)
             {
                 if (xMove == 0)
-                    gfx.drawImage(Assets.player_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.player_left), (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset()), null);
 
                 else
-                    gfx.drawImage(Assets.walk_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset()), null);
+                    gfx.drawImage(blackSprite(Assets.walk_left), (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset()), null);
             }
 
             else if (double_jumping)
@@ -1039,14 +1223,14 @@ public class Player extends Creature
 
         //Soul
         gfx.drawImage(Assets.soul_vessel_hud_up, 90, 80, null);
-        if (soul >= 33)
+        if (Math.ceil(soul) >= 33)
             gfx.setColor(Color.white);
         else
             gfx.setColor(Color.lightGray);
         gfx.drawImage(Assets.soul_vessel_hud_down, 90, 80, null);
         gfx.fillOval(105, 110, 103, 103);
         if (soul < max_soul)
-            gfx.drawImage(new SpriteSheet(Assets.soul_vessel_hud_down).crop(14, 30, 106, (int) (105 - Math.floor(105D/max_soul * soul))), 104, 110, null);
+            gfx.drawImage(new SpriteSheet(Assets.soul_vessel_hud_down).crop(14, 30, 106, (int) (105 - Math.floor(105D / max_soul * soul))), 104, 110, null);
         if (soul >= 55)
             gfx.drawImage(Assets.soul_vessel_hud_middle, 115, 165, null);
 
@@ -1070,6 +1254,11 @@ public class Player extends Creature
     public void hasBeenHit()
     {
         //bruh
+    }
+
+    @Override
+    public void fireballHit() {
+
     }
 
     @Override
@@ -1104,5 +1293,17 @@ public class Player extends Creature
     public boolean isFacingRight()
     {
         return facing_right;
+    }
+
+    private BufferedImage blackSprite(BufferedImage in)
+    {
+        BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TRANSLUCENT);
+        RescaleOp rescaleOp = new RescaleOp(1f, -255, null);
+        if (render_black_sprite)
+            rescaleOp.filter(in, out);
+        else
+            out = in;
+
+        return out;
     }
 }

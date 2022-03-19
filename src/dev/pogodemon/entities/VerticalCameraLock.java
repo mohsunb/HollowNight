@@ -34,7 +34,7 @@ public class VerticalCameraLock extends StaticEntity
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (Launcher.show_hitboxes)
         {
@@ -46,6 +46,11 @@ public class VerticalCameraLock extends StaticEntity
     @Override
     public void hasBeenHit()
     {
+
+    }
+
+    @Override
+    public void fireballHit() {
 
     }
 

@@ -1,6 +1,7 @@
 package dev.pogodemon.display;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
 
 public class Assets
 {
@@ -25,7 +26,9 @@ public class Assets
             , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large, geo_deposit_up, geo_deposit_down, geo_deposit_left, geo_deposit_right
             , geo_deposit_broken_up, geo_deposit_broken_down, geo_deposit_broken_left, geo_deposit_broken_right, vengefly_idle_right
             , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left, player_up_right, player_up_left, player_down_right, player_down_left
-            , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open, soul_vessel_hud_middle, breakable_wall_generic_right, breakable_wall_generic_left;
+            , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open, soul_vessel_hud_middle, breakable_wall_generic_right, breakable_wall_generic_left
+            , heal_right, heal_left, vengeful_spirit_right, vengeful_spirit_left, vengeful_spirit_big_right, vengeful_spirit_big_left, spell_char_right
+            , spell_char_left;
 
     public static void init()
     {
@@ -153,5 +156,13 @@ public class Assets
         soul_vessel_hud_middle = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_hud_middle.png");
         breakable_wall_generic_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/breakable_wall_generic_right.png");
         breakable_wall_generic_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/breakable_wall_generic_left.png");
+        heal_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/heal_right.png");
+        heal_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/heal_left.png");
+        vengeful_spirit_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/spells/vengeful_spirit_right.png");
+        vengeful_spirit_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/spells/vengeful_spirit_left.png");
+        vengeful_spirit_big_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/spells/vengeful_spirit_big_right.png");
+        vengeful_spirit_big_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/spells/vengeful_spirit_big_left.png");
+        spell_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/spell_char_right.png");
+        spell_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/spell_char_left.png");
     }
 }

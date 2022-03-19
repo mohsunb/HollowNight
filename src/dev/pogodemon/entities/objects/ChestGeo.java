@@ -33,4 +33,9 @@ public class ChestGeo extends Chest
         for (int l = 0; l < geo; l++)
             handler.getWorld().spawnEntity(new Geo(handler, getCenterX(), getCenterY() - bounds.height, 0));
     }
+
+    @Override
+    public void fireballHit() {
+
+    }
 }

@@ -96,6 +96,7 @@ public class CameraFocusPoint extends StaticEntity
                 pY.add(player.getCenterY() - 200);
             else if (player.looking_down)
                 pY.add(player.getCenterY() + 200);
+
             else if (vertical_lock)
             {
                 if (ttY == 0)
@@ -130,8 +131,20 @@ public class CameraFocusPoint extends StaticEntity
         }
     }
 
+    public void clearCameraQueue()
+    {
+        int s = pX.size();
+        pX.clear();
+        pY.clear();
+        for (int i = 0; i < s; i++)
+        {
+            pX.add(handler.getWorld().getEntityManager().getPlayer().getCenterX());
+            pY.add(handler.getWorld().getEntityManager().getPlayer().getCenterY());
+        }
+    }
+
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (Launcher.show_hitboxes)
         {
@@ -143,6 +156,11 @@ public class CameraFocusPoint extends StaticEntity
     @Override
     public void hasBeenHit()
     {
+
+    }
+
+    @Override
+    public void fireballHit() {
 
     }
 

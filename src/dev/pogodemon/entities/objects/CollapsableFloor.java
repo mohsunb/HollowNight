@@ -55,7 +55,7 @@ public class CollapsableFloor extends StaticEntity
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (exists)
         {
@@ -75,6 +75,11 @@ public class CollapsableFloor extends StaticEntity
     @Override
     public void hasBeenHit()
     {
+
+    }
+
+    @Override
+    public void fireballHit() {
 
     }
 

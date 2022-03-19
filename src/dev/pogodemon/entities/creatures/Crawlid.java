@@ -33,6 +33,9 @@ public class Crawlid extends Creature
     {
         if (exists)
         {
+            if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
+                was_just_attacked = false;
+
             move();
 
             if (hit_knockback)
@@ -91,7 +94,7 @@ public class Crawlid extends Creature
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (exists)
         {
@@ -119,28 +122,50 @@ public class Crawlid extends Creature
     @Override
     public void hasBeenHit()
     {
-        Player player = handler.getWorld().getEntityManager().getPlayer();
-        health -= player.nail_damage;
-
-        hit_knockback = true;
-        if (!player.up_slashing && !player.down_slashing)
+        if (!was_just_attacked)
         {
+            was_just_attacked = true;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            health -= player.nail_damage;
+
+            hit_knockback = true;
+            if (!player.up_slashing && !player.down_slashing)
+            {
+                if (player.isFacingRight())
+                    hit_knockback_right = true;
+                else
+                    hit_knockback_left = true;
+            }
+
+            else if (player.up_slashing)
+            {
+                player.ceiling_collide = true;
+                hit_knockback_up = true;
+            }
+
+            else
+                hit_knockback_down = true;
+
+            player.addSoul(11);
+        }
+    }
+
+    @Override
+    public void fireballHit()
+    {
+        if (!was_just_fireball_hit)
+        {
+
+            was_just_fireball_hit = true;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            health -= player.fireball_damage;
+            hit_knockback = true;
+
             if (player.isFacingRight())
                 hit_knockback_right = true;
             else
                 hit_knockback_left = true;
         }
-
-        else if (player.up_slashing)
-        {
-            player.ceiling_collide = true;
-            hit_knockback_up = true;
-        }
-
-        else
-            hit_knockback_down = true;
-
-        player.addSoul(11);
     }
 
     @Override

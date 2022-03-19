@@ -5,6 +5,19 @@ An attempt at remaking **Hollow Knight** from **Team Cherry** for a project aime
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
 You can change the launch options in the main class. The game currently only works at 1920x1080 resolution. I will try to add resolution scaling in the future.
 
+## Update 20-Mar-2022: v0.1.3
+* Fixed a bug with hazards that would not set the player to the ground
+* Fixed a bug with hazards that would not reset the camera
+* Added transparency option to the rendering engine
+* Improved knockback when damage shocked
+* Reimplemented attacking system
+* Down-slash hitbox was decreased due to the previous change
+* Fixed a bug with the reimplemented attack system where knockback was too long
+* Added a dark flashing effect when the player is invulnerable (after taking damage)
+* Added fully functional healing system
+* Refined horizontal slash knockback detection
+* Added fully functional Vengeful Spirit spell
+
 ## Update 17-Mar-2022: v0.1.2
 * Fixed a bug with camera lock system
 * Refined camera system

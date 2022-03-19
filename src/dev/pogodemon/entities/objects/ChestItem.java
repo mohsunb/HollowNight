@@ -15,4 +15,9 @@ public class ChestItem extends Chest
     {
 
     }
+
+    @Override
+    public void fireballHit() {
+
+    }
 }

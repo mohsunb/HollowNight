@@ -34,7 +34,7 @@ public class Tile
 
     }
 
-    public void render(Graphics gfx, int x, int y)
+    public void render(Graphics2D gfx, int x, int y)
     {
         gfx.drawImage(texture, x, y, TILE_WIDTH, TILE_HEIGHT, null);
     }

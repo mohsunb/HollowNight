@@ -53,6 +53,9 @@ public class WanderingHusk extends Creature
     {
         if (exists)
         {
+            if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
+                was_just_attacked = false;
+
             move();
 
             if (hit_knockback)
@@ -207,7 +210,7 @@ public class WanderingHusk extends Creature
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (exists)
         {
@@ -254,15 +257,31 @@ public class WanderingHusk extends Creature
     @Override
     public void hasBeenHit()
     {
-        Player player = handler.getWorld().getEntityManager().getPlayer();
-        health -= player.nail_damage;
+        if (!was_just_attacked)
+        {
+            was_just_attacked = true;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            health -= player.nail_damage;
 
-        if (attacking)
-            attacking = false;
-        if (!player.up_slashing && !player.down_slashing)
-            hit_knockback = true;
+            if (attacking)
+                attacking = false;
+            if (!player.up_slashing && !player.down_slashing)
+                hit_knockback = true;
 
-        player.addSoul(11);
+            player.addSoul(11);
+        }
+    }
+
+    @Override
+    public void fireballHit()
+    {
+        if (!was_just_fireball_hit)
+        {
+
+            was_just_fireball_hit = true;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            health -= player.fireball_damage;
+        }
     }
 
     @Override

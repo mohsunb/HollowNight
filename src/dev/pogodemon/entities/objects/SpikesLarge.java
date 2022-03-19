@@ -32,11 +32,12 @@ public class SpikesLarge extends StaticEntity
     @Override
     public void update()
     {
-
+        if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
+            was_just_attacked = false;
     }
 
     @Override
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         if (facing == 0)
             gfx.drawImage(Assets.spikes_large_up, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
@@ -60,6 +61,11 @@ public class SpikesLarge extends StaticEntity
     @Override
     public void hasBeenHit()
     {
+
+    }
+
+    @Override
+    public void fireballHit() {
 
     }
 

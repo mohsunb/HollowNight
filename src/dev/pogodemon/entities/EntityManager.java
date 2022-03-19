@@ -43,7 +43,7 @@ public class EntityManager
             e.update();
     }
 
-    public void render(Graphics gfx)
+    public void render(Graphics2D gfx)
     {
         for (Entity e : entities)
             e.render(gfx);

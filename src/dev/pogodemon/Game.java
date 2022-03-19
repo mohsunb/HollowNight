@@ -21,7 +21,7 @@ public class Game implements Runnable
     private final boolean full_screen;
 
     private BufferStrategy buffer;
-    private Graphics gfx;
+    private Graphics2D gfx;
 
     private State gameState;
     private KeyManager keyManager;
@@ -73,7 +73,7 @@ public class Game implements Runnable
             return;
         }
 
-        gfx = buffer.getDrawGraphics();
+        gfx = (Graphics2D) buffer.getDrawGraphics();
 
         //Clear the windows
         gfx.clearRect(0, 0, width, height);

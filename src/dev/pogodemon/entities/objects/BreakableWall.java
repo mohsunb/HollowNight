@@ -17,6 +17,9 @@ public abstract class BreakableWall extends StaticEntity
     {
         if (exists)
         {
+            if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
+                was_just_attacked = false;
+
             if (health <= 0)
             {
                 exists = false;
@@ -31,7 +34,11 @@ public abstract class BreakableWall extends StaticEntity
     @Override
     public void hasBeenHit()
     {
-        health--;
+        if (!was_just_attacked)
+        {
+            was_just_attacked = true;
+            health--;
+        }
     }
 
     @Override
