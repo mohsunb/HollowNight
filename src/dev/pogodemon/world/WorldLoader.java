@@ -17,7 +17,7 @@ public class WorldLoader
 
     public World KingsPass()
     {
-        World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4751); // 2000 4751
+        World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4752); // 2000 4752
         handler.setWorld(kings_pass);
 
         kings_pass.spawnEntity(new CollapsableFloor(handler, 8960, 1200, 1000, 200, (int) (Launcher.framerate_limit * 0.5)));
@@ -29,8 +29,7 @@ public class WorldLoader
         kings_pass.spawnEntity(new BreakableWallKingsPass(handler, 9700, 4640, 100, 240, false));
         kings_pass.spawnEntity(new BreakableWallKingsPass(handler, 5740, 3560, 100, 240, true));
 
-        //For testing, remove later
-        kings_pass.spawnEntity(new ChestGeo(handler, 2100, 4780, 100));
+        kings_pass.spawnEntity(new ChestGeo(handler, 13400, 4420, 100));
 
         kings_pass.spawnEntity(new Stalagmite(handler, 9410, 2880, 700));
         kings_pass.spawnEntity(new Stalagmite(handler, 4960, 1880, 600));

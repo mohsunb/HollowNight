@@ -205,8 +205,11 @@ public abstract class Creature extends Entity
 
                     if (this == player && (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) || checkEntityMoveCollisions(xMove + 2, 0)) && !jumping && !grounded && !dashing && hasMantisClaw)
                     {
-                        facing_right = false;
-                        cling_right = true;
+                        if (!player.slashing)
+                        {
+                            facing_right = false;
+                            cling_right = true;
+                        }
                     }
                 }
             }
@@ -278,8 +281,11 @@ public abstract class Creature extends Entity
 
                     if (this == player && (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) || checkEntityMoveCollisions(xMove - 2, 0)) && !jumping  && !grounded && !dashing && hasMantisClaw)
                     {
-                        cling_left = true;
-                        facing_right = true;
+                        if (!player.slashing)
+                        {
+                            cling_left = true;
+                            facing_right = true;
+                        }
                     }
                 }
             }

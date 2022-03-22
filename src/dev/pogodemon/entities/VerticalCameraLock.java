@@ -19,6 +19,7 @@ public class VerticalCameraLock extends StaticEntity
     public void update()
     {
         Player player = handler.getWorld().getEntityManager().getPlayer();
+        CameraFocusPoint camera = handler.getWorld().getEntityManager().getPlayerCamera();
         boolean bool = false;
         for (Entity e : handler.getWorld().getEntityManager().getPlayer().getCollidingEntities(0, 0))
             if (e.is_camera_lock)
@@ -26,11 +27,11 @@ public class VerticalCameraLock extends StaticEntity
                 bool = true;
                 break;
             }
-        if (player.grounded && bool)
-            handler.getWorld().getEntityManager().getPlayerCamera().lock();
+        if (!camera.isLocked() && player.grounded && bool && player.getCenterY() == camera.getCenterY())
+            camera.lock();
 
-        else if (!bool)
-            handler.getWorld().getEntityManager().getPlayerCamera().unlock();
+        else if (camera.isLocked() && (!bool || player.looking_up || player.looking_down))
+            camera.unlock();
     }
 
     @Override

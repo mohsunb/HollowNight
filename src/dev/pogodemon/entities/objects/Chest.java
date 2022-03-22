@@ -49,11 +49,7 @@ public abstract class Chest extends StaticEntity
             gfx.drawImage(Assets.chest_open, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() - 73), null);
 
         else
-        {
-            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F));
             gfx.drawImage(Assets.chest, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() - 20), null);
-            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
-        }
 
         if (Launcher.show_hitboxes)
         {

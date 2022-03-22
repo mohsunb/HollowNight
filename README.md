@@ -5,6 +5,14 @@ An attempt at remaking **Hollow Knight** from **Team Cherry** for a project aime
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
 You can change the launch options in the main class. The game currently only works at 1920x1080 resolution. I will try to add resolution scaling in the future.
 
+## Update 23-Mar-2022: v0.1.4
+* Fixed a bug with the rendering of healing sprites (Windows specific)
+* Vengeful Spirit can now be used with the heal button as well
+* Fixed a bug where you would use a spell if you had enough extra soul after healing
+* Significantly improved the camera system and fixed many inconsistencies and bugs
+* Player now cannot cling to the walls while pogo-ing
+* Screen now fades to black at hazard respawns
+
 ## Update 20-Mar-2022: v0.1.3
 * Fixed a bug with hazards that would not set the player to the ground
 * Fixed a bug with hazards that would not reset the camera

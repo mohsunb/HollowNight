@@ -11,11 +11,15 @@ public class CameraFocusPoint extends StaticEntity
     private boolean focused = true;
     private boolean vertical_lock = false;
     private boolean far = false;
+    private boolean looking_up = false;
+    private boolean looking_down = false;
+    private int looking_timer = 0;
+    private int look_counter = 0;
 
     private final ArrayList<Float> pX = new ArrayList<Float>();
+    private final ArrayList<Float> pY = new ArrayList<Float>();
     private float ttY = 0;
     private boolean y_chosen = false;
-    private final ArrayList<Float> pY = new ArrayList<Float>();
 
     int counter = 0;
 
@@ -69,6 +73,35 @@ public class CameraFocusPoint extends StaticEntity
         handler.getCamera().centerOnEntity(this);
         Player player = handler.getWorld().getEntityManager().getPlayer();
 
+        if (player.looking_up && !looking_up)
+        {
+            looking_timer++;
+            if (looking_timer >= Launcher.framerate_limit * 0.5)
+            {
+                looking_timer = 0;
+                looking_up = true;
+            }
+        }
+
+        if (looking_up && !player.looking_up)
+            looking_up = false;
+
+        if (player.looking_down && !looking_down)
+        {
+            looking_timer++;
+            if (looking_timer >= Launcher.framerate_limit * 0.5)
+            {
+                looking_timer = 0;
+                looking_down = true;
+            }
+        }
+
+        if (looking_timer > 0 && !player.looking_down && !player.looking_up)
+            looking_timer = 0;
+
+        if (looking_down && !player.looking_down)
+            looking_down = false;
+
         if (counter < Launcher.framerate_limit * 0.0625)
         {
             counter++;
@@ -92,14 +125,28 @@ public class CameraFocusPoint extends StaticEntity
             pX.add(player.getCenterX());
             pY.remove(0);
 
-            if (player.looking_up)
-                pY.add(player.getCenterY() - 200);
-            else if (player.looking_down)
-                pY.add(player.getCenterY() + 200);
+            if (look_counter > 0 && !looking_up && !looking_down)
+                look_counter = 0;
+
+            if (looking_up)
+            {
+                pY.add((float) (player.getCenterY() - 200 * look_counter / (Launcher.framerate_limit * 0.0625)));
+                y_chosen = false;
+                if (look_counter < Launcher.framerate_limit * 0.0625)
+                    look_counter++;
+            }
+
+            else if (looking_down)
+            {
+                pY.add((float) (player.getCenterY() + 200 * look_counter / (Launcher.framerate_limit * 0.0625)));
+                y_chosen = false;
+                if (look_counter < Launcher.framerate_limit * 0.0625)
+                    look_counter++;
+            }
 
             else if (vertical_lock)
             {
-                if (ttY == 0)
+                if (ttY == 0 || ttY != player.getCenterY())
                     pY.add(pY.get(pY.size() - 1));
                 else
                     pY.add(ttY);
@@ -114,10 +161,10 @@ public class CameraFocusPoint extends StaticEntity
             else if (far)
             {
                 if (player.getCenterY() > getCenterY() + 50)
-                    pY.add(pY.get(pY.size() - 1) + 10);
+                    pY.add(pY.get(pY.size() - 1) + 10 * 144 / Launcher.framerate_limit);
 
                 else if (player.getCenterY() < getCenterY() - 50)
-                    pY.add(pY.get(pY.size() - 1) - 10);
+                    pY.add(pY.get(pY.size() - 1) - 10 * 144 / Launcher.framerate_limit);
 
                 else
                     pY.add(pY.get(pY.size() - 1));
