@@ -36,6 +36,8 @@ public abstract class Chest extends StaticEntity
         {
             open();
             setSolid(false);
+            handler.getWorld().spawnEntity(new SolidArea(handler, getX(), getY() + 20, 20, bounds.height - 20));
+            handler.getWorld().spawnEntity(new SolidArea(handler, getX() + bounds.width - 20, getY() + 20, 20, bounds.height - 20));
             opened = true;
             has_knockback = false;
             is_pogoable = false;
@@ -66,6 +68,12 @@ public abstract class Chest extends StaticEntity
             was_just_attacked = true;
             open = true;
         }
+    }
+
+    @Override
+    public void fireballHit()
+    {
+
     }
 
     @Override

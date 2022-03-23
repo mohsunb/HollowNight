@@ -54,55 +54,42 @@ public class Geo extends Creature
     public void update()
     {
         Player player = handler.getWorld().getEntityManager().getPlayer();
-        if (exists)
+        if (!can_be_collected)
         {
-            if (!can_be_collected)
-            {
-                boolean bool = false;
-                for (Entity e : player.getCollidingEntities(player.xMove, player.yMove))
-                    if (e.equals(this))
-                    {
-                        bool = true;
-                        break;
-                    }
+            boolean bool = false;
+            for (Entity e : player.getCollidingEntities(player.xMove, player.yMove))
+                if (e.equals(this))
+                {
+                    bool = true;
+                    break;
+                }
 
-                if (!bool)
-                    can_be_collected = true;
-            }
-
-            move();
+            if (!bool)
+                can_be_collected = true;
         }
 
-
-        else if (getX() != 0 || getY() != 0)
-        {
-            setX(0);
-            setY(0);
-        }
+        move();
     }
 
     @Override
     public void render(Graphics2D gfx)
     {
-        if (exists)
+        if (size == 0)
+            gfx.drawImage(Assets.geo_small, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
+
+        else if (size == 1)
+            gfx.drawImage(Assets.geo_medium, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
+
+        else if (size == 2)
+            gfx.drawImage(Assets.geo_large, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
+
+        else
+            gfx.drawImage(Assets.geo_small, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
+
+        if (Launcher.show_hitboxes)
         {
-            if (size == 0)
-                gfx.drawImage(Assets.geo_small, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
-
-            else if (size == 1)
-                gfx.drawImage(Assets.geo_medium, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
-
-            else if (size == 2)
-                gfx.drawImage(Assets.geo_large, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
-
-            else
-                gfx.drawImage(Assets.geo_small, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
-
-            if (Launcher.show_hitboxes)
-            {
-                gfx.setColor(Color.blue);
-                gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
-            }
+            gfx.setColor(Color.blue);
+            gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
 
@@ -136,7 +123,7 @@ public class Geo extends Creature
         if (can_be_collected)
         {
             handler.getWorld().getEntityManager().getPlayer().addGeo(getCount());
-            exists = false;
+            handler.getWorld().removeEntity(this);
         }
     }
 }

@@ -186,6 +186,8 @@ public class Stalagmite extends Creature
             if (!player.invulnerable && !player.shadow_dashing)
             {
                 player.health -= 20;
+                player.triggerScreenShake();
+                player.triggerDamageFreeze();
                 player.invulnerable = true;
                 player.damage_shocked = true;
                 if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))

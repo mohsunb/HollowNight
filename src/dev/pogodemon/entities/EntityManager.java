@@ -40,7 +40,11 @@ public class EntityManager
     public void update()
     {
         for (Entity e : entities)
+        {
+            if (e.equals(cam))
+                continue;
             e.update();
+        }
     }
 
     public void render(Graphics2D gfx)

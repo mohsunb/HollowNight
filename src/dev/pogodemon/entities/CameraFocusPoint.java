@@ -1,6 +1,8 @@
 package dev.pogodemon.entities;
 
+import dev.pogodemon.Game;
 import dev.pogodemon.Launcher;
+import dev.pogodemon.states.GameState;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -8,6 +10,8 @@ import java.util.ArrayList;
 
 public class CameraFocusPoint extends StaticEntity
 {
+    private float xOffset = 0;
+    private float yOffset = 0;
     private boolean focused = true;
     private boolean vertical_lock = false;
     private boolean far = false;
@@ -70,7 +74,12 @@ public class CameraFocusPoint extends StaticEntity
     @Override
     public void update()
     {
-        handler.getCamera().centerOnEntity(this);
+        if (xOffset != 0 && !GameState.screen_shake)
+            xOffset = 0;
+
+        if (yOffset != 0 && !GameState.screen_shake)
+            yOffset = 0;
+
         Player player = handler.getWorld().getEntityManager().getPlayer();
 
         if (player.looking_up && !looking_up)
@@ -119,8 +128,8 @@ public class CameraFocusPoint extends StaticEntity
 
             float tX = pX.get(0);
             float tY = pY.get(0);
-            setX(tX);
-            setY(tY);
+            setX(tX + xOffset);
+            setY(tY + yOffset);
             pX.remove(0);
             pX.add(player.getCenterX());
             pY.remove(0);
@@ -207,7 +216,8 @@ public class CameraFocusPoint extends StaticEntity
     }
 
     @Override
-    public void fireballHit() {
+    public void fireballHit()
+    {
 
     }
 
@@ -215,5 +225,25 @@ public class CameraFocusPoint extends StaticEntity
     public void playerContact()
     {
 
+    }
+
+    public float getXOffset()
+    {
+        return xOffset;
+    }
+
+    public float getYOffset()
+    {
+        return yOffset;
+    }
+
+    public void setXOffset(float xO)
+    {
+        xOffset = xO;
+    }
+
+    public void setYOffset(float yO)
+    {
+        yOffset = yO;
     }
 }

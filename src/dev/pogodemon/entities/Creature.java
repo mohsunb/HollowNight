@@ -31,12 +31,16 @@ public abstract class Creature extends Entity
     public boolean damage_shocked_right = false;
     public boolean invulnerable = false;
 
-    //Abilities (temporary, will be loaded off of a save file in the future)
-    protected boolean hasMothwingCloak = true;
-    protected boolean hasShadeCloak = true;
-    protected boolean hasMantisClaw = true;
-    protected boolean hasMonarchWings = true;
-    protected boolean hasCrystalHeart = true;
+    //Player abilities (temporary, will be loaded off of a save file in the future)
+    protected boolean hasMothwingCloak = false;
+    protected boolean hasShadeCloak = false;
+    protected boolean hasMantisClaw = false;
+    protected boolean hasMonarchWings = false;
+    protected boolean hasCrystalHeart = false;
+
+    //Charm effect
+    protected boolean shamanStone = false;
+    protected boolean quickSlash = false;
 
     //jumping helper dynamic flags
     protected boolean double_jumping = false;

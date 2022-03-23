@@ -23,9 +23,6 @@ public class World
     private int[][] tiles;
     private EntityManager entityManager;
 
-    private String copyPath;
-    private int copySpawnX, copySpawnY;
-
     public World(Handler handler, String path, int spawnX, int spawnY)
     {
         try

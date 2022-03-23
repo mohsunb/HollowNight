@@ -118,8 +118,8 @@ public class PlayerSlash extends Creature
 
         if (exists)
         {
-            x = player.getX();
-            y = player.getY();
+            setX(player.getX());
+            setY(player.getY());
 
             if (checkEntityCollisions(xMove, yMove))
             {

@@ -5,6 +5,7 @@ import dev.pogodemon.entities.*;
 import dev.pogodemon.entities.creatures.Crawlid;
 import dev.pogodemon.entities.creatures.Vengefly;
 import dev.pogodemon.entities.objects.*;
+import dev.pogodemon.items.Items;
 import dev.pogodemon.utils.Handler;
 
 public class WorldLoader
@@ -20,6 +21,12 @@ public class WorldLoader
         World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4752); // 2000 4752
         handler.setWorld(kings_pass);
 
+        handler.getWorld().spawnEntity(new InteractableItem(handler, 2100, 4802, false, Items.mothwingCloak));
+        handler.getWorld().spawnEntity(new InteractableItem(handler, 2300, 4802, false, Items.mantisClaw));
+        handler.getWorld().spawnEntity(new InteractableItem(handler, 2500, 4802, false, Items.crystalHeart));
+        handler.getWorld().spawnEntity(new InteractableItem(handler, 2700, 4802, false, Items.monarchWings));
+        handler.getWorld().spawnEntity(new InteractableItem(handler, 2900, 4802, false, Items.shadeCloak));
+
         kings_pass.spawnEntity(new CollapsableFloor(handler, 8960, 1200, 1000, 200, (int) (Launcher.framerate_limit * 0.5)));
         kings_pass.spawnEntity(new BreakableWallDirtmouthEntrance(handler, 14760, 440, 120, 760));
         kings_pass.spawnEntity(new BreakableWallKingsPass(handler, 4700, 4640, 100, 240, false));
@@ -29,7 +36,7 @@ public class WorldLoader
         kings_pass.spawnEntity(new BreakableWallKingsPass(handler, 9700, 4640, 100, 240, false));
         kings_pass.spawnEntity(new BreakableWallKingsPass(handler, 5740, 3560, 100, 240, true));
 
-        kings_pass.spawnEntity(new ChestGeo(handler, 13400, 4420, 100));
+        kings_pass.spawnEntity(new ChestItem(handler, 13400, 4420, Items.hallownestSeal));
 
         kings_pass.spawnEntity(new Stalagmite(handler, 9410, 2880, 700));
         kings_pass.spawnEntity(new Stalagmite(handler, 4960, 1880, 600));

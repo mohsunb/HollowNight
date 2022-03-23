@@ -5,6 +5,13 @@ An attempt at remaking **Hollow Knight** from **Team Cherry** for a project aime
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
 You can change the launch options in the main class. The game currently only works at 1920x1080 resolution. I will try to add resolution scaling in the future.
 
+## Update 24-Mar-2022: v0.1.5
+* Chests now have proper hitbox after being opened
+* Implemented item system
+* Implemented item chests
+* Added screen shake
+* Game now freezes for a brief time when getting hit
+
 ## Update 23-Mar-2022: v0.1.4
 * Fixed a bug with the rendering of healing sprites (Windows specific)
 * Vengeful Spirit can now be used with the heal button as well

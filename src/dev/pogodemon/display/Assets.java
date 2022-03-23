@@ -28,7 +28,8 @@ public class Assets
             , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left, player_up_right, player_up_left, player_down_right, player_down_left
             , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open, soul_vessel_hud_middle, breakable_wall_generic_right, breakable_wall_generic_left
             , heal_right, heal_left, vengeful_spirit_right, vengeful_spirit_left, vengeful_spirit_big_right, vengeful_spirit_big_left, spell_char_right
-            , spell_char_left;
+            , spell_char_left, item_pickup_right, item_pickup_left, interact, mothwing_cloak, mantis_claw, crystal_heart, monarch_wings, shade_cloak
+            , hallownest_seal, wanderers_journal, kings_idol, arcane_egg, damage;
 
     public static void init()
     {
@@ -164,5 +165,18 @@ public class Assets
         vengeful_spirit_big_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/spells/vengeful_spirit_big_left.png");
         spell_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/spell_char_right.png");
         spell_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/spell_char_left.png");
+        item_pickup_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/item_pickup_right.png");
+        item_pickup_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/item_pickup_left.png");
+        interact = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/interact.png");
+        mothwing_cloak = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/mothwing_cloak.png");
+        mantis_claw = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/mantis_claw.png");
+        crystal_heart = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/crystal_heart.png");
+        monarch_wings = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/monarch_wings.png");
+        shade_cloak = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/shade_cloak.png");
+        hallownest_seal = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/hallownest_seal.png");
+        wanderers_journal = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/wanderers_journal.png");
+        kings_idol = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/kings_idol.png");
+        arcane_egg = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/arcane_egg.png");
+        damage = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/damage_shock.png");
     }
 }

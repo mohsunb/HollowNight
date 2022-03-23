@@ -3,15 +3,23 @@ package dev.pogodemon.entities;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.display.SpriteSheet;
+import dev.pogodemon.items.Item;
+import dev.pogodemon.items.Items;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import java.util.ArrayList;
 
 public class Player extends Creature
 {
+    private boolean screen_shake_triggered = false;
+    private int screen_shake_counter = 0;
+    private boolean damage_shock_freeze_triggered = false;
+    private int damage_shock_freeze_timer = 0;
+
     private int max_health;
     private int geo = 100;
     private int geo_buffer = 0;
@@ -38,6 +46,22 @@ public class Player extends Creature
     private boolean heal_button_fireball = false;
     private int heal_button_fireball_timer = 0;
 
+    public boolean item_pickup = false;
+    private boolean item_pickup_ground = false;
+    private int item_pickup_timer = 0;
+
+    private ArrayList<Item> items = new ArrayList<Item>();
+
+    /*
+    0 -> Fade in
+    1 -> Static
+    2 -> Fade out
+     */
+    private int itemDisplayState = 0;
+    private Item latestItemDisplayed = null;
+    private boolean itemDisplayed = false;
+    private float itemDisplayCounter = 0;
+
     public Player(Handler handler, float x, float y)
     {
         super(handler, x, y, Creature.DEFAULT_WIDTH * 0.75f, Creature.DEFAULT_HEIGHT * 1.625f);
@@ -51,6 +75,69 @@ public class Player extends Creature
         can_be_killed = false;
 
         CREATURE_TYPE = 0; //Player
+
+        /*giveItem(Items.mothwingCloak);
+        giveItem(Items.shadeCloak);
+        giveItem(Items.mantisClaw);
+        giveItem(Items.crystalHeart);
+        giveItem(Items.monarchWings);*/
+    }
+
+    public void triggerDamageFreeze()
+    {
+        if (!damage_shock_freeze_triggered)
+            damage_shock_freeze_triggered = true;
+    }
+
+    public boolean damageFreezeTriggered()
+    {
+        return damage_shock_freeze_triggered;
+    }
+
+    public void triggerScreenShake()
+    {
+        if (!screen_shake_triggered)
+            screen_shake_triggered = true;
+    }
+
+    public boolean screenShakeTriggered()
+    {
+        return screen_shake_triggered;
+    }
+
+    public void displayItem(Item item)
+    {
+        if (itemDisplayed)
+        {
+            itemDisplayState = 0;
+            itemDisplayCounter = 0;
+        }
+
+        else
+            itemDisplayed = true;
+
+        latestItemDisplayed = item;
+    }
+
+    public void giveItem(Item item)
+    {
+        ArrayList<Item> temp = new ArrayList<Item>(items);
+        temp.add(item);
+        items = temp;
+    }
+
+    public void takeItem(Item item)
+    {
+        ArrayList<Item> temp = new ArrayList<Item>(items);
+        for (Item i : temp)
+        {
+            if (i.type() == item.type() && i.name().equals(item.name()))
+            {
+                temp.remove(i);
+                break;
+            }
+        }
+        items = temp;
     }
 
     public boolean looking_up = false;
@@ -93,8 +180,11 @@ public class Player extends Creature
     public void hazardRespawn()
     {
         hazard_triggered = true;
+
         if (!damage_shocked)
             damage_shocked = true;
+
+        damage_shocked_right = !isFacingRight();
     }
 
     public void updateRespawnPoint(float x, float y)
@@ -110,9 +200,109 @@ public class Player extends Creature
             soul = max_soul;
     }
 
+    public void pickupItem(boolean ground)
+    {
+        item_pickup = true;
+        item_pickup_ground = ground;
+    }
+
     @Override
     public void update()
     {
+        if (screen_shake_triggered && screen_shake_counter++ >= 1)
+        {
+            screen_shake_counter = 0;
+            screen_shake_triggered = false;
+        }
+
+        if (damage_shock_freeze_triggered && damage_shock_freeze_timer++ >= 1)
+        {
+            damage_shock_freeze_timer = 0;
+            damage_shock_freeze_triggered = false;
+        }
+
+        if (itemDisplayed)
+        {
+            itemDisplayCounter++;
+            if (itemDisplayState == 0)
+            {
+                if (itemDisplayCounter >= Launcher.framerate_limit / 3F)
+                {
+                    itemDisplayCounter = 0;
+                    itemDisplayState++;
+                }
+            }
+
+            else if (itemDisplayState == 1)
+            {
+                if (itemDisplayCounter >= Launcher.framerate_limit * 4)
+                {
+                    itemDisplayCounter = 0;
+                    itemDisplayState++;
+                }
+            }
+
+            else if (itemDisplayState == 2)
+            {
+                if (itemDisplayCounter >= Launcher.framerate_limit / 6F)
+                {
+                    itemDisplayCounter = 0;
+                    itemDisplayState = 0;
+                    itemDisplayed = false;
+                    latestItemDisplayed = null;
+                }
+            }
+        }
+
+        for (Item i : items)
+        {
+            if (i.type() == Item.SKILL)
+            {
+                if (!hasMothwingCloak && i.name().equals(Items.mothwingCloak.name()))
+                {
+                    hasMothwingCloak = true;
+                    continue;
+                }
+
+                if (!hasShadeCloak && i.name().equals(Items.shadeCloak.name()))
+                {
+                    hasShadeCloak = true;
+                    continue;
+                }
+
+                if (!hasMantisClaw && i.name().equals(Items.mantisClaw.name()))
+                {
+                    hasMantisClaw = true;
+                    continue;
+                }
+
+                if (!hasCrystalHeart && i.name().equals(Items.crystalHeart.name()))
+                {
+                    hasCrystalHeart = true;
+                    continue;
+                }
+
+                if (!hasMonarchWings && i.name().equals(Items.monarchWings.name()))
+                    hasMonarchWings = true;
+            }
+        }
+
+        if (item_pickup)
+        {
+            item_pickup_timer++;
+            if (item_pickup_timer >= Launcher.framerate_limit * 0.8)
+            {
+                item_pickup_timer = 0;
+                item_pickup = false;
+            }
+        }
+
+        if (item_pickup && damage_shocked)
+        {
+            item_pickup = false;
+            item_pickup_timer = 0;
+        }
+
         if (fireball_knockback)
         {
             fireball_knockback_timer++;
@@ -349,7 +539,7 @@ public class Player extends Creature
                 yMove = 0;
             }
 
-            if (!can_dash)
+            if (!can_dash && hasMothwingCloak)
                 can_dash = true;
 
             if (did_double_jump)
@@ -404,17 +594,15 @@ public class Player extends Creature
         }
 
         if (slash_blocked)
-        {
             slash_cooldown_timer++;
-        }
 
-        if (slash_timer >= Launcher.framerate_limit * 0.25)
+        if (slash_timer >= Launcher.framerate_limit * (quickSlash ? 0.25 : 0.35))
         {
             slash_timer = 0;
             slashing = false;
         }
 
-        if (slash_cooldown_timer >= Launcher.framerate_limit * 0.41)
+        if (slash_cooldown_timer >= Launcher.framerate_limit * (quickSlash ? 0.28 : 0.41))
         {
             slash_cooldown_timer = 0;
             slash_blocked = false;
@@ -451,7 +639,7 @@ public class Player extends Creature
             damage_shock_timer = 0;
         }
 
-        if (cling_right || cling_left)
+        if (hasMothwingCloak && (cling_right || cling_left))
             can_dash = true;
 
         //prevent hard fall by dashing or clinging
@@ -530,6 +718,7 @@ public class Player extends Creature
                 setY(respawnY);
                 handler.getWorld().getEntityManager().getPlayerCamera().clearCameraQueue();
                 health -= 20;
+                triggerScreenShake();
                 invulnerable = true;
                 fall_shocked = true;
                 dashing = false;
@@ -548,6 +737,29 @@ public class Player extends Creature
 
     private void getInput()
     {
+        if (item_pickup || damage_shocked || fall_shocked)
+        {
+            if (handler.getKeyManager().a)
+            {
+                illegal_heal = true;
+                illegal_fireball = true;
+            }
+
+            if (handler.getKeyManager().s)
+                illegal_superdash = true;
+            if (handler.getKeyManager().f)
+                illegal_fireball = true;
+            if (handler.getKeyManager().z)
+            {
+                illegal_jumping = true;
+                illegal_double_jumping = true;
+            }
+            if (handler.getKeyManager().x)
+                illegal_slash = true;
+            if (handler.getKeyManager().c)
+                can_dash = false;
+        }
+
         if (illegal_heal && heal_button_fireball)
         {
             heal_button_fireball_timer++;
@@ -561,11 +773,11 @@ public class Player extends Creature
         if (!post_heal && !heal_button_fireball && !illegal_heal && handler.getKeyManager().a)
             heal_button_fireball = true;
 
-        if ((((heal_buffer_timer > 0 && !post_heal && !healing) || illegal_heal) && heal_button_fireball && !handler.getKeyManager().a) || (!illegal_fireball && !fireball_blocked && !dashing && !superdash && superdash_charge_timer == 0 && !superdash_charged && !fall_shocked && !damage_shocked && !post_heal && handler.getKeyManager().f))
+        if ((((heal_buffer_timer > 0 && !post_heal && !healing) || illegal_heal) && heal_button_fireball && !handler.getKeyManager().a) || (!illegal_fireball && !fireball_blocked && !dashing && !superdash && superdash_charge_timer == 0 && !superdash_charged && !item_pickup && !fall_shocked && !damage_shocked && !post_heal && handler.getKeyManager().f))
         {
-            if (Math.ceil(soul) >= 33 && (slash_timer == 0 || slash_timer >= Launcher.framerate_limit * 0.125F))
+            if (Math.ceil(soul) >= 33 && (slash_timer == 0 || slash_timer >= Launcher.framerate_limit * 0.175F))
             {
-                handler.getWorld().spawnEntity(new Fireball(handler, getCenterX(), getCenterY(), false, isFacingRight()));
+                handler.getWorld().spawnEntity(new Fireball(handler, getCenterX(), getCenterY(), shamanStone, isFacingRight()));
                 soul -= 33;
                 fireball_blocked = true;
                 fireball_knockback = true;
@@ -579,7 +791,7 @@ public class Player extends Creature
         if (illegal_fireball && !handler.getKeyManager().f)
             illegal_fireball = false;
 
-        if (!fireball_knockback && can_heal && !illegal_heal && grounded && !dashing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !fall_shocked && !damage_shocked && handler.getKeyManager().a)
+        if (!fireball_knockback && can_heal && !illegal_heal && grounded && !dashing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !item_pickup && !fall_shocked && !damage_shocked && handler.getKeyManager().a)
         {
             if (!healing)
             {
@@ -643,7 +855,7 @@ public class Player extends Creature
             }
         }
 
-        if (!fireball_knockback && !post_heal && !healing && !looking_up && grounded && !superdash_shocked && !damage_shocked && !fall_shocked && xMove == 0 && handler.getKeyManager().up)
+        if (!fireball_knockback && !post_heal && !healing && !looking_up && grounded && !superdash_shocked && !damage_shocked && !item_pickup && !fall_shocked && xMove == 0 && handler.getKeyManager().up)
         {
             looking_up_timer++;
             if (looking_up_timer >= Launcher.framerate_limit * 0.5)
@@ -653,7 +865,7 @@ public class Player extends Creature
             }
         }
 
-        if (!fireball_knockback && !looking_down && grounded && !superdash_shocked && !damage_shocked && !fall_shocked && xMove == 0 && handler.getKeyManager().down)
+        if (!fireball_knockback && !looking_down && grounded && !superdash_shocked && !damage_shocked && !item_pickup && !fall_shocked && xMove == 0 && handler.getKeyManager().down)
         {
             looking_down_timer++;
             if (looking_down_timer >= Launcher.framerate_limit * 0.5)
@@ -707,7 +919,7 @@ public class Player extends Creature
             superdash_shocked = true;
         }
 
-        if (!fireball_knockback && !post_heal && !healing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !fall_shocked && !damage_shocked && !slashing && !slash_blocked && !illegal_slash && handler.getKeyManager().x)
+        if (!fireball_knockback && !post_heal && !healing && !superdash_shocked && superdash_charge_timer == 0 && !superdash_charged && !superdash && !dashing && !item_pickup && !fall_shocked && !damage_shocked && !slashing && !slash_blocked && !illegal_slash && handler.getKeyManager().x)
         {
             slashing = true;
             alternative_slash_sprite = !alternative_slash_sprite;
@@ -776,7 +988,7 @@ public class Player extends Creature
             }
         }
 
-        if (!fireball_knockback && !fall_shocked && !damage_shocked)
+        if (!fireball_knockback && !item_pickup && !fall_shocked && !damage_shocked)
         {
             if (!dashing && !can_dash && (grounded || can_dash_twice) && !handler.getKeyManager().c)
             {
@@ -1005,9 +1217,28 @@ public class Player extends Creature
     @Override
     public void render(Graphics2D gfx)
     {
+        if (damageFreezeTriggered())
+            gfx.drawImage(Assets.damage, (int) (x - handler.getCamera().getxOffset() - 650), (int) (y - handler.getCamera().getyOffset() - 50), null);
+
         //Coordinates
         gfx.setColor(Color.white);
         gfx.drawString("X: " + (int) getX() + "  Y: " + (int) getY(), 5, 15);
+
+        if (itemDisplayed)
+        {
+            if (itemDisplayState == 0)
+                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, itemDisplayCounter / (Launcher.framerate_limit / 3F)));
+            else if (itemDisplayState == 1)
+                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+            else if (itemDisplayState == 2)
+                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F - itemDisplayCounter / (Launcher.framerate_limit / 6F)));
+
+            gfx.drawImage(latestItemDisplayed.icon(), 150 - (int) (latestItemDisplayed.icon().getWidth() * 0.5F), Launcher.game_height - 150 - (int) (latestItemDisplayed.icon().getHeight() * 0.5F), null);
+            gfx.setFont(new Font("Arial", Font.PLAIN, 45));
+            gfx.drawString(latestItemDisplayed.name(), 170 + (int) (latestItemDisplayed.icon().getWidth() * 0.5F), Launcher.game_height - 135);
+            gfx.setFont(new Font("Arial", Font.PLAIN, 12));
+            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+        }
 
         //Render player
         if (cling_left)
@@ -1056,7 +1287,15 @@ public class Player extends Creature
 
         else if (facing_right)
         {
-            if (fireball_knockback)
+            if (item_pickup)
+            {
+                if (item_pickup_ground)
+                    gfx.drawImage(Assets.fall_shock_right, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                else
+                    gfx.drawImage(Assets.item_pickup_right, (int) (x - handler.getCamera().getxOffset() + 5), (int) (y - handler.getCamera().getyOffset() + 5), null);
+            }
+
+            else if (fireball_knockback)
                 gfx.drawImage(Assets.spell_char_right, (int) (x - handler.getCamera().getxOffset() - 140), (int) (y - handler.getCamera().getyOffset() - 220), null);
 
             else if (healing)
@@ -1158,7 +1397,15 @@ public class Player extends Creature
 
         else
         {
-            if (fireball_knockback)
+            if (item_pickup)
+            {
+                if (item_pickup_ground)
+                    gfx.drawImage(Assets.fall_shock_left, (int) (x - handler.getCamera().getxOffset() - 4), (int) (y - handler.getCamera().getyOffset() + 20), null);
+                else
+                    gfx.drawImage(Assets.item_pickup_left, (int) (x - handler.getCamera().getxOffset() - 15), (int) (y - handler.getCamera().getyOffset() + 5), null);
+            }
+
+            else if (fireball_knockback)
                 gfx.drawImage(Assets.spell_char_left, (int) (x - handler.getCamera().getxOffset() - 200), (int) (y - handler.getCamera().getyOffset() - 220), null);
 
             else if (healing)
