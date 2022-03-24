@@ -24,7 +24,7 @@ public class Player extends Creature
     private float damage_shock_freeze_length = 0;
 
     public int max_health;
-    private int geo = 100;
+    private int geo = 0;
     public int geo_buffer = 0;
     public boolean has_buffered_geo;
     private int geo_buffer_timer;
@@ -38,7 +38,9 @@ public class Player extends Creature
     private int heal_counter = 0;
     private boolean can_heal = false;
 
-    public float soul = 99;
+    public int lifeblood = 0;
+
+    public float soul = 0;
     public float max_soul = 99;
 
     private boolean fireball_knockback = false;
@@ -711,7 +713,7 @@ public class Player extends Creature
                 setX(respawnX);
                 setY(respawnY);
                 handler.getWorld().getEntityManager().getPlayerCamera().clearCameraQueue();
-                health -= 20;
+                dealDamage();;
                 invulnerable = true;
                 fall_shocked = true;
                 dashing = false;
@@ -1550,6 +1552,29 @@ public class Player extends Creature
             out = in;
 
         return out;
+    }
+
+    public void dealDamage()
+    {
+        if (lifeblood >= 20)
+            lifeblood -= 20;
+        else
+            health -= 20;
+    }
+
+    public void dealDoubleDamage()
+    {
+        if (lifeblood >= 40)
+            lifeblood -= 40;
+
+        else if (lifeblood == 20)
+        {
+            lifeblood -= 20;
+            health -= 20;
+        }
+
+        else
+            health -= 40;
     }
 
     public void setScreenShakeLength(float i)

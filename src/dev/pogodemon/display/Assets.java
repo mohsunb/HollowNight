@@ -1,15 +1,13 @@
 package dev.pogodemon.display;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 
 public class Assets
 {
     public static BufferedImage player_right, player_left, tile_collision, tile_empty, grass, mask_full, mask_empty
-            , soul_vessel_hud_up, soul_vessel_hud_down, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left, fall_shock_right
-            , fall_shock_left, cling_right, cling_left, slash1_right, slash1_left, slash2_right, slash2_left, upslash_right, upslash_left
-            , downslash_right, downslash_left, upslash_char_right, upslash_char_left, downslash_char_right, downslash_char_left
+            , soul_vessel_hud_up, soul_vessel_hud_down, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left
+            , fall_shock_right, fall_shock_left, cling_right, cling_left, slash1_right, slash1_left, slash2_right, slash2_left, upslash_right
+            , upslash_left, downslash_right, downslash_left, upslash_char_right, upslash_char_left, downslash_char_right, downslash_char_left
             , slash1_char_left, slash1_char_right, slash2_char_right, slash2_char_left, spikes_small_up, spikes_small_right
             , spikes_small_down, spikes_small_left, spikes_medium_up, spikes_medium_right, spikes_medium_down, spikes_medium_left
             , spikes_large_up, spikes_large_down, spikes_large_left, spikes_large_right, damage_shock_right, damage_shock_left
@@ -27,10 +25,11 @@ public class Assets
             , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large, geo_deposit_up, geo_deposit_down, geo_deposit_left, geo_deposit_right
             , geo_deposit_broken_up, geo_deposit_broken_down, geo_deposit_broken_left, geo_deposit_broken_right, vengefly_idle_right
             , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left, player_up_right, player_up_left, player_down_right, player_down_left
-            , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open_back, chest_open_front, soul_vessel_hud_middle, breakable_wall_generic_right, breakable_wall_generic_left
-            , heal_right, heal_left, vengeful_spirit_right, vengeful_spirit_left, vengeful_spirit_big_right, vengeful_spirit_big_left, spell_char_right
-            , spell_char_left, item_pickup_right, item_pickup_left, interact, mothwing_cloak, mantis_claw, crystal_heart, monarch_wings, shade_cloak
-            , hallownest_seal, wanderers_journal, kings_idol, arcane_egg, damage, heal_decal;
+            , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open_back, chest_open_front, soul_vessel_hud_middle, breakable_wall_generic_right
+            , breakable_wall_generic_left, heal_right, heal_left, vengeful_spirit_right, vengeful_spirit_left, vengeful_spirit_big_right, vengeful_spirit_big_left
+            , spell_char_right, spell_char_left, item_pickup_right, item_pickup_left, interact, mothwing_cloak, mantis_claw, crystal_heart, monarch_wings, shade_cloak
+            , hallownest_seal, wanderers_journal, kings_idol, arcane_egg, damage, heal_decal, lifeblood_cocoon, lifeseed_right, lifeseed_left
+            , lifeblood_mask;
 
     public static void init()
     {
@@ -181,5 +180,9 @@ public class Assets
         arcane_egg = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/arcane_egg.png");
         damage = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/damage_shock.png");
         heal_decal = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/heal_decal.png");
+        lifeblood_cocoon = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/lifeblood_cocoon.png");
+        lifeblood_mask = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/lifeblood_mask.png");
+        lifeseed_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/lifeseed/lifeseed_right.png");
+        lifeseed_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/lifeseed/lifeseed_left.png");
     }
 }

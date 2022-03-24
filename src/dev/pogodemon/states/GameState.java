@@ -177,6 +177,9 @@ public class GameState extends State
         for (int i = 0; i < player.health / 20; i++)
             gfx.drawImage(Assets.mask_full, 60 * i + 235, 103, null);
 
+        for (int i = 1; i < player.lifeblood / 20 + 1; i++)
+            gfx.drawImage(Assets.lifeblood_mask,60 * i + 60 * player.max_health / 20 - 60 + 235, 102, null);
+
         //Acquired Items
         if (player.itemDisplayed)
         {

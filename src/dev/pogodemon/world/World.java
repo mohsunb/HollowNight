@@ -1,5 +1,6 @@
 package dev.pogodemon.world;
 
+import dev.pogodemon.display.ImageLoader;
 import dev.pogodemon.entities.CameraFocusPoint;
 import dev.pogodemon.entities.Entity;
 import dev.pogodemon.entities.EntityManager;
@@ -19,27 +20,18 @@ public class World
 {
     private Handler handler;
     private int width, height;
-    private int spawnX, spawnY;
     private int[][] tiles;
     private EntityManager entityManager;
 
     public World(Handler handler, String path, int spawnX, int spawnY)
     {
-        try
-        {
-            this.width = ImageIO.read(new File(path)).getWidth();
-            this.height = ImageIO.read(new File(path)).getHeight();
-        }
-
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        this.width = ImageLoader.loadImage(path).getWidth();
+        this.height = ImageLoader.loadImage(path).getHeight();
 
         this.handler = handler;
         entityManager = new EntityManager(handler, new Player(handler, 0, 0), new CameraFocusPoint(handler));
 
-        loadWorldFromImage(path, spawnX, spawnY);
+        loadWorldFromImage(path);
 
         entityManager.getPlayer().setX(spawnX);
         entityManager.getPlayer().setY(spawnY);
@@ -106,27 +98,13 @@ public class World
     }
 
 
-    private void loadWorldFromImage(String ImageName, int spawnX, int spawnY)
+    private void loadWorldFromImage(String path)
     {
         /*
         The input image has to be grayscale (8-bit color)
          */
 
-        this.spawnX = spawnX;
-        this.spawnY = spawnY;
-        DataBufferByte data = null;
-        try
-        {
-            File imgPath = new File(ImageName);
-            BufferedImage bufferedImage = ImageIO.read(imgPath);
-            WritableRaster raster = bufferedImage.getRaster();
-            data = (DataBufferByte) raster.getDataBuffer();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
+        DataBufferByte data = (DataBufferByte) ImageLoader.loadImage(path).getRaster().getDataBuffer();
         int[] map_data = new int[data.getData().length];
 
         for (int i = 0; i < map_data.length; i++)

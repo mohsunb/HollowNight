@@ -18,15 +18,17 @@ public class WorldLoader
 
     public World KingsPass()
     {
-        World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4752); // 2000 4752
+        World kings_pass = new World(handler, "/dev/pogodemon/assets/collision_maps/kings_pass.png", 5062, 1352); // 2000 4752
         handler.setWorld(kings_pass);
 
+        kings_pass.spawnEntity(new LifebloodCocoon(handler, 4680, 920, 2));
+
         /*
-        handler.getWorld().spawnEntity(new InteractableItem(handler, 2100, 4802, false, Items.mothwingCloak));
-        handler.getWorld().spawnEntity(new InteractableItem(handler, 2300, 4802, false, Items.mantisClaw));
-        handler.getWorld().spawnEntity(new InteractableItem(handler, 2500, 4802, false, Items.crystalHeart));
-        handler.getWorld().spawnEntity(new InteractableItem(handler, 2700, 4802, false, Items.monarchWings));
-        handler.getWorld().spawnEntity(new InteractableItem(handler, 2900, 4802, false, Items.shadeCloak));
+        kings_pass.spawnEntity(new InteractableItem(handler, 2100, 4802, false, Items.mothwingCloak));
+        kings_pass.spawnEntity(new InteractableItem(handler, 2300, 4802, false, Items.mantisClaw));
+        kings_pass.spawnEntity(new InteractableItem(handler, 2500, 4802, false, Items.crystalHeart));
+        kings_pass.spawnEntity(new InteractableItem(handler, 2700, 4802, false, Items.monarchWings));
+        kings_pass.spawnEntity(new InteractableItem(handler, 2900, 4802, false, Items.shadeCloak));
         */
 
         kings_pass.spawnEntity(new CollapsableFloor(handler, 8960, 1200, 1000, 200, (int) (Launcher.framerate_limit * 0.5)));

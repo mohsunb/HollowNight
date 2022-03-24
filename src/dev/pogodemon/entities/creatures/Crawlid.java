@@ -207,7 +207,7 @@ public class Crawlid extends Creature
         Player player = handler.getWorld().getEntityManager().getPlayer();
         if (!player.invulnerable && !player.shadow_dashing)
         {
-            player.health -= 20;
+            player.dealDamage();
             player.triggerScreenShake();
             player.setScreenShakeLength(Launcher.framerate_limit);
             player.setScreenShakeLevel(10);

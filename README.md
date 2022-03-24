@@ -1,9 +1,14 @@
 # Hollow Night
 
-An attempt at remaking **Hollow Knight** from **Team Cherry** for a project aimed at improving my OOP/Java skills. All assets were made in GIMP. For starting the project I used the "2D Game Programming on Java Tutorial" by ***CodeNMore*** on **YouTube**.
+An attempt at remaking **Hollow Knight** from **Team Cherry** for a project aimed at improving my OOP/Java skills. All assets were made in GIMP/Paint.NET. For starting the project I used the "2D Game Programming on Java Tutorial" by ***CodeNMore*** on **YouTube**.
 
 To play the game simply clone the repository into your preferred IDE and run Launcher.java. I am using IntelliJ IDEA and cannot guarantee that it will work with other IDEs.
 You can change the launch options in the main class. The game currently only works at 1920x1080 resolution. I will try to add resolution scaling in the future.
+
+## Update 25-Mar-2022: v0.1.7
+* Reimplemented map loading system for organizing assets better
+* Added Lifeblood system
+* Added Lifeblood cocoons and Lifeseed
 
 ## Update 24-Mar-2022: v0.1.6
 * Implemented rendering rank system
