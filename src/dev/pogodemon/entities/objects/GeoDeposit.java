@@ -9,10 +9,15 @@ import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.World;
 
 import java.awt.*;
+import java.util.Random;
 
 public class GeoDeposit extends Creature
 {
     private int facing = 0; // 0 -> up; 1 -> right; 2 -> down; 3 -> left;
+    private boolean hit = false;
+    private int hit_counter = 0;
+    private float xBak;
+    private float yBak;
 
     public GeoDeposit(Handler handler, float x, float y, int facing)
     {
@@ -21,6 +26,9 @@ public class GeoDeposit extends Creature
         has_knockback = false;
         is_pogoable = true;
         health = handler.getWorld().getEntityManager().getPlayer().nail_damage * 5;
+
+        xBak = x;
+        yBak = y;
 
         this.facing = facing;
 
@@ -35,6 +43,32 @@ public class GeoDeposit extends Creature
     {
         if (exists)
         {
+            if (hit && ++hit_counter >= Launcher.framerate_limit * 0.125)
+            {
+                hit = false;
+                hit_counter = 0;
+            }
+
+            if (hit)
+            {
+                Random rand = new Random();
+                setX((float) (getX() + Math.pow(-1, rand.nextInt(0, 2)) * rand.nextInt(1, 101) * 0.01 * 2));
+                setY((float) (getY() + Math.pow(-1, rand.nextInt(0, 2)) * rand.nextInt(1, 101) * 0.01 * 2));
+
+                if (Math.abs(getX() - xBak) >= 20)
+                    setX(xBak);
+                if (Math.abs(getY() - yBak) >= 20)
+                    setY(yBak);
+            }
+
+            else
+            {
+                if (getX() != xBak)
+                    setX(xBak);
+                if (getY() != yBak)
+                    setY(yBak);
+            }
+
             if (was_just_fireball_hit)
             {
                 fireball_timer++;
@@ -55,6 +89,12 @@ public class GeoDeposit extends Creature
                     handler.getWorld().spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
             }
         }
+    }
+
+    @Override
+    public int renderRank()
+    {
+        return 0;
     }
 
     @Override
@@ -99,6 +139,12 @@ public class GeoDeposit extends Creature
             was_just_attacked = true;
             Player player = handler.getWorld().getEntityManager().getPlayer();
             health -= player.nail_damage;
+            if (!hit)
+            {
+                hit = true;
+                xBak = getX();
+                yBak = getY();
+            }
 
             World world = handler.getWorld();
             world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
@@ -114,6 +160,12 @@ public class GeoDeposit extends Creature
             was_just_fireball_hit = true;
             Player player = handler.getWorld().getEntityManager().getPlayer();
             health -= player.nail_damage;
+            if (!hit)
+            {
+                hit = true;
+                xBak = getX();
+                yBak = getY();
+            }
 
             World world = handler.getWorld();
             world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));

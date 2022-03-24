@@ -158,6 +158,12 @@ public class PlayerSlash extends Creature
     }
 
     @Override
+    public int renderRank()
+    {
+        return 3;
+    }
+
+    @Override
     public void render(Graphics2D gfx)
     {
         if (exists)

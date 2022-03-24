@@ -2,9 +2,10 @@ package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
-import dev.pogodemon.display.SpriteSheet;
 import dev.pogodemon.items.Item;
 import dev.pogodemon.items.Items;
+import dev.pogodemon.states.GameState;
+import dev.pogodemon.states.State;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -15,15 +16,17 @@ import java.util.ArrayList;
 
 public class Player extends Creature
 {
-    private boolean screen_shake_triggered = false;
-    private int screen_shake_counter = 0;
-    private boolean damage_shock_freeze_triggered = false;
-    private int damage_shock_freeze_timer = 0;
+    public boolean screen_shake_triggered = false;
+    private float screen_shake_length = 0;
+    private float screen_shake_level = 10;
 
-    private int max_health;
+    public boolean damage_shock_freeze_triggered = false;
+    private float damage_shock_freeze_length = 0;
+
+    public int max_health;
     private int geo = 100;
-    private int geo_buffer = 0;
-    private boolean has_buffered_geo;
+    public int geo_buffer = 0;
+    public boolean has_buffered_geo;
     private int geo_buffer_timer;
 
     private int heal_buffer_timer = 0;
@@ -35,8 +38,8 @@ public class Player extends Creature
     private int heal_counter = 0;
     private boolean can_heal = false;
 
-    private float soul = 0;
-    private float max_soul = 99;
+    public float soul = 99;
+    public float max_soul = 99;
 
     private boolean fireball_knockback = false;
     private int fireball_knockback_timer = 0;
@@ -57,10 +60,10 @@ public class Player extends Creature
     1 -> Static
     2 -> Fade out
      */
-    private int itemDisplayState = 0;
-    private Item latestItemDisplayed = null;
-    private boolean itemDisplayed = false;
-    private float itemDisplayCounter = 0;
+    public int itemDisplayState = 0;
+    public Item latestItemDisplayed = null;
+    public boolean itemDisplayed = false;
+    public float itemDisplayCounter = 0;
 
     public Player(Handler handler, float x, float y)
     {
@@ -76,11 +79,11 @@ public class Player extends Creature
 
         CREATURE_TYPE = 0; //Player
 
-        /*giveItem(Items.mothwingCloak);
+        giveItem(Items.mothwingCloak);
         giveItem(Items.shadeCloak);
         giveItem(Items.mantisClaw);
         giveItem(Items.crystalHeart);
-        giveItem(Items.monarchWings);*/
+        giveItem(Items.monarchWings);
     }
 
     public void triggerDamageFreeze()
@@ -185,6 +188,9 @@ public class Player extends Creature
             damage_shocked = true;
 
         damage_shocked_right = !isFacingRight();
+        triggerScreenShake();
+        setScreenShakeLength(Launcher.framerate_limit * 0.5F);
+        setScreenShakeLevel(10);
     }
 
     public void updateRespawnPoint(float x, float y)
@@ -209,18 +215,6 @@ public class Player extends Creature
     @Override
     public void update()
     {
-        if (screen_shake_triggered && screen_shake_counter++ >= 1)
-        {
-            screen_shake_counter = 0;
-            screen_shake_triggered = false;
-        }
-
-        if (damage_shock_freeze_triggered && damage_shock_freeze_timer++ >= 1)
-        {
-            damage_shock_freeze_timer = 0;
-            damage_shock_freeze_triggered = false;
-        }
-
         if (itemDisplayed)
         {
             itemDisplayCounter++;
@@ -718,7 +712,6 @@ public class Player extends Creature
                 setY(respawnY);
                 handler.getWorld().getEntityManager().getPlayerCamera().clearCameraQueue();
                 health -= 20;
-                triggerScreenShake();
                 invulnerable = true;
                 fall_shocked = true;
                 dashing = false;
@@ -818,6 +811,8 @@ public class Player extends Creature
                     heal_timer = 0;
                     if (health < max_health)
                         health += 20;
+                    GameState state = (GameState) State.getState();
+                    state.triggerHealEffect();
                     heal_counter++;
                     heal_button_fireball = false;
                     if (heal_counter == 3 || Math.ceil(soul) < 33 || health >= max_health)
@@ -1215,6 +1210,12 @@ public class Player extends Creature
     }
 
     @Override
+    public int renderRank()
+    {
+        return 1;
+    }
+
+    @Override
     public void render(Graphics2D gfx)
     {
         if (damageFreezeTriggered())
@@ -1223,22 +1224,6 @@ public class Player extends Creature
         //Coordinates
         gfx.setColor(Color.white);
         gfx.drawString("X: " + (int) getX() + "  Y: " + (int) getY(), 5, 15);
-
-        if (itemDisplayed)
-        {
-            if (itemDisplayState == 0)
-                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, itemDisplayCounter / (Launcher.framerate_limit / 3F)));
-            else if (itemDisplayState == 1)
-                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
-            else if (itemDisplayState == 2)
-                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F - itemDisplayCounter / (Launcher.framerate_limit / 6F)));
-
-            gfx.drawImage(latestItemDisplayed.icon(), 150 - (int) (latestItemDisplayed.icon().getWidth() * 0.5F), Launcher.game_height - 150 - (int) (latestItemDisplayed.icon().getHeight() * 0.5F), null);
-            gfx.setFont(new Font("Arial", Font.PLAIN, 45));
-            gfx.drawString(latestItemDisplayed.name(), 170 + (int) (latestItemDisplayed.icon().getWidth() * 0.5F), Launcher.game_height - 135);
-            gfx.setFont(new Font("Arial", Font.PLAIN, 12));
-            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
-        }
 
         //Render player
         if (cling_left)
@@ -1300,10 +1285,10 @@ public class Player extends Creature
 
             else if (healing)
             {
-                BufferedImage out = new BufferedImage(Assets.heal_right.getWidth(), Assets.heal_right.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-                RescaleOp rescaleOp = new RescaleOp(1f, 255 * heal_timer / (Launcher.framerate_limit * 0.891F), null);
-                rescaleOp.filter(Assets.heal_right, out);
-                gfx.drawImage(out, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 5), null);
+                gfx.drawImage(Assets.heal_right, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 5), null);
+                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, heal_timer / (Launcher.framerate_limit * 0.891F)));
+                gfx.drawImage(Assets.heal_decal, (int) (x - handler.getCamera().getxOffset() - 30), (int) (y - handler.getCamera().getyOffset() - 80), null);
+                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
             }
 
             else if (looking_up)
@@ -1410,10 +1395,10 @@ public class Player extends Creature
 
             else if (healing)
             {
-                BufferedImage out = new BufferedImage(Assets.heal_left.getWidth(), Assets.heal_left.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-                RescaleOp rescaleOp = new RescaleOp(1f, 255 * heal_timer / (Launcher.framerate_limit * 0.891F), null);
-                rescaleOp.filter(Assets.heal_left, out);
-                gfx.drawImage(out, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 5), null);
+                gfx.drawImage(Assets.heal_left, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() + 5), null);
+                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, heal_timer / (Launcher.framerate_limit * 0.891F)));
+                gfx.drawImage(Assets.heal_decal, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset() - 80), null);
+                gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
             }
 
             else if (looking_up)
@@ -1507,36 +1492,6 @@ public class Player extends Creature
             gfx.setColor(Color.blue);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
-
-        //Render HUD
-
-        //Soul
-        gfx.drawImage(Assets.soul_vessel_hud_up, 90, 80, null);
-        if (Math.ceil(soul) >= 33)
-            gfx.setColor(Color.white);
-        else
-            gfx.setColor(Color.lightGray);
-        gfx.drawImage(Assets.soul_vessel_hud_down, 90, 80, null);
-        gfx.fillOval(105, 110, 103, 103);
-        if (soul < max_soul)
-            gfx.drawImage(new SpriteSheet(Assets.soul_vessel_hud_down).crop(14, 30, 106, (int) (105 - Math.floor(105D / max_soul * soul))), 104, 110, null);
-        if (soul >= 55)
-            gfx.drawImage(Assets.soul_vessel_hud_middle, 115, 165, null);
-
-        //Geo
-        gfx.drawImage(Assets.geo_hud, 223, 165, null);
-        gfx.setColor(Color.white);
-        gfx.setFont(new Font("Arial", Font.PLAIN, 45));
-        gfx.drawString(Integer.toString(geo), 290, 220);
-        if (has_buffered_geo)
-            gfx.drawString((geo_buffer > 0 ? "+" : " -") + Math.abs(geo_buffer), 290, 270);
-
-        //Masks
-        for (int i = 0; i < max_health / 20; i++)
-            gfx.drawImage(Assets.mask_empty, 60 * i + 235, 105, null);
-
-        for (int i = 0; i < health / 20; i++)
-            gfx.drawImage(Assets.mask_full, 60 * i + 235, 103, null);
     }
 
     @Override
@@ -1584,6 +1539,7 @@ public class Player extends Creature
         return facing_right;
     }
 
+    //Flashing sprites when invulnerable
     private BufferedImage blackSprite(BufferedImage in)
     {
         BufferedImage out = new BufferedImage(in.getWidth(), in.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
@@ -1594,5 +1550,35 @@ public class Player extends Creature
             out = in;
 
         return out;
+    }
+
+    public void setScreenShakeLength(float i)
+    {
+        screen_shake_length = i;
+    }
+
+    public void setScreenShakeLevel(float i)
+    {
+        screen_shake_level = i;
+    }
+
+    public void setDamageShockFreezeLength(float i)
+    {
+        damage_shock_freeze_length = i;
+    }
+
+    public float getScreenShakeLength()
+    {
+        return screen_shake_length;
+    }
+
+    public float getScreenShakeLevel()
+    {
+        return screen_shake_level;
+    }
+
+    public float getDamageShockFreezeLength()
+    {
+        return damage_shock_freeze_length;
     }
 }

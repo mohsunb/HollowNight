@@ -5,7 +5,7 @@ import dev.pogodemon.items.Item;
 
 import java.awt.image.BufferedImage;
 
-public class MantisClaw  extends Item
+public class MantisClaw extends Item
 {
     @Override
     public int type()

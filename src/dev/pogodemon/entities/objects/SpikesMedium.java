@@ -27,6 +27,12 @@ public class SpikesMedium extends StaticEntity
     }
 
     @Override
+    public int renderRank()
+    {
+        return 3;
+    }
+
+    @Override
     public void render(Graphics2D gfx)
     {
         if (facing == 0)
@@ -51,7 +57,14 @@ public class SpikesMedium extends StaticEntity
     @Override
     public void hasBeenHit()
     {
-
+        if (!was_just_attacked)
+        {
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            player.triggerScreenShake();
+            player.setScreenShakeLength(Launcher.framerate_limit * 0.0625F);
+            player.setScreenShakeLevel(5);
+            was_just_attacked = true;
+        }
     }
 
     @Override

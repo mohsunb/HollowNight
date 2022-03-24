@@ -55,6 +55,12 @@ public class CollapsableFloor extends StaticEntity
     }
 
     @Override
+    public int renderRank()
+    {
+        return 0;
+    }
+
+    @Override
     public void render(Graphics2D gfx)
     {
         if (exists)

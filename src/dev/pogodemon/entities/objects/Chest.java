@@ -36,6 +36,7 @@ public abstract class Chest extends StaticEntity
         {
             open();
             setSolid(false);
+            handler.getWorld().spawnEntity(new ChestExtra(handler, getX(), getY()));
             handler.getWorld().spawnEntity(new SolidArea(handler, getX(), getY() + 20, 20, bounds.height - 20));
             handler.getWorld().spawnEntity(new SolidArea(handler, getX() + bounds.width - 20, getY() + 20, 20, bounds.height - 20));
             opened = true;
@@ -45,10 +46,16 @@ public abstract class Chest extends StaticEntity
     }
 
     @Override
+    public int renderRank()
+    {
+        return 4;
+    }
+
+    @Override
     public void render(Graphics2D gfx)
     {
         if (open)
-            gfx.drawImage(Assets.chest_open, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() - 73), null);
+            gfx.drawImage(Assets.chest_open_front, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() - 73), null);
 
         else
             gfx.drawImage(Assets.chest, (int) (x - handler.getCamera().getxOffset() - 10), (int) (y - handler.getCamera().getyOffset() - 20), null);

@@ -4,6 +4,7 @@ import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class EntityManager
 {
@@ -11,6 +12,16 @@ public class EntityManager
     private Player player;
     private CameraFocusPoint cam;
     private ArrayList<Entity> entities;
+    private final Comparator<Entity> renderSorter = new Comparator<Entity>()
+    {
+        @Override
+        public int compare(Entity o1, Entity o2)
+        {
+            if (o1.renderRank() < o2.renderRank())
+                return -1;
+            return 1;
+        }
+    };
 
     public EntityManager(Handler handler, Player player, CameraFocusPoint cam)
     {
@@ -45,6 +56,8 @@ public class EntityManager
                 continue;
             e.update();
         }
+
+        entities.sort(renderSorter);
     }
 
     public void render(Graphics2D gfx)

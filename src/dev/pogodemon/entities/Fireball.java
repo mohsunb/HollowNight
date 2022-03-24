@@ -70,6 +70,12 @@ public class Fireball extends Creature
     }
 
     @Override
+    public int renderRank()
+    {
+        return 0;
+    }
+
+    @Override
     public void render(Graphics2D gfx)
     {
         if (facing_right)

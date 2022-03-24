@@ -230,6 +230,8 @@ public abstract class Entity
 
     public abstract void update();
 
+    public abstract int renderRank();
+
     public abstract void render(Graphics2D gfx);
 
     public abstract void hasBeenHit();

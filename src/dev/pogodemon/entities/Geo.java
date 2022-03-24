@@ -51,6 +51,12 @@ public class Geo extends Creature
     }
 
     @Override
+    public int renderRank()
+    {
+        return 2;
+    }
+
+    @Override
     public void update()
     {
         Player player = handler.getWorld().getEntityManager().getPlayer();

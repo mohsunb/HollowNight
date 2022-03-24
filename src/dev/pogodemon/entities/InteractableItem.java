@@ -34,6 +34,12 @@ public class InteractableItem extends Creature
     }
 
     @Override
+    public int renderRank()
+    {
+        return 0;
+    }
+
+    @Override
     public void update()
     {
         Player player = handler.getWorld().getEntityManager().getPlayer();

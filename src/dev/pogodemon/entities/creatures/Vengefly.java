@@ -26,6 +26,11 @@ public class Vengefly extends Creature
 
     Player player = handler.getWorld().getEntityManager().getPlayer();
 
+    private boolean hit = false;
+    private float hitX = 0;
+    private float hitY = 0;
+    private int hit_counter = 0;
+
     public Vengefly(Handler handler, float x, float y, float agro_range, float de_agro_range)
     {
         super(handler, x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -43,6 +48,12 @@ public class Vengefly extends Creature
     @Override
     public void update()
     {
+        if (hit && ++hit_counter >= Launcher.framerate_limit / 3F)
+        {
+            hit = false;
+            hit_counter = 0;
+        }
+
         if (exists)
         {
             if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
@@ -89,7 +100,7 @@ public class Vengefly extends Creature
                     yMove = 0;
                 }
 
-                float s = DEFAULT_SPEED * 0.92f;
+                float s = DEFAULT_SPEED * 2.71f;
                 if (hit_knockback_right)
                     xMove = s;
                 else if (hit_knockback_left)
@@ -135,7 +146,7 @@ public class Vengefly extends Creature
                     facing_right = false;
             }
 
-            if (health <= 0) // death;
+            if (health <= 0 && !hit_knockback) // death;
             {
                 exists = false;
                 World world = handler.getWorld();
@@ -154,6 +165,12 @@ public class Vengefly extends Creature
                 setY(0);
             }
         }
+    }
+
+    @Override
+    public int renderRank()
+    {
+        return 0;
     }
 
     @Override
@@ -178,6 +195,15 @@ public class Vengefly extends Creature
             }
         }
 
+        if (hit)
+        {
+            float rate = hit_counter / (Launcher.framerate_limit / 3F);
+            gfx.setColor(new Color(255, 84, 0));
+            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F - rate));
+            gfx.fillOval((int) (hitX - handler.getCamera().getxOffset() - 100 - 200 * rate), (int) (hitY - handler.getCamera().getyOffset() - 100 - 200 * rate), (int) (200 + 2 * 200 * rate), (int) (200 + 2 * 200 * rate));
+            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+        }
+
         if (Launcher.show_hitboxes)
         {
             gfx.setColor(Color.red);
@@ -192,6 +218,12 @@ public class Vengefly extends Creature
         {
             was_just_attacked = true;
             health -= player.nail_damage;
+            if (!hit)
+            {
+                hit = true;
+                hitX = getCenterX();
+                hitY = getCenterY();
+            }
             hit_knockback = true;
             if (!player.up_slashing && !player.down_slashing)
             {
@@ -238,7 +270,10 @@ public class Vengefly extends Creature
         {
             player.health -= 20;
             player.triggerScreenShake();
+            player.setScreenShakeLength(Launcher.framerate_limit);
+            player.setScreenShakeLevel(10);
             player.triggerDamageFreeze();
+            player.setDamageShockFreezeLength(Launcher.framerate_limit / 3F);
             player.invulnerable = true;
             player.damage_shocked = true;
             if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))

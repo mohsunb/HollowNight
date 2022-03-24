@@ -1,5 +1,6 @@
 package dev.pogodemon.display;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 
@@ -26,10 +27,10 @@ public class Assets
             , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large, geo_deposit_up, geo_deposit_down, geo_deposit_left, geo_deposit_right
             , geo_deposit_broken_up, geo_deposit_broken_down, geo_deposit_broken_left, geo_deposit_broken_right, vengefly_idle_right
             , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left, player_up_right, player_up_left, player_down_right, player_down_left
-            , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open, soul_vessel_hud_middle, breakable_wall_generic_right, breakable_wall_generic_left
+            , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open_back, chest_open_front, soul_vessel_hud_middle, breakable_wall_generic_right, breakable_wall_generic_left
             , heal_right, heal_left, vengeful_spirit_right, vengeful_spirit_left, vengeful_spirit_big_right, vengeful_spirit_big_left, spell_char_right
             , spell_char_left, item_pickup_right, item_pickup_left, interact, mothwing_cloak, mantis_claw, crystal_heart, monarch_wings, shade_cloak
-            , hallownest_seal, wanderers_journal, kings_idol, arcane_egg, damage;
+            , hallownest_seal, wanderers_journal, kings_idol, arcane_egg, damage, heal_decal;
 
     public static void init()
     {
@@ -153,7 +154,8 @@ public class Assets
         stalagmite_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/stalagmite/stalagmite_right.png");
         stalagmite_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/stalagmite/stalagmite_left.png");
         chest = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/chest/chest.png");
-        chest_open = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/chest/chest_open.png");
+        chest_open_back = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/chest/chest_open_back.png");
+        chest_open_front = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/chest/chest_open_front.png");
         soul_vessel_hud_middle = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_hud_middle.png");
         breakable_wall_generic_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/breakable_wall_generic_right.png");
         breakable_wall_generic_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/breakable_wall_generic_left.png");
@@ -178,5 +180,6 @@ public class Assets
         kings_idol = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/kings_idol.png");
         arcane_egg = ImageLoader.loadImage("/dev/pogodemon/assets/textures/ui/items/arcane_egg.png");
         damage = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/damage_shock.png");
+        heal_decal = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/heal_decal.png");
     }
 }

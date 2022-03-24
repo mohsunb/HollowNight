@@ -18,6 +18,11 @@ public class Crawlid extends Creature
     private boolean hit_knockback_right = false;
     private long hit_knockback_timer = 0;
 
+    private boolean hit = false;
+    private float hitX = 0;
+    private float hitY = 0;
+    private int hit_counter = 0;
+
     public Crawlid(Handler handler, float x, float y)
     {
         super(handler, x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -31,6 +36,12 @@ public class Crawlid extends Creature
     @Override
     public void update()
     {
+        if (hit && ++hit_counter >= Launcher.framerate_limit / 3F)
+        {
+            hit = false;
+            hit_counter = 0;
+        }
+
         if (exists)
         {
             if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
@@ -61,7 +72,7 @@ public class Crawlid extends Creature
                     yMove = 0;
                 }
 
-                float s = DEFAULT_SPEED * 0.92f;
+                float s = DEFAULT_SPEED * 2.71f;
                 if (hit_knockback_right)
                     xMove = s;
                 else if (hit_knockback_left)
@@ -82,7 +93,7 @@ public class Crawlid extends Creature
             }
 
 
-            if (health <= 0) // death
+            if (health <= 0 && !hit_knockback) // death
             {
                 exists = false;
                 World world = handler.getWorld();
@@ -91,6 +102,12 @@ public class Crawlid extends Creature
                 facing_right = !handler.getWorld().getEntityManager().getPlayer().isFacingRight();
             }
         }
+    }
+
+    @Override
+    public int renderRank()
+    {
+        return 0;
     }
 
     @Override
@@ -107,9 +124,18 @@ public class Crawlid extends Creature
         else
         {
             if (facing_right)
-                gfx.drawImage(Assets.crawlid_dead_right, (int) (x - handler.getCamera().getxOffset() - 150), (int) (y - handler.getCamera().getyOffset() + 40), null);
+                gfx.drawImage(Assets.crawlid_dead_right, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() + 40), null);
             else
-                gfx.drawImage(Assets.crawlid_dead_left, (int) (x - handler.getCamera().getxOffset() + 100), (int) (y - handler.getCamera().getyOffset() + 40), null);
+                gfx.drawImage(Assets.crawlid_dead_left, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() + 40), null);
+        }
+
+        if (hit)
+        {
+            float rate = hit_counter / (Launcher.framerate_limit / 3F);
+            gfx.setColor(new Color(255, 84, 0));
+            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F - rate));
+            gfx.fillOval((int) (hitX - handler.getCamera().getxOffset() - 100 - 200 * rate), (int) (hitY - handler.getCamera().getyOffset() - 100 - 200 * rate), (int) (200 + 2 * 200 * rate), (int) (200 + 2 * 200 * rate));
+            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
         }
 
         if (Launcher.show_hitboxes)
@@ -127,6 +153,13 @@ public class Crawlid extends Creature
             was_just_attacked = true;
             Player player = handler.getWorld().getEntityManager().getPlayer();
             health -= player.nail_damage;
+            if (!hit)
+            {
+                hit = true;
+                hitX = getCenterX();
+                hitY = getCenterY();
+            }
+
 
             hit_knockback = true;
             if (!player.up_slashing && !player.down_slashing)
@@ -176,7 +209,10 @@ public class Crawlid extends Creature
         {
             player.health -= 20;
             player.triggerScreenShake();
+            player.setScreenShakeLength(Launcher.framerate_limit);
+            player.setScreenShakeLevel(10);
             player.triggerDamageFreeze();
+            player.setDamageShockFreezeLength(Launcher.framerate_limit / 3F);
             player.invulnerable = true;
             player.damage_shocked = true;
             if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))

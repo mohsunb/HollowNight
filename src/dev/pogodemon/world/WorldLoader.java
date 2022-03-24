@@ -21,11 +21,13 @@ public class WorldLoader
         World kings_pass = new World(handler,"kings_pass_collision_map.png", 2000, 4752); // 2000 4752
         handler.setWorld(kings_pass);
 
+        /*
         handler.getWorld().spawnEntity(new InteractableItem(handler, 2100, 4802, false, Items.mothwingCloak));
         handler.getWorld().spawnEntity(new InteractableItem(handler, 2300, 4802, false, Items.mantisClaw));
         handler.getWorld().spawnEntity(new InteractableItem(handler, 2500, 4802, false, Items.crystalHeart));
         handler.getWorld().spawnEntity(new InteractableItem(handler, 2700, 4802, false, Items.monarchWings));
         handler.getWorld().spawnEntity(new InteractableItem(handler, 2900, 4802, false, Items.shadeCloak));
+        */
 
         kings_pass.spawnEntity(new CollapsableFloor(handler, 8960, 1200, 1000, 200, (int) (Launcher.framerate_limit * 0.5)));
         kings_pass.spawnEntity(new BreakableWallDirtmouthEntrance(handler, 14760, 440, 120, 760));
@@ -50,7 +52,7 @@ public class WorldLoader
 
         kings_pass.spawnEntity(new Vengefly(handler, 6890, 3232, 500, 1500));
         kings_pass.spawnEntity(new Vengefly(handler, 4900, 2700, 500, 1500));
-        kings_pass.spawnEntity(new Vengefly(handler, 6658, 2300, 500, 1500));
+        kings_pass.spawnEntity(new Vengefly(handler, 6500, 2100, 600, 1500));
 
         kings_pass.spawnEntity(new GeoDeposit(handler, 960, 4800, 0));
         kings_pass.spawnEntity(new GeoDeposit(handler, 12245, 5200, 0));

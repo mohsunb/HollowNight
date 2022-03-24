@@ -23,6 +23,12 @@ public class Grass extends StaticEntity
     }
 
     @Override
+    public int renderRank()
+    {
+        return 0;
+    }
+
+    @Override
     public void render(Graphics2D gfx)
     {
         gfx.drawImage(Assets.grass, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), (int) width, (int) height, null);

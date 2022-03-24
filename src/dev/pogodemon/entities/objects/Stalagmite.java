@@ -112,6 +112,12 @@ public class Stalagmite extends Creature
     }
 
     @Override
+    public int renderRank()
+    {
+        return 0;
+    }
+
+    @Override
     public void render(Graphics2D gfx)
     {
         if (exists)
@@ -187,7 +193,10 @@ public class Stalagmite extends Creature
             {
                 player.health -= 20;
                 player.triggerScreenShake();
+                player.setScreenShakeLength(Launcher.framerate_limit);
+                player.setScreenShakeLevel(10);
                 player.triggerDamageFreeze();
+                player.setDamageShockFreezeLength(Launcher.framerate_limit / 3F);
                 player.invulnerable = true;
                 player.damage_shocked = true;
                 if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))

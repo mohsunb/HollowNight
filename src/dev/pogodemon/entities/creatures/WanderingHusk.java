@@ -29,6 +29,11 @@ public class WanderingHusk extends Creature
     private long attack_timer;
     private long attack_cooldown_timer;
 
+    private boolean hit = false;
+    private float hitX = 0;
+    private float hitY = 0;
+    private int hit_counter = 0;
+
     public WanderingHusk(Handler handler, float x, float y, float agro_range, float de_agro_range)
     {
         super(handler, x, y, DEFAULT_WIDTH , DEFAULT_HEIGHT);
@@ -51,6 +56,12 @@ public class WanderingHusk extends Creature
     @Override
     public void update()
     {
+        if (hit && ++hit_counter >= Launcher.framerate_limit / 3F)
+        {
+            hit = false;
+            hit_counter = 0;
+        }
+
         if (exists)
         {
             if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
@@ -67,7 +78,7 @@ public class WanderingHusk extends Creature
                     hit_knockback = false;
                 }
 
-                float s = DEFAULT_SPEED * 0.92f;
+                float s = DEFAULT_SPEED * 2.71f;
                 if (facing_right)
                     xMove = -s;
                 else
@@ -191,7 +202,7 @@ public class WanderingHusk extends Creature
             }
 
 
-            if (health <= 0) // death;
+            if (health <= 0 && !hit_knockback) // death;
             {
                 exists = false;
                 World world = handler.getWorld();
@@ -207,6 +218,12 @@ public class WanderingHusk extends Creature
             walking = false;
             agro = false;
         }
+    }
+
+    @Override
+    public int renderRank()
+    {
+        return 0;
     }
 
     @Override
@@ -247,6 +264,15 @@ public class WanderingHusk extends Creature
                 gfx.drawImage(Assets.wandering_husk_dead_left, (int) (x - handler.getCamera().getxOffset() + 50), (int) (y - handler.getCamera().getyOffset() + 45), null);
         }
 
+        if (hit)
+        {
+            float rate = hit_counter / (Launcher.framerate_limit / 3F);
+            gfx.setColor(new Color(255, 84, 0));
+            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F - rate));
+            gfx.fillOval((int) (hitX - handler.getCamera().getxOffset() - 100 - 200 * rate), (int) (hitY - handler.getCamera().getyOffset() - 100 - 200 * rate), (int) (200 + 2 * 200 * rate), (int) (200 + 2 * 200 * rate));
+            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+        }
+
         if (Launcher.show_hitboxes)
         {
             gfx.setColor(Color.red);
@@ -262,6 +288,12 @@ public class WanderingHusk extends Creature
             was_just_attacked = true;
             Player player = handler.getWorld().getEntityManager().getPlayer();
             health -= player.nail_damage;
+            if (!hit)
+            {
+                hit = true;
+                hitX = getCenterX();
+                hitY = getCenterY();
+            }
 
             if (attacking)
                 attacking = false;
@@ -292,7 +324,10 @@ public class WanderingHusk extends Creature
         {
             player.health -= 20;
             player.triggerScreenShake();
+            player.setScreenShakeLength(Launcher.framerate_limit);
+            player.setScreenShakeLevel(10);
             player.triggerDamageFreeze();
+            player.setDamageShockFreezeLength(Launcher.framerate_limit / 3F);
             player.invulnerable = true;
             player.damage_shocked = true;
             if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))
