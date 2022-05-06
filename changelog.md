@@ -1,110 +1,50 @@
-<<<<<<< HEAD
-=======
-## Update 7-May-2022: v0.3.6
-* Fixed a bug where shade would spawn inside hazards and die immediately if the player also died to the same hazard previously
-* Fixed a bug where shade would spawn inside walls
-* Fixed a bug where shade could still do contact damage in death animation
-* Fixed a bug where shade could attack during death
-* Added shade absorption animation
-* Improved soul animation
-* Reimplemented map loading system to depend on "GameFlags"
-* Player can now respawn lying on ground (without benches)
-* Fixed a bug where camera would flicker briefly after respawning
-* Fixed a bug where maximum soul amount would still be cut even after the shade was killed
-* Particle effect of taking damage is now displayed according to facing direction
-* Death particle effect is now rendered above the world
-* Generic breakable walls are now not climbable
-* Fixed animation speed of player's slashes
-* Fixed a bug where you could stop superdash during room transitions
+## Update 7-May-2022: Major Change 1 (v0.3.6)
+***Additions:***
+* Implemented proper particle system
+* Added Dirtmouth
+* Added room transitioning
+* Added missing spell interactions to some enemies
+* Added option to hide mouse cursor
+* Added slashing animations
+* Added walking animation
+* Added benches
+* Added respawn system
+* Added death animation
+* Added custom window icon
+* Added custom mouse cursor
+* Added "Perpetua" and "Trajan Pro" custom fonts
+* Added regular and shadow dashing animation as well as its particles
+* Added double jump animation
+* Added visual and particle effect for having low health
+* Added Shade enemy
+* Added liquid animation to the soul vessel
+* Implemented "GameFlags" class for easier and more efficient game state management
+* Added particle effect for getting hit while having Lifeblood
 * Added ability to mirror images through code
 * Added superdash animation
 * Added particle effect for hitting walls and enemies
 * Added particle effect for collecting geo
 * Added particle effect for hitting spikes
-* Reduced player slash active hitbox duration
 
-## Update 5-May-2022: v0.3.5
-* Fixed a bug with pogo system where you would pogo twice
-* Added Shade enemy (no spell attacks)
-* Improved death animation
-* Implemented "GameFlags" class
-* Added soul animation for the soul vessel
-* Added particle effect for getting hit while having lifeblood
-* Fixed a vertical camera lock in King's Pass
+***Changes:***
+* Massively improved implementation of World system
+* Improved wall climb system
+* Decreased screen shake
+* Reduced horizontal bounce of geo
+* Double jump is now slightly delayed to simulate inertia
 * Interactable items are now rendered in front of the player
 * Generalized the method of player getting hit
+* Particle effect of taking damage is now displayed according to facing direction
+* Generic breakable walls are now not climbable
+* Reduced player slash active hitbox duration
 
-## Update 2-May-2022: v0.3.4
-* Added nail and shell props to death animation
-* Added shade spawning animation upon death
-
-## Update 28-Apr-2022: v0.3.3
-* Adjusted low hp particle effects
-* Adjusted shadow dash animation
-* Added double jump animation
-* Adjusted double jump timing
-
-## Update 27-Apr-2022: v0.3.2
-* Added void particles to shadow dash
-
-## Update 27-Apr-2022: v0.3.1
-* Added shadow dashing animation (incomplete, lacks particle effects)
-
-## Update 27-Apr-2022: v0.3.0
-* Added dashing animation (regular only)
-
-## Update 26-Apr-2022: v0.2.9
-* Added void particles to the player at low health
-* Reduced geo horizontal bounce
-
-## Update 26-Apr-2022: v0.2.8
-* Added death animation (incomplete, lacks post props)
-
-## Update 25-Apr-2022: v0.2.7
+***Bugfixes:***
+* Fixed a bug with spikes where player wouldn't stop pogo'ing
+* Fixed timing of damage dealt by hazards
 * Fixed a bug with the engine where the window wouldn't scale properly if the "Display Scaling" setting in the OS is not 100%
-* Decreased screen shake to more sane levels
-* Added "Perpetua" and "Trajan Pro" fonts
-* Added mouse cursor
-* Added window icon
-* Added respawn system (no animation)
+* Fixed a bug with the pogo system where you could pogo twice
+* Fixed a broken vertical camera lock in King's Pass
 
-## Update 24-Apr-2022: v0.2.6
-* Added benches (incomplete)
-
-## Update 24-Apr-2022: v0.2.5
-* Added slashing animation to the player model (vertical)
-
-## Update 24-Apr-2022: v0.2.4
-* Added slashing animation to the player model (horizontal only)
-
-## Update 24-Apr-2022: v0.2.3
-* Added walking animation (🤩)
-
-## Update 23-Apr-2022: v0.2.2
-* Fixed the timing of damage dealt by hazards
-* Added room transition visual effects
-* Fixed a bug with room transitions where you could buffer input during the fadeout
-* Added slashing animations
-* Fixed a bug with hazards where player wouldn't stop pogo'ing
-* Reduced downslash hitbox (😁)
-
-## Update 22-Apr-2022: v0.2.1
-* Added the option to hide the mouse cursor
-* Added missing spell interaction to some entities
-* Added fps counter
-
-## Update 21-Apr-2022: v0.2.0
-* Transitioning rooms now retains player state (health, geo, etc.)
-
-## Update 18-Apr-2022: v0.1.9
-* Massively improved the world system
-* Added Dirtmouth (incomplete)
-* Improved wall climb system
-
-## Update 14-Apr-2022: v0.1.8
-* Implemented proper particle system (separate from corresponding entities)
-
->>>>>>> 6aee207 (v0.3.6)
 ## Update 25-Mar-2022: v0.1.7
 * Reimplemented map loading system for organizing assets better
 * Added Lifeblood system
