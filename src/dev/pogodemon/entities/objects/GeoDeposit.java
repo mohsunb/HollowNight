@@ -5,6 +5,7 @@ import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.Geo;
 import dev.pogodemon.entities.Player;
+import dev.pogodemon.entities.particles.ParticleEnemyHit;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.World;
 
@@ -149,6 +150,8 @@ public class GeoDeposit extends Creature
             World world = handler.getWorld();
             world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
             world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+
+            world.spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
         }
     }
 

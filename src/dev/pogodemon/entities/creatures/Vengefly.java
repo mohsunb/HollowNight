@@ -5,6 +5,12 @@ import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.Geo;
 import dev.pogodemon.entities.Player;
+<<<<<<< HEAD
+=======
+import dev.pogodemon.entities.particles.Colors;
+import dev.pogodemon.entities.particles.ParticleEnemyHit;
+import dev.pogodemon.entities.particles.ParticleHit;
+>>>>>>> 6aee207 (v0.3.6)
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.World;
 
@@ -218,12 +224,17 @@ public class Vengefly extends Creature
         {
             was_just_attacked = true;
             health -= player.nail_damage;
+<<<<<<< HEAD
             if (!hit)
             {
                 hit = true;
                 hitX = getCenterX();
                 hitY = getCenterY();
             }
+=======
+            handler.getWorld().spawnEntity(new ParticleHit(handler, Colors.infected, getCenterX(), getCenterY()));
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
+>>>>>>> 6aee207 (v0.3.6)
             hit_knockback = true;
             if (!player.up_slashing && !player.down_slashing)
             {

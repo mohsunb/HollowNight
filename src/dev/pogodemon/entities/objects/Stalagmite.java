@@ -5,6 +5,7 @@ import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.Entity;
 import dev.pogodemon.entities.Player;
+import dev.pogodemon.entities.particles.ParticleEnemyHit;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -162,6 +163,10 @@ public class Stalagmite extends Creature
             if (!diagonal && !player.up_slashing && !player.down_slashing)
             {
                 diagonal = true;
+<<<<<<< HEAD
+=======
+                handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
+>>>>>>> 6aee207 (v0.3.6)
                 facing_right = player.isFacingRight();
             }
 

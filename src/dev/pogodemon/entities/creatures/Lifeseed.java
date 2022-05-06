@@ -4,6 +4,12 @@ import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.Player;
+<<<<<<< HEAD
+=======
+import dev.pogodemon.entities.particles.Colors;
+import dev.pogodemon.entities.particles.ParticleEnemyHit;
+import dev.pogodemon.entities.particles.ParticleHit;
+>>>>>>> 6aee207 (v0.3.6)
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -195,8 +201,15 @@ public class Lifeseed extends Creature
     @Override
     public void fireballHit()
     {
+<<<<<<< HEAD
         dead = true;
         hit = true;
+=======
+        handler.getWorld().getEntityManager().getPlayer().lifeblood += 20;
+        handler.getWorld().removeEntity(this);
+        handler.getWorld().spawnEntity(new ParticleHit(handler, Colors.lifeblood, getCenterX(), getCenterY()));
+        handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
+>>>>>>> 6aee207 (v0.3.6)
     }
 
     @Override

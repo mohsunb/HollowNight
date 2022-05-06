@@ -4,6 +4,7 @@ import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Player;
 import dev.pogodemon.entities.StaticEntity;
+import dev.pogodemon.entities.particles.ParticleSpikeHit;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -75,6 +76,7 @@ public class SpikesLarge extends StaticEntity
             player.setScreenShakeLength(Launcher.framerate_limit * 0.0625F);
             player.setScreenShakeLevel(5);
             was_just_attacked = true;
+            handler.getWorld().spawnEntity(new ParticleSpikeHit(handler, getCenterX(), getCenterY()));
         }
     }
 

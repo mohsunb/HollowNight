@@ -7,7 +7,6 @@ import java.awt.*;
 
 public class BreakableWallDirtmouthEntrance extends BreakableWall
 {
-
     public BreakableWallDirtmouthEntrance(Handler handler, float x, float y, float width, float height)
     {
         super(handler, x, y, width, height, 13);

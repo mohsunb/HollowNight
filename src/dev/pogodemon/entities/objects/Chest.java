@@ -2,8 +2,8 @@ package dev.pogodemon.entities.objects;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
-import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.StaticEntity;
+import dev.pogodemon.entities.particles.ParticleEnemyHit;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -15,7 +15,7 @@ public abstract class Chest extends StaticEntity
 
     public Chest(Handler handler, float x, float y)
     {
-        super(handler, x, y, Creature.DEFAULT_WIDTH, Creature.DEFAULT_WIDTH);
+        super(handler, x, y, 0, 0);
         setSolid(true);
 
         bounds.width = 150;
@@ -74,6 +74,7 @@ public abstract class Chest extends StaticEntity
         {
             was_just_attacked = true;
             open = true;
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
         }
     }
 

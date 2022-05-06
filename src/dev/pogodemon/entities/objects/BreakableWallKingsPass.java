@@ -14,6 +14,7 @@ public class BreakableWallKingsPass extends BreakableWall
         super(handler, x, y, width, height, 1);
         this.facing_right = facing_right;
         has_knockback = false;
+        setClimbable(false);
     }
 
     @Override

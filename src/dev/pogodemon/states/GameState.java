@@ -2,8 +2,11 @@ package dev.pogodemon.states;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
+<<<<<<< HEAD
 import dev.pogodemon.display.Camera;
 import dev.pogodemon.display.SpriteSheet;
+=======
+>>>>>>> 6aee207 (v0.3.6)
 import dev.pogodemon.entities.CameraFocusPoint;
 import dev.pogodemon.entities.Player;
 import dev.pogodemon.utils.Handler;
@@ -13,6 +16,35 @@ import java.util.Random;
 
 public class GameState extends State
 {
+<<<<<<< HEAD
+=======
+    // Soul fluid animations
+    private final Animation anim_soul1 = new Animation(100, Assets.soul1);
+    private final Animation anim_soul2 = new Animation(100, Assets.soul2);
+    private final Animation anim_soul3 = new Animation(100, Assets.soul3);
+    private final Animation anim_soul4 = new Animation(100, Assets.soul4);
+    private final Animation anim_soul5 = new Animation(100, Assets.soul5);
+    private final Animation anim_soul6 = new Animation(100, Assets.soul6);
+    private final Animation anim_soul7 = new Animation(100, Assets.soul7);
+    private final Animation anim_soul8 = new Animation(100, Assets.soul8);
+
+    //Low hp effect
+    private final int vignette_limit = Launcher.framerate_limit * 10;
+    private int vignette_counter = 0;
+    private boolean vignette_ended = false;
+    private boolean flag1 = false;
+    private float vignette_opacity = 0.0F;
+    private int flag0 = 1;
+
+    //Room transition logs
+    private int rt_health;
+    private float rt_soul;
+    private int rt_lifeblood;
+    private int rt_geo;
+    private boolean rt_facing_right;
+    private boolean rt_superdash;
+
+>>>>>>> 6aee207 (v0.3.6)
     public static boolean screen_shake = false;
     private int screen_shake_timer = 0;
     private boolean damage_shock = false;
@@ -34,7 +66,40 @@ public class GameState extends State
     public GameState(Handler handler)
     {
         super(handler);
+<<<<<<< HEAD
         handler.setWorld(handler.loadWorld().KingsPass());
+=======
+        handler.setWorld(new World(handler, GameFlags.load_map_id, GameFlags.load_coordinates, GameFlags.load_state));
+        MapHelper.getEntityData(handler, GameFlags.load_map_id).spawnEntities();
+    }
+
+    /*
+    For room transitions
+     */
+    public void bufferPlayerState()
+    {
+        rt_health = handler.getWorld().getEntityManager().getPlayer().health;
+        rt_lifeblood = handler.getWorld().getEntityManager().getPlayer().lifeblood;
+        rt_geo = handler.getWorld().getEntityManager().getPlayer().getGeo();
+        rt_soul = handler.getWorld().getEntityManager().getPlayer().soul;
+        rt_facing_right = handler.getWorld().getEntityManager().getPlayer().isFacingRight();
+        rt_superdash = handler.getWorld().getEntityManager().getPlayer().superdash;
+    }
+
+    /*
+    For room transitions
+     */
+    public void updatePlayerState()
+    {
+        handler.getWorld().getEntityManager().getPlayer().health = rt_health;
+        handler.getWorld().getEntityManager().getPlayer().lifeblood = rt_lifeblood;
+        handler.getWorld().getEntityManager().getPlayer().setGeo(rt_geo);
+        handler.getWorld().getEntityManager().getPlayer().soul = rt_soul;
+        handler.getWorld().getEntityManager().getPlayer().setDirection(rt_facing_right);
+        handler.getWorld().getEntityManager().getPlayer().superdash = rt_superdash;
+        if (!rt_superdash)
+            handler.getWorld().getEntityManager().getPlayer().setxMove(handler.getWorld().getEntityManager().getPlayer().getxSpeed() * (rt_facing_right ? 1 : -1));
+>>>>>>> 6aee207 (v0.3.6)
     }
 
     @Override
@@ -134,6 +199,22 @@ public class GameState extends State
         handler.getWorld().render(gfx);
         Player player = handler.getWorld().getEntityManager().getPlayer();
 
+<<<<<<< HEAD
+=======
+        // Death shock vfx >> above everything else
+        if (player.damageFreezeTriggered() && player.dead)
+            gfx.drawImage(Assets.death_shock, (int) (player.getX() - handler.getCamera().getxOffset() - 300), (int) (player.getY() - handler.getCamera().getyOffset() - 240), null);
+
+        //Low HP vignette
+        if (player.health <= 20 && !vignette_ended)
+        {
+            Utils.setOpacity(gfx, vignette_opacity);
+            gfx.drawImage(Assets.vignette_low_hp, 0, 0, null);
+            Utils.setOpacity(gfx, 1.0F);
+        }
+
+        // Healing vfx
+>>>>>>> 6aee207 (v0.3.6)
         if (heal_effect)
         {
             float r = heal_effect_timer / Launcher.framerate_limit;
@@ -168,7 +249,7 @@ public class GameState extends State
         gfx.setFont(new Font("Arial", Font.PLAIN, 45));
         gfx.drawString(Integer.toString(player.getGeo()), 290, 220);
         if (player.has_buffered_geo)
-            gfx.drawString((player.geo_buffer > 0 ? "+" : " -") + Math.abs(player.geo_buffer), 290, 270);
+            gfx.drawString((player.geo_buffer < 0 ? "-" : "+") + Math.abs(player.geo_buffer), 290, 270);
 
         //Masks
         for (int i = 0; i < player.max_health / 20; i++)

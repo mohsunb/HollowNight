@@ -2,6 +2,7 @@ package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
+import dev.pogodemon.entities.particles.ParticleWallHit;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -13,7 +14,20 @@ public class PlayerSlash extends Creature
     private boolean hit_wall = false;
     private long hit_wall_timer = 0;
 
+<<<<<<< HEAD
     public PlayerSlash(Handler handler, float x, float y)
+=======
+    private final Animation slash1_right = new Animation(Math.round(1000F / 60F), Assets.slash1_right);
+    private final Animation slash1_left = new Animation(Math.round(1000F / 60F), Assets.slash1_left);
+    private final Animation slash2_right = new Animation(Math.round(1000F / 60F), Assets.slash2_right);
+    private final Animation slash2_left = new Animation(Math.round(1000F / 60F), Assets.slash2_left);
+    private final Animation upslash_left = new Animation(Math.round(1000F / 60F), Assets.upslash_left);
+    private final Animation upslash_right = new Animation(Math.round(1000F / 60F), Assets.upslash_right);
+    private final Animation downslash_right = new Animation(Math.round(1000F / 60F), Assets.downslash_right);
+    private final Animation downslash_left = new Animation(Math.round(1000F / 60F), Assets.downslash_left);
+
+    public PlayerSlash(Handler handler)
+>>>>>>> 6aee207 (v0.3.6)
     {
         super(handler, x, y, Creature.DEFAULT_WIDTH, Creature.DEFAULT_HEIGHT);
         player = handler.getWorld().getEntityManager().getPlayer();
@@ -24,6 +38,21 @@ public class PlayerSlash extends Creature
     @Override
     public void update()
     {
+<<<<<<< HEAD
+=======
+        slash1_right.update();
+        slash1_left.update();
+        slash2_right.update();
+        slash2_left.update();
+        upslash_left.update();
+        upslash_right.update();
+        downslash_right.update();
+        downslash_left.update();
+
+        if (!player.isSlashing() || slash1_right.getIndex() == 9)
+            handler.getWorld().removeEntity(this);
+
+>>>>>>> 6aee207 (v0.3.6)
         if (hit_wall)
         {
             hit_wall_timer++;
@@ -56,6 +85,9 @@ public class PlayerSlash extends Creature
              || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT))
             {
                 player.attack_knockback = true;
+                float xx = player.isFacingRight() ? x + bounds.x + bounds.width : x + bounds.x;
+                float yy = y + bounds.y + bounds.height * 0.5F;
+                handler.getWorld().spawnEntity(new ParticleWallHit(handler, xx, yy));
                 hit_wall = true;
             }
         }

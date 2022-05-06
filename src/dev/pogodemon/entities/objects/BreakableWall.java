@@ -1,6 +1,7 @@
 package dev.pogodemon.entities.objects;
 
 import dev.pogodemon.entities.StaticEntity;
+import dev.pogodemon.entities.particles.ParticleEnemyHit;
 import dev.pogodemon.utils.Handler;
 
 public abstract class BreakableWall extends StaticEntity
@@ -38,6 +39,7 @@ public abstract class BreakableWall extends StaticEntity
         {
             was_just_attacked = true;
             health--;
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
         }
     }
 

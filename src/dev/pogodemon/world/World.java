@@ -18,23 +18,112 @@ import java.util.ArrayList;
 
 public class World
 {
+    public static final int NEUTRAL = 0;
+    public static final int BENCHED = 1;
+    public static final int SLEEPING = 2;
+
     private Handler handler;
     private int width, height;
     private int[][] tiles;
     private EntityManager entityManager;
 
+<<<<<<< HEAD
     public World(Handler handler, String path, int spawnX, int spawnY)
     {
         this.width = ImageLoader.loadImage(path).getWidth();
         this.height = ImageLoader.loadImage(path).getHeight();
+=======
+    //Transitions
+    public World(Handler handler, int map_id, int entrance_id)
+    {
+        this.width = ImageLoader.loadImage(MapHelper.path(map_id)).getWidth();
+        this.height = ImageLoader.loadImage(MapHelper.path(map_id)).getHeight();
+        this.map_id = map_id;
+>>>>>>> 6aee207 (v0.3.6)
 
         this.handler = handler;
         entityManager = new EntityManager(handler, new Player(handler, 0, 0), new CameraFocusPoint(handler));
 
+<<<<<<< HEAD
         loadWorldFromImage(path);
 
         entityManager.getPlayer().setX(spawnX);
         entityManager.getPlayer().setY(spawnY);
+=======
+        loadWorldFromImage(MapHelper.path(map_id));
+
+        entityManager.getPlayer().setX(MapHelper.coordinate(map_id, entrance_id).getX());
+        entityManager.getPlayer().setY(MapHelper.coordinate(map_id, entrance_id).getY());
+        entityManager.getPlayerCamera().setX(MapHelper.coordinate(map_id, entrance_id).getX() + entityManager.getPlayer().bounds.x + entityManager.getPlayer().bounds.width * 0.5F);
+        entityManager.getPlayerCamera().setY(MapHelper.coordinate(map_id, entrance_id).getY() + entityManager.getPlayer().bounds.y + entityManager.getPlayer().bounds.height * 0.5F);
+    }
+
+    // Benched / sleeping (no autowakeup)
+    public World(Handler handler, int map_id, Coordinate spawn, int spawn_status)
+    {
+        this.width = ImageLoader.loadImage(MapHelper.path(map_id)).getWidth();
+        this.height = ImageLoader.loadImage(MapHelper.path(map_id)).getHeight();
+        this.map_id = map_id;
+
+        this.handler = handler;
+        entityManager = new EntityManager(handler, new Player(handler, 0, 0), new CameraFocusPoint(handler));
+
+        loadWorldFromImage(MapHelper.path(map_id));
+
+        if (spawn_status == BENCHED)
+        {
+            entityManager.getPlayer().benched = true;
+            entityManager.getPlayer().bench_target_x = spawn.getX();
+            entityManager.getPlayer().bench_target_y = spawn.getY();
+        }
+
+        if (spawn_status == SLEEPING)
+        {
+            entityManager.getPlayer().sleeping = true;
+            entityManager.getPlayer().waking_up = false;
+        }
+
+        entityManager.getPlayer().setX(spawn.getX());
+        entityManager.getPlayer().setY(spawn.getY());
+        entityManager.getPlayerCamera().setX(spawn.getX() + entityManager.getPlayer().bounds.x + entityManager.getPlayer().bounds.width * 0.5F);
+        entityManager.getPlayerCamera().setY(spawn.getY() + entityManager.getPlayer().bounds.y + entityManager.getPlayer().bounds.height * 0.5F);
+    }
+
+    // Benched / sleeping + autowakeup
+    public World(Handler handler, int map_id, Coordinate spawn, int spawn_status, boolean autowakeup)
+    {
+        this.width = ImageLoader.loadImage(MapHelper.path(map_id)).getWidth();
+        this.height = ImageLoader.loadImage(MapHelper.path(map_id)).getHeight();
+        this.map_id = map_id;
+
+        this.handler = handler;
+        entityManager = new EntityManager(handler, new Player(handler, 0, 0), new CameraFocusPoint(handler));
+
+        loadWorldFromImage(MapHelper.path(map_id));
+
+        if (spawn_status == BENCHED)
+        {
+            entityManager.getPlayer().benched = true;
+            entityManager.getPlayer().bench_target_x = spawn.getX();
+            entityManager.getPlayer().bench_target_y = spawn.getY();
+        }
+
+        if (spawn_status == SLEEPING)
+        {
+            entityManager.getPlayer().sleeping = true;
+            entityManager.getPlayer().waking_up = autowakeup;
+        }
+
+        entityManager.getPlayer().setX(spawn.getX());
+        entityManager.getPlayer().setY(spawn.getY());
+        entityManager.getPlayerCamera().setX(spawn.getX() + entityManager.getPlayer().bounds.x + entityManager.getPlayer().bounds.width * 0.5F);
+        entityManager.getPlayerCamera().setY(spawn.getY() + entityManager.getPlayer().bounds.y + entityManager.getPlayer().bounds.height * 0.5F);
+    }
+
+    public int getID()
+    {
+        return map_id;
+>>>>>>> 6aee207 (v0.3.6)
     }
 
     public EntityManager getEntityManager()

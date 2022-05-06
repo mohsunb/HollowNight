@@ -4,13 +4,14 @@ import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.creatures.Lifeseed;
+import dev.pogodemon.entities.particles.ParticleEnemyHit;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
 
 public class LifebloodCocoon extends Creature
 {
-    private int lifeseed_count;
+    private final int lifeseed_count;
     public LifebloodCocoon(Handler handler, float x, float y, int lifeseed_count)
     {
         super(handler, x, y, Assets.lifeblood_cocoon.getWidth(), Assets.lifeblood_cocoon.getHeight());
@@ -52,6 +53,7 @@ public class LifebloodCocoon extends Creature
     public void hasBeenHit()
     {
         health = 0;
+        handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
     }
 
     @Override

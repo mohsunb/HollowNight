@@ -2,6 +2,7 @@ package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
+import dev.pogodemon.entities.particles.ParticleGeoCollect;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -129,6 +130,7 @@ public class Geo extends Creature
         if (can_be_collected)
         {
             handler.getWorld().getEntityManager().getPlayer().addGeo(getCount());
+            handler.getWorld().spawnEntity(new ParticleGeoCollect(handler));
             handler.getWorld().removeEntity(this);
         }
     }

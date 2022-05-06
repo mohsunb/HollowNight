@@ -207,7 +207,11 @@ public abstract class Creature extends Entity
                     else
                         x = tx * Tile.TILE_WIDTH - bounds.x - bounds.width - 1;
 
+<<<<<<< HEAD
                     if (this == player && (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) || checkEntityMoveCollisions(xMove + 2, 0)) && !jumping && !grounded && !dashing && hasMantisClaw)
+=======
+                    if (this == player && !player.damage_shocked && (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) || (checkEntityMoveCollisions(xMove + 2, 0) && getCollidingSolidEntity(xMove, 0).isClimbable())) && !jumping && !grounded && !dashing && hasMantisClaw && !player.slashing)
+>>>>>>> 6aee207 (v0.3.6)
                     {
                         if (!player.slashing)
                         {
@@ -283,7 +287,11 @@ public abstract class Creature extends Entity
                     else
                         x = tx * Tile.TILE_WIDTH + Tile.TILE_WIDTH - bounds.x;
 
+<<<<<<< HEAD
                     if (this == player && (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) || checkEntityMoveCollisions(xMove - 2, 0)) && !jumping  && !grounded && !dashing && hasMantisClaw)
+=======
+                    if (this == player && !player.damage_shocked && (collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT)) || (checkEntityMoveCollisions(xMove - 2, 0) && getCollidingSolidEntity(xMove, 0).isClimbable())) && !jumping  && !grounded && !dashing && hasMantisClaw && !player.slashing)
+>>>>>>> 6aee207 (v0.3.6)
                     {
                         if (!player.slashing)
                         {

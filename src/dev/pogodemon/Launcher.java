@@ -8,8 +8,14 @@ public class Launcher
 
     public static final int game_width = 1920;
     public static final int game_height = 1080;
+<<<<<<< HEAD
     public static final int framerate_limit = 144; // Game breaks if the framerate doesn't match the limit. So, log the fps if something feels off.
     public static final boolean exclusive_fullscreen = true; // Needs more testing (works properly in Windows, but shows the taskbar in Linux (GNOME))
+=======
+    public static final int framerate_limit = 60;
+    public static final boolean exclusive_fullscreen = true;
+    public static final String platform = System.getProperty("os.name").toLowerCase();
+>>>>>>> 6aee207 (v0.3.6)
 
     public static void main(String[] args)
     {
