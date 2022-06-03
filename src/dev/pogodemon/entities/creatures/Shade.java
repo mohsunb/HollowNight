@@ -1,5 +1,6 @@
 package dev.pogodemon.entities.creatures;
 
+import dev.pogodemon.Game;
 import dev.pogodemon.GameFlags;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Animation;
@@ -7,10 +8,7 @@ import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.EnemySlash;
 import dev.pogodemon.entities.Player;
-import dev.pogodemon.entities.particles.ParticleEnemyHit;
-import dev.pogodemon.entities.particles.ParticleHit;
-import dev.pogodemon.entities.particles.ParticleShadeAbsorb;
-import dev.pogodemon.entities.particles.ParticleShadeCloakTrailCircles;
+import dev.pogodemon.entities.particles.*;
 import dev.pogodemon.utils.Handler;
 
 import java.awt.*;
@@ -115,6 +113,9 @@ public class Shade extends Creature
                 player.addGeo(GameFlags.shadeGeo);
                 player.max_soul = 99;
                 GameFlags.hasShade = false;
+                GameFlags.data.updateValue("has_shade", false);
+                GameFlags.data.updateValue("shade_geo", 0);
+                GameFlags.data.updateLocalFile();
             }
             if (attacking)
                 attacking = false;
@@ -128,6 +129,9 @@ public class Shade extends Creature
                 player.addGeo(GameFlags.shadeGeo);
                 player.max_soul = 99;
                 GameFlags.hasShade = false;
+                GameFlags.data.updateValue("has_shade", false);
+                GameFlags.data.updateValue("shade_geo", 0);
+                GameFlags.data.updateLocalFile();
             }
         }
 
@@ -220,7 +224,7 @@ public class Shade extends Creature
         if (hit_knockback)
         {
             hit_knockback_timer++;
-            if (hit_knockback_timer >= Launcher.framerate_limit * 0.2)
+            if (hit_knockback_timer >= Launcher.framerate_limit * 0.1)
             {
                 hit_knockback_timer = 0;
                 hit_knockback = false;
@@ -240,7 +244,7 @@ public class Shade extends Creature
                 yMove = 0;
             }
 
-            float s = DEFAULT_SPEED * 2.71f * 0.5F;
+            float s = DEFAULT_SPEED * 2.71f;
             if (hit_knockback_right)
                 xMove = s;
             else if (hit_knockback_left)
@@ -299,13 +303,10 @@ public class Shade extends Creature
                 }
             }
 
-            if (attack_cooldown)
+            if (attack_cooldown && attack_cooldown_timer++ >= Launcher.framerate_limit * 5F)
             {
-                if (attack_cooldown_timer++ >= Launcher.framerate_limit * 5F)
-                {
-                    attack_cooldown_timer = 0;
-                    attack_cooldown = false;
-                }
+                attack_cooldown_timer = 0;
+                attack_cooldown = false;
             }
 
             if (!attacking)
@@ -511,7 +512,9 @@ public class Shade extends Creature
             was_just_attacked = true;
             health -= player.nail_damage;
             handler.getWorld().spawnEntity(new ParticleHit(handler, Color.black, getCenterX(), getCenterY()));
-            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
+            Player p = handler.getWorld().getEntityManager().getPlayer();
+            float yy = (p.up_slashing || p.down_slashing) ? getCenterY() : p.getCenterY();
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), yy));
             hit_knockback = true;
             if (!player.up_slashing && !player.down_slashing)
             {
@@ -545,6 +548,7 @@ public class Shade extends Creature
         {
             was_just_fireball_hit = true;
             health -= player.fireball_damage;
+            handler.getWorld().spawnEntity(new ParticleHit(handler, Color.black, getCenterX(), getCenterY()));
             hit_knockback = true;
             if (player.isFacingRight())
                 hit_knockback_right = true;

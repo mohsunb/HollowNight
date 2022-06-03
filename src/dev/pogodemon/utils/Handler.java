@@ -4,13 +4,11 @@ import dev.pogodemon.Game;
 import dev.pogodemon.display.Camera;
 import dev.pogodemon.input.KeyManager;
 import dev.pogodemon.world.World;
-import dev.pogodemon.world.WorldLoader;
 
 public class Handler
 {
     private Game game;
     private World world;
-    private WorldLoader loader = new WorldLoader(this);
 
     public Handler(Game game)
     {
@@ -51,9 +49,5 @@ public class Handler
 
     public void setWorld(World world) {
         this.world = world;
-    }
-
-    public WorldLoader loadWorld() {
-        return loader;
     }
 }

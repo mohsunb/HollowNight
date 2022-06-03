@@ -119,7 +119,13 @@ public class Game implements Runnable
             if (timer >= 1_000_000_000)
             {
                 if (Launcher.log_fps)
-                    System.out.println("FPS: " + ticks);
+                {
+                    if (State.getState() == gameState)
+                    {
+                        GameState state = (GameState) State.getState();
+                        state.setFps(ticks);
+                    }
+                }
                 uptime++;
                 ticks = 0;
                 timer = 0;

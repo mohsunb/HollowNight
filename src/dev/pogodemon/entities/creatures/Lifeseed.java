@@ -4,12 +4,10 @@ import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.Player;
-<<<<<<< HEAD
-=======
 import dev.pogodemon.entities.particles.Colors;
 import dev.pogodemon.entities.particles.ParticleEnemyHit;
 import dev.pogodemon.entities.particles.ParticleHit;
->>>>>>> 6aee207 (v0.3.6)
+import dev.pogodemon.entities.particles.ParticleLifebloodEffects;
 import dev.pogodemon.utils.Handler;
 import dev.pogodemon.world.Tile;
 
@@ -18,15 +16,12 @@ import java.util.Random;
 
 public class Lifeseed extends Creature
 {
-    private boolean hit = false;
-    private int hit_counter = 0;
-    private boolean dead = false;
-
     private boolean bounce = false;
-
     private boolean can_be_killed = false;
-
     private boolean bool = false;
+
+    private boolean dead = false;
+    private int timer = 0;
 
     public Lifeseed(Handler handler, float x, float y)
     {
@@ -45,75 +40,73 @@ public class Lifeseed extends Creature
     @Override
     public void update()
     {
-        float speed_limit = DEFAULT_SPEED * 0.5F;
-        Player player = handler.getWorld().getEntityManager().getPlayer();
-
-        if (!can_be_killed && !player.slashing)
-            can_be_killed = true;
-
-        if (hit && ++hit_counter >= Launcher.framerate_limit / 3F)
-        {
-            hit = false;
-            hit_counter = 0;
-        }
-
-        if (!bool && grounded)
-        {
-            if (speedX > speed_limit)
-                speedX = speed_limit;
-            bool = true;
-        }
-
-        int lim = (int) (Launcher.framerate_limit * 0.5F);
-
-        if (bool)
-        {
-            if (bounce)
-            {
-                speedX *= -1;
-                bounce = false;
-            }
-
-            if (player.getCenterX() > getCenterX())
-            {
-                if (speedX > -speed_limit)
-                {
-                    if (speedX - speed_limit / lim < -speed_limit)
-                        speedX = -speed_limit;
-                    else
-                        speedX -= speed_limit / lim;
-                }
-
-
-                if (facing_right)
-                    facing_right = false;
-            }
-
-            else
-            {
-                if (speedX < speed_limit)
-                {
-                    if (speedX + speed_limit / lim > speed_limit)
-                        speedX = speed_limit;
-                    else
-                        speedX += speed_limit / lim;
-                }
-
-                if (!facing_right)
-                    facing_right = true;
-            }
-
-            xMove = speedX;
-        }
-
-        if (dead && !hit)
-        {
-            player.lifeblood += 20;
-            handler.getWorld().removeEntity(this);
-        }
-
         if (!dead)
         {
+            float speed_limit = DEFAULT_SPEED * 0.5F;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+
+            if (was_just_fireball_hit)
+            {
+                fireball_timer++;
+                if (fireball_timer >= Launcher.framerate_limit * 0.15)
+                {
+                    was_just_fireball_hit = false;
+                    fireball_timer = 0;
+                }
+            }
+
+            if (!can_be_killed && !player.slashing)
+                can_be_killed = true;
+
+            if (!bool && grounded)
+            {
+                if (speedX > speed_limit)
+                    speedX = speed_limit;
+                bool = true;
+            }
+
+            int lim = (int) (Launcher.framerate_limit * 0.5F);
+
+            if (bool)
+            {
+                if (bounce)
+                {
+                    speedX *= -1;
+                    bounce = false;
+                }
+
+                if (player.getCenterX() > getCenterX())
+                {
+                    if (speedX > -speed_limit)
+                    {
+                        if (speedX - speed_limit / lim < -speed_limit)
+                            speedX = -speed_limit;
+                        else
+                            speedX -= speed_limit / lim;
+                    }
+
+
+                    if (facing_right)
+                        facing_right = false;
+                }
+
+                else
+                {
+                    if (speedX < speed_limit)
+                    {
+                        if (speedX + speed_limit / lim > speed_limit)
+                            speedX = speed_limit;
+                        else
+                            speedX += speed_limit / lim;
+                    }
+
+                    if (!facing_right)
+                        facing_right = true;
+                }
+
+                xMove = speedX;
+            }
+
             yMove = 0;
             if (!grounded && speedY <= DEFAULT_SPEED * 4)
                 speedY += DEFAULT_SPEED * 0.05  * 144 / Launcher.framerate_limit;
@@ -125,12 +118,12 @@ public class Lifeseed extends Creature
 
             if (xMove > 0)
             {
-                int tx = (int) Math.floor((x + xMove + bounds.x + bounds.width) / Tile.TILE_WIDTH);
-                if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y) / Tile.TILE_HEIGHT))
-                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.TILE_HEIGHT))
-                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT))
-                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
-                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)) && !checkEntityMoveCollisions(xMove, 0))
+                int tx = (int) Math.floor((x + xMove + bounds.x + bounds.width) / Tile.SIZE);
+                if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y) / Tile.SIZE))
+                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.SIZE))
+                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.SIZE))
+                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.SIZE))
+                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.SIZE)) && !checkEntityMoveCollisions(xMove, 0))
                     x += xMove;
 
                 else
@@ -139,12 +132,12 @@ public class Lifeseed extends Creature
 
             else if (xMove < 0)
             {
-                int tx = (int) Math.floor((x + xMove + bounds.x) / Tile.TILE_WIDTH);
-                if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y) / Tile.TILE_HEIGHT))
-                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.TILE_HEIGHT))
-                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT))
-                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
-                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)) && !checkEntityMoveCollisions(xMove, 0))
+                int tx = (int) Math.floor((x + xMove + bounds.x) / Tile.SIZE);
+                if (!collisionWithTile(tx, (int) Math.floor((y + bounds.y) / Tile.SIZE))
+                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.SIZE))
+                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.SIZE))
+                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.SIZE))
+                        && !collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.SIZE)) && !checkEntityMoveCollisions(xMove, 0))
                     x += xMove;
 
                 else
@@ -152,6 +145,12 @@ public class Lifeseed extends Creature
             }
 
             moveY();
+        }
+
+        else if (handler.getWorld().getEntityManager().getPlayer().room_transitioning || timer++ >= Launcher.framerate_limit * 1.5)
+        {
+            handler.getWorld().removeEntity(this);
+            handler.getWorld().getEntityManager().getPlayer().lifeblood += 20;
         }
     }
 
@@ -177,39 +176,28 @@ public class Lifeseed extends Creature
                 gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
             }
         }
-
-        if (hit)
-        {
-            float rate = hit_counter / (Launcher.framerate_limit / 3F);
-            gfx.setColor(new Color(157, 212, 242));
-            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F - rate));
-            gfx.fillOval((int) (getCenterX() - handler.getCamera().getxOffset() - 100 - 200 * rate), (int) (getCenterY() - handler.getCamera().getyOffset() - 100 - 200 * rate), (int) (200 + 2 * 200 * rate), (int) (200 + 2 * 200 * rate));
-            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
-        }
     }
 
     @Override
     public void hasBeenHit()
     {
         if (can_be_killed)
-        {
-            dead = true;
-            hit = true;
-        }
+            fireballHit();
     }
 
     @Override
     public void fireballHit()
     {
-<<<<<<< HEAD
-        dead = true;
-        hit = true;
-=======
-        handler.getWorld().getEntityManager().getPlayer().lifeblood += 20;
-        handler.getWorld().removeEntity(this);
-        handler.getWorld().spawnEntity(new ParticleHit(handler, Colors.lifeblood, getCenterX(), getCenterY()));
-        handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
->>>>>>> 6aee207 (v0.3.6)
+        if (!dead)
+        {
+            dead = true;
+            for (int i = 0; i < 40; i++)
+                handler.getWorld().spawnEntity(new ParticleLifebloodEffects(handler, getCenterX(), getCenterY()));
+            handler.getWorld().spawnEntity(new ParticleHit(handler, Colors.lifeblood, getCenterX(), getCenterY()));
+            Player p = handler.getWorld().getEntityManager().getPlayer();
+            float yy = (p.up_slashing || p.down_slashing) ? getCenterY() : p.getCenterY();
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), yy));
+        }
     }
 
     @Override

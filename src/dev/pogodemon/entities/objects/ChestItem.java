@@ -7,9 +7,9 @@ import dev.pogodemon.utils.Handler;
 public class ChestItem extends Chest
 {
     private Item item;
-    public ChestItem(Handler handler, float x, float y, Item item)
+    public ChestItem(Handler handler, float x, float y, Item item, String entry)
     {
-        super(handler, x, y);
+        super(handler, x, y, entry);
         this.item = item;
     }
 

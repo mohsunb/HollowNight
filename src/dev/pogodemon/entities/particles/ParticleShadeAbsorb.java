@@ -41,7 +41,7 @@ public class ParticleShadeAbsorb extends Entity
     @Override
     public int renderRank()
     {
-        return 3;
+        return 5;
     }
 
     @Override

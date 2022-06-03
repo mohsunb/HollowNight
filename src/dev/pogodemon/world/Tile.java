@@ -1,13 +1,11 @@
 package dev.pogodemon.world;
 
-import dev.pogodemon.Launcher;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Tile
 {
-    public static final int TILE_WIDTH = Launcher.game_width / 48, TILE_HEIGHT = Launcher.game_height / 27;
+    public static final int SIZE = 40;
 
     public static Tile[] tiles = new Tile[10];
     public static Tile air = new TileEmpty(0);
@@ -36,7 +34,7 @@ public class Tile
 
     public void render(Graphics2D gfx, int x, int y)
     {
-        gfx.drawImage(texture, x, y, TILE_WIDTH, TILE_HEIGHT, null);
+        gfx.drawImage(texture, x, y, SIZE, SIZE, null);
     }
 
     public int getId()

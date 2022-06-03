@@ -1,11 +1,35 @@
 # Hollow Night
 
-## An attempt at remaking **Hollow Knight** from **Team Cherry** for a project aimed at improving my OOP/Java skills.
+## A pathetic remake of [Hollow Knight](https://www.hollowknight.com/) by [Team Cherry](https://www.teamcherry.com.au/) made in Java using Swing API (Java2D, JPanel)
 
-All assets were made in **GIMP**.
-For starting the project I used the "2D Game Programming on Java Tutorial" by [***CodeNMore***](https://youtube.com/playlist?list=PLah6faXAgguMnTBs3JnEJY0shAc18XYQZ) on **YouTube**.
+# Credits:
+* u/**Sumwan** for datamined [assets of Hollow Knight](https://www.reddit.com/r/HollowKnight/comments/cf83u1/all_hollow_knight_sprites_as_of_version_1432/?utm_source=share&utm_medium=web2x&context=3)
+* **The Embraced One** for [detailed map information](https://www.hallownest.net/)
+* **CodeNMore** for [beginner Swing tutorials](https://youtube.com/playlist?list=PLah6faXAgguMnTBs3JnEJY0shAc18XYQZ)
 
-To play the game simply clone the repository into your preferred IDE and run Launcher.java. You can change the launch options in the main class. The game currently only works at 1920x1080 resolution. I will try to add resolution scaling in the future. Compiled versions will be released when I am satisfied with the current state of my project.
+## Origin of the project:
+Back in February 2022 I decided to take on any Java project to improve my programming skills. I chose this as both Hollow Knight and game development were of my interest.
+It was originally supposed to be a complete remake with entire Hallownest and Godhome.
+I then realised I was way too ambitious and set my goals to be just Forgotten Crossroads, similar to the official demo.
+I then abandoned the project about 75% in as it took too much of my time and I felt burnt out.
 
-See ***changelog.md*** for more information on updates.   
-You can also see these updates in action in my [**YouTube**](https://youtube.com/playlist?list=PLmh2cJzgZnhOsGtRkt4r6EaodniLnrPgb) channel.
+## Content:
+I added a lot of stuff. Missing things include:
+* Menu
+* False Knight
+* NPCs
+* Grubs
+* Dialogue (lore tablet, npc)
+* Room textures
+* Audio
+* Interiors (Iselda's shop, Ancestral Mound)
+* Some hazards and stalagmites in Crossroads
+
+# Limitations:
+* It is completely 2D, like a glorified slideshow of PNGs, unlike [Hollow Knight which is actually 3D](https://unity.com/madewith/hollow-knight).
+* It doesn't leverage GPU at all, everything is done with CPU.
+* It is completely single-threaded, so it will probably run properly only on modern hardware.
+* I tried adding audio, but single-threaded nature of the project made the game stutter a lot when any audio started playing, so I scrapped the idea.
+
+I plan to come back to making games just as hobby. I have very good ideas for a mash-up of Sekiro and Hollow Knight, starring Quirrel.
+(Idea stolen from [r/HollowKnightMemes](https://www.reddit.com/r/HollowKnightMemes/comments/nw5nbx/what_we_realy_are_awaiting_for/?utm_source=share&utm_medium=web2x&context=3))

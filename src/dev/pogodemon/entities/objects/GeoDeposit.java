@@ -1,5 +1,6 @@
 package dev.pogodemon.entities.objects;
 
+import dev.pogodemon.GameFlags;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
@@ -20,13 +21,18 @@ public class GeoDeposit extends Creature
     private float xBak;
     private float yBak;
 
-    public GeoDeposit(Handler handler, float x, float y, int facing)
+    private final String entry;
+
+    public GeoDeposit(Handler handler, float x, float y, int facing, String entry)
     {
         super(handler, x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         can_be_killed = false;
         has_knockback = false;
         is_pogoable = true;
-        health = handler.getWorld().getEntityManager().getPlayer().nail_damage * 5;
+
+        this.entry = entry;
+        health = (int) GameFlags.data.getValue(entry);
+        exists = health > 0;
 
         xBak = x;
         yBak = y;
@@ -138,8 +144,9 @@ public class GeoDeposit extends Creature
         if (!was_just_attacked)
         {
             was_just_attacked = true;
-            Player player = handler.getWorld().getEntityManager().getPlayer();
-            health -= player.nail_damage;
+            health--;
+            GameFlags.data.updateValue(entry, health);
+            GameFlags.data.updateLocalFile();
             if (!hit)
             {
                 hit = true;
@@ -151,7 +158,9 @@ public class GeoDeposit extends Creature
             world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
             world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
 
-            world.spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
+            Player p = handler.getWorld().getEntityManager().getPlayer();
+            float yy = (p.up_slashing || p.down_slashing) ? getCenterY() : p.getCenterY();
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), yy));
         }
     }
 
@@ -162,7 +171,9 @@ public class GeoDeposit extends Creature
         {
             was_just_fireball_hit = true;
             Player player = handler.getWorld().getEntityManager().getPlayer();
-            health -= player.nail_damage;
+            health--;
+            GameFlags.data.updateValue(entry, health);
+            GameFlags.data.updateLocalFile();
             if (!hit)
             {
                 hit = true;

@@ -1,6 +1,7 @@
 package dev.pogodemon.entities;
 
 import dev.pogodemon.Launcher;
+import dev.pogodemon.display.Animation;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.particles.ParticleWallHit;
 import dev.pogodemon.utils.Handler;
@@ -10,13 +11,10 @@ import java.awt.*;
 
 public class PlayerSlash extends Creature
 {
-    private Player player;
+    private final Player player;
     private boolean hit_wall = false;
     private long hit_wall_timer = 0;
 
-<<<<<<< HEAD
-    public PlayerSlash(Handler handler, float x, float y)
-=======
     private final Animation slash1_right = new Animation(Math.round(1000F / 60F), Assets.slash1_right);
     private final Animation slash1_left = new Animation(Math.round(1000F / 60F), Assets.slash1_left);
     private final Animation slash2_right = new Animation(Math.round(1000F / 60F), Assets.slash2_right);
@@ -27,9 +25,8 @@ public class PlayerSlash extends Creature
     private final Animation downslash_left = new Animation(Math.round(1000F / 60F), Assets.downslash_left);
 
     public PlayerSlash(Handler handler)
->>>>>>> 6aee207 (v0.3.6)
     {
-        super(handler, x, y, Creature.DEFAULT_WIDTH, Creature.DEFAULT_HEIGHT);
+        super(handler, 0, 0, 0, 0);
         player = handler.getWorld().getEntityManager().getPlayer();
         CREATURE_TYPE = -1;
         can_be_killed = false;
@@ -38,8 +35,6 @@ public class PlayerSlash extends Creature
     @Override
     public void update()
     {
-<<<<<<< HEAD
-=======
         slash1_right.update();
         slash1_left.update();
         slash2_right.update();
@@ -49,10 +44,9 @@ public class PlayerSlash extends Creature
         downslash_right.update();
         downslash_left.update();
 
-        if (!player.isSlashing() || slash1_right.getIndex() == 9)
+        if (!player.isSlashing() || slash1_right.getIndex() == 9 || (player.down_slashing && player.flatSurface()))
             handler.getWorld().removeEntity(this);
 
->>>>>>> 6aee207 (v0.3.6)
         if (hit_wall)
         {
             hit_wall_timer++;
@@ -63,34 +57,215 @@ public class PlayerSlash extends Creature
             }
         }
 
-        if (exists && !player.down_slashing && !player.up_slashing && !hit_wall) // wall knockback
+        if (!player.down_slashing && !player.up_slashing && !hit_wall) // wall knockback
         {
-            if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
-             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT))
+            float xx;
+            float yy = y + bounds.y + bounds.height * 0.5F;
+
+            boolean bool = false;
+
+            if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.0F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.0F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.0F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.2F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.2F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.2F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.4F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.4F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.4F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.6F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.6F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.6F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.8F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.8F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 0.8F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 1.0F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 1.0F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.SIZE))
+            {
+                bool = true;
+                xx = x + bounds.x + bounds.width * 1.0F;
+            }
+
+            else
+                xx = 0;
+
+            if (bool)
             {
                 player.attack_knockback = true;
-                float xx = player.isFacingRight() ? x + bounds.x + bounds.width : x + bounds.x;
-                float yy = y + bounds.y + bounds.height * 0.5F;
                 handler.getWorld().spawnEntity(new ParticleWallHit(handler, xx, yy));
                 hit_wall = true;
             }
         }
+
+        if ((player.down_slashing || player.up_slashing) && !hit_wall) // wall knockback
+        {
+            float xx = x + bounds.x + bounds.width * 0.5F;
+            float yy;
+
+            boolean bool = false;
+
+            if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.50) / Tile.SIZE, (int) Math.floor(getY() + bounds.y) / Tile.SIZE))
+            {
+                bool = true;
+                yy = y + bounds.y + bounds.height * 0.0F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.50) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.2) / Tile.SIZE))
+            {
+                bool = true;
+                yy = y + bounds.y + bounds.height * 0.2F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.50) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.4) / Tile.SIZE))
+            {
+                bool = true;
+                yy = y + bounds.y + bounds.height * 0.4F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.50) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.6) / Tile.SIZE))
+            {
+                bool = true;
+                yy = y + bounds.y + bounds.height * 0.6F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.50) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height * 0.8) / Tile.SIZE))
+            {
+                bool = true;
+                yy = y + bounds.y + bounds.height * 0.8F;
+            }
+
+            else if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.50) / Tile.SIZE, (int) Math.floor(getY() + bounds.y + bounds.height) / Tile.SIZE))
+            {
+                bool = true;
+                yy = y + bounds.y + bounds.height * 1.0F;
+            }
+
+            else
+                yy = 0;
+
+            if (bool)
+            {
+                handler.getWorld().spawnEntity(new ParticleWallHit(handler, xx, yy));
+                hit_wall = true;
+            }
+        }
+
+//        if (!hit_wall) // wall knockback
+//        {
+//            if (collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.2) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.4) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.6) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 0.8) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.34) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.50) / Tile.TILE_HEIGHT)
+//             || collisionWithTile((int) Math.floor(getX() + bounds.x + bounds.width * 1.0) / Tile.TILE_WIDTH, (int) Math.floor(getY() + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT))
+//            {
+//                if (!player.down_slashing && !player.up_slashing)
+//                    player.attack_knockback = true;
+//
+//                float xx = player.isFacingRight() ? x + bounds.x + bounds.width : x + bounds.x;
+//                float yy = y + bounds.y + bounds.height * 0.5F;
+//                handler.getWorld().spawnEntity(new ParticleWallHit(handler, xx, yy));
+//                hit_wall = true;
+//            }
+//        }
 
         if (player.isFacingRight())
         {
@@ -115,7 +290,7 @@ public class PlayerSlash extends Creature
                 bounds.x = -55;
                 bounds.y = 0;
                 bounds.width = 170;
-                bounds.height = 230;
+                bounds.height = 220;
             }
         }
 
@@ -142,50 +317,44 @@ public class PlayerSlash extends Creature
                 bounds.x = -55;
                 bounds.y = 0;
                 bounds.width = 170;
-                bounds.height = 230;
+                bounds.height = 220;
             }
         }
 
-        exists = player.isSlashing();
+        setX(player.getX());
+        setY(player.getY());
 
-        if (exists)
+        if (checkEntityCollisions(xMove, yMove))
         {
-            setX(player.getX());
-            setY(player.getY());
-
-            if (checkEntityCollisions(xMove, yMove))
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            if (getCollidingEntity(xMove, yMove) != null)
             {
-                Player player = handler.getWorld().getEntityManager().getPlayer();
-                if (getCollidingEntity(xMove, yMove) != null)
+                boolean bool1 = false;
+                boolean bool2 = false;
+
+                for (Entity e : getCollidingEntities(xMove, yMove))
                 {
-                    for (Entity e : getCollidingEntities(xMove, yMove))
-                        e.hasBeenHit();
-                    player.was_just_attacked = true;
+                    e.hasBeenHit();
 
-                    boolean bool1 = false;
-                    boolean bool2 = false;
-                    for (Entity e : getCollidingEntities(xMove, yMove))
+                    if (!bool1 && e.is_pogoable)
+                        bool1 = true;
+
+                    if (!bool2 && e.has_knockback)
+                        bool2 = true;
+                }
+
+                if (!player.up_slashing && !player.down_slashing && bool2 && !player.just_knocked_back)
+                    player.attack_knockback = true;
+
+                else if (player.down_slashing && bool1)
+                {
+                    if (!player.just_pogoed)
                     {
-                        if (e.is_pogoable)
-                            bool1 = true;
-
-                        if (e.has_knockback)
-                            bool2 = true;
-                    }
-
-                    if (!player.up_slashing && !player.down_slashing && bool2 && !player.just_knocked_back)
-                        player.attack_knockback = true;
-
-                    else if (player.down_slashing && bool1)
                         player.pogo = true;
+                        player.just_pogoed = true;
+                    }
                 }
             }
-        }
-
-        else if (getX() != 0 && getY() != 0)
-        {
-            setX(0);
-            setY(0);
         }
     }
 
@@ -198,55 +367,52 @@ public class PlayerSlash extends Creature
     @Override
     public void render(Graphics2D gfx)
     {
-        if (exists)
+        if (player.isFacingRight())
         {
-            if (player.isFacingRight())
+            if (!player.down_slashing && !player.up_slashing)
             {
-                if (!player.down_slashing && !player.up_slashing)
-                {
-                    if (player.alternative_slash_sprite)
-                        gfx.drawImage(Assets.slash1_right, (int) (x - handler.getCamera().getxOffset() - 40), (int) (y - handler.getCamera().getyOffset()), null);
-                    else
-                        gfx.drawImage(Assets.slash2_right, (int) (x - handler.getCamera().getxOffset() - 40), (int) (y - handler.getCamera().getyOffset() - 15), null);
-                }
-
-                else if (player.up_slashing)
-                {
-                    gfx.drawImage(Assets.upslash_right, (int) (x - handler.getCamera().getxOffset() - 50), (int) (y - handler.getCamera().getyOffset() - 100), null);
-                }
-
+                if (player.alternative_slash_sprite)
+                    gfx.drawImage(slash1_right.getCurrentFrame(), (int) (x - handler.getCamera().getxOffset() - 71), (int) (y - handler.getCamera().getyOffset()), null);
                 else
-                {
-                    gfx.drawImage(Assets.downslash_right, (int) (x - handler.getCamera().getxOffset() - 60), (int) (y - handler.getCamera().getyOffset() - 20), null);
-                }
+                    gfx.drawImage(slash2_right.getCurrentFrame(), (int) (x - handler.getCamera().getxOffset() - 40), (int) (y - handler.getCamera().getyOffset() - 15), null);
+            }
+
+            else if (player.up_slashing)
+            {
+                gfx.drawImage(upslash_right.getCurrentFrame(), (int) (x - handler.getCamera().getxOffset() - 50), (int) (y - handler.getCamera().getyOffset() - 100), null);
             }
 
             else
             {
-                if (!player.down_slashing && !player.up_slashing)
-                {
-                    if (player.alternative_slash_sprite)
-                        gfx.drawImage(Assets.slash1_left, (int) (x - handler.getCamera().getxOffset() - 157), (int) (y - handler.getCamera().getyOffset()), null);
-                    else
-                        gfx.drawImage(Assets.slash2_left, (int) (x - handler.getCamera().getxOffset() - 140), (int) (y - handler.getCamera().getyOffset() - 15), null);
-                }
-
-                else if (player.up_slashing)
-                {
-                    gfx.drawImage(Assets.upslash_left, (int) (x - handler.getCamera().getxOffset() - 75), (int) (y - handler.getCamera().getyOffset() - 100), null);
-                }
-
-                else
-                {
-                    gfx.drawImage(Assets.downslash_left, (int) (x - handler.getCamera().getxOffset() - 62), (int) (y - handler.getCamera().getyOffset() - 20), null);
-                }
+                gfx.drawImage(downslash_right.getCurrentFrame(), (int) (x - handler.getCamera().getxOffset() - 60), (int) (y - handler.getCamera().getyOffset() - 20), null);
             }
+        }
 
-            if (Launcher.show_hitboxes)
+        else
+        {
+            if (!player.down_slashing && !player.up_slashing)
             {
-                gfx.setColor(Color.blue);
-                gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
+                if (player.alternative_slash_sprite)
+                    gfx.drawImage(slash1_left.getCurrentFrame(), (int) (x - handler.getCamera().getxOffset() - 157), (int) (y - handler.getCamera().getyOffset()), null);
+                else
+                    gfx.drawImage(slash2_left.getCurrentFrame(), (int) (x - handler.getCamera().getxOffset() - 140), (int) (y - handler.getCamera().getyOffset() - 15), null);
             }
+
+            else if (player.up_slashing)
+            {
+                gfx.drawImage(upslash_left.getCurrentFrame(), (int) (x - handler.getCamera().getxOffset() - 75), (int) (y - handler.getCamera().getyOffset() - 100), null);
+            }
+
+            else
+            {
+                gfx.drawImage(downslash_left.getCurrentFrame(), (int) (x - handler.getCamera().getxOffset() - 62), (int) (y - handler.getCamera().getyOffset() - 20), null);
+            }
+        }
+
+        if (Launcher.show_hitboxes)
+        {
+            gfx.setColor(Color.blue);
+            gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
 

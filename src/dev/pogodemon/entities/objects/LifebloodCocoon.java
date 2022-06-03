@@ -3,6 +3,7 @@ package dev.pogodemon.entities.objects;
 import dev.pogodemon.Launcher;
 import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
+import dev.pogodemon.entities.Player;
 import dev.pogodemon.entities.creatures.Lifeseed;
 import dev.pogodemon.entities.particles.ParticleEnemyHit;
 import dev.pogodemon.utils.Handler;
@@ -53,7 +54,9 @@ public class LifebloodCocoon extends Creature
     public void hasBeenHit()
     {
         health = 0;
-        handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
+        Player p = handler.getWorld().getEntityManager().getPlayer();
+            float yy = (p.up_slashing || p.down_slashing) ? getCenterY() : p.getCenterY();
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), yy));
     }
 
     @Override

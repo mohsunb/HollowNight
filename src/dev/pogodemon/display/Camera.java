@@ -21,14 +21,14 @@ public class Camera
         if (xOffset < 0)
             xOffset = 0;
 
-        else if (xOffset > handler.getWorld().getWidth() * Tile.TILE_WIDTH - handler.getWidth())
-            xOffset = handler.getWorld().getWidth() * Tile.TILE_WIDTH - handler.getWidth();
+        else if (xOffset > handler.getWorld().getWidth() * Tile.SIZE - handler.getWidth())
+            xOffset = handler.getWorld().getWidth() * Tile.SIZE - handler.getWidth();
 
         if (yOffset < 0)
             yOffset = 0;
 
-        else if (yOffset > handler.getWorld().getHeight() * Tile.TILE_HEIGHT - handler.getHeight())
-            yOffset = handler.getWorld().getHeight() * Tile.TILE_HEIGHT - handler.getHeight();
+        else if (yOffset > handler.getWorld().getHeight() * Tile.SIZE - handler.getHeight())
+            yOffset = handler.getWorld().getHeight() * Tile.SIZE - handler.getHeight();
     }
 
     public void centerOnEntity(Entity e)

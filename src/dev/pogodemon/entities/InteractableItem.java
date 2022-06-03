@@ -36,7 +36,7 @@ public class InteractableItem extends Creature
     @Override
     public int renderRank()
     {
-        return 0;
+        return 2;
     }
 
     @Override
@@ -127,8 +127,8 @@ public class InteractableItem extends Creature
             {
                 gfx.drawImage(Assets.interact, (int) (getX() - handler.getCamera().getxOffset() - Assets.interact.getWidth() * 0.5), (int) (getY() - handler.getCamera().getyOffset() - 200 - handler.getWorld().getEntityManager().getPlayer().bounds.height), null);
                 gfx.setColor(Color.white);
-                gfx.setFont(new Font("Arial", Font.PLAIN, 45));
-                gfx.drawString("INSPECT", getX() - handler.getCamera().getxOffset() - 100, getY() - handler.getCamera().getyOffset() - 227.5F);
+                gfx.setFont(Assets.trajan);
+                gfx.drawString("INSPECT", getX() - handler.getCamera().getxOffset() - 100 - 10, getY() - handler.getCamera().getyOffset() - 227.5F);
                 gfx.setFont(new Font("Arial", Font.PLAIN, 12));
             }
         }
@@ -139,8 +139,8 @@ public class InteractableItem extends Creature
             {
                 gfx.drawImage(Assets.interact, (int) (getX() - handler.getCamera().getxOffset() - Assets.interact.getWidth() * 0.5), (int) (getY() - handler.getCamera().getyOffset() - 100 - handler.getWorld().getEntityManager().getPlayer().bounds.height), null);
                 gfx.setColor(Color.white);
-                gfx.setFont(new Font("Arial", Font.PLAIN, 45));
-                gfx.drawString("INSPECT", getX() - handler.getCamera().getxOffset() - 100, getY() - handler.getCamera().getyOffset() - 127.5F);
+                gfx.setFont(Assets.trajan);
+                gfx.drawString("INSPECT", getX() - handler.getCamera().getxOffset() - 100 - 10, getY() - handler.getCamera().getyOffset() - 127.5F);
                 gfx.setFont(new Font("Arial", Font.PLAIN, 12));
             }
         }

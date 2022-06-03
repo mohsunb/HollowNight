@@ -5,13 +5,11 @@ import dev.pogodemon.display.Assets;
 import dev.pogodemon.entities.Creature;
 import dev.pogodemon.entities.Geo;
 import dev.pogodemon.entities.Player;
-<<<<<<< HEAD
-=======
 import dev.pogodemon.entities.particles.Colors;
 import dev.pogodemon.entities.particles.ParticleEnemyHit;
 import dev.pogodemon.entities.particles.ParticleHit;
->>>>>>> 6aee207 (v0.3.6)
 import dev.pogodemon.utils.Handler;
+import dev.pogodemon.world.Tile;
 import dev.pogodemon.world.World;
 
 import java.awt.*;
@@ -24,10 +22,9 @@ public class Crawlid extends Creature
     private boolean hit_knockback_right = false;
     private long hit_knockback_timer = 0;
 
-    private boolean hit = false;
-    private float hitX = 0;
-    private float hitY = 0;
-    private int hit_counter = 0;
+    private boolean flag1 = false;
+
+    private boolean dead = false;
 
     public Crawlid(Handler handler, float x, float y)
     {
@@ -42,23 +39,25 @@ public class Crawlid extends Creature
     @Override
     public void update()
     {
-        if (hit && ++hit_counter >= Launcher.framerate_limit / 3F)
+        if (!dead)
         {
-            hit = false;
-            hit_counter = 0;
-        }
+            if (was_just_fireball_hit)
+            {
+                fireball_timer++;
+                if (fireball_timer >= Launcher.framerate_limit * 0.15)
+                {
+                    was_just_fireball_hit = false;
+                    fireball_timer = 0;
+                }
+            }
 
-        if (exists)
-        {
             if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
                 was_just_attacked = false;
-
-            move();
 
             if (hit_knockback)
             {
                 hit_knockback_timer++;
-                if (hit_knockback_timer >= Launcher.framerate_limit * 0.2)
+                if (hit_knockback_timer >= Launcher.framerate_limit * 0.1)
                 {
                     hit_knockback_timer = 0;
                     hit_knockback = false;
@@ -99,15 +98,34 @@ public class Crawlid extends Creature
             }
 
 
-            if (health <= 0 && !hit_knockback) // death
+            if (health <= 0) // death
             {
-                exists = false;
-                World world = handler.getWorld();
-                world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
-                world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
-                facing_right = !handler.getWorld().getEntityManager().getPlayer().isFacingRight();
+                if (!flag1)
+                {
+                    flag1 = true;
+                    World world = handler.getWorld();
+                    world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+                    world.spawnEntity(new Geo(handler, (float) (getX() + bounds.width * 0.5), (float) (getY() + bounds.height * 0.5), 0));
+                }
+
+                if (!hit_knockback)
+                {
+                    dead = true;
+                    is_pogoable = false;
+                    has_knockback = false;
+
+                    facing_right = !handler.getWorld().getEntityManager().getPlayer().isFacingRight();
+                }
             }
         }
+
+        if (dead && (!hit_knockback || grounded))
+        {
+            speedX = 0;
+            xMove = 0;
+        }
+
+        move();
     }
 
     @Override
@@ -119,15 +137,7 @@ public class Crawlid extends Creature
     @Override
     public void render(Graphics2D gfx)
     {
-        if (exists)
-        {
-            if (facing_right)
-                gfx.drawImage(Assets.crawlid_right, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset() + 5), null);
-            else
-                gfx.drawImage(Assets.crawlid_left, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset() + 5), null);
-        }
-
-        else
+        if (dead)
         {
             if (facing_right)
                 gfx.drawImage(Assets.crawlid_dead_right, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() + 40), null);
@@ -135,18 +145,20 @@ public class Crawlid extends Creature
                 gfx.drawImage(Assets.crawlid_dead_left, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() + 40), null);
         }
 
-        if (hit)
+        else
         {
-            float rate = hit_counter / (Launcher.framerate_limit / 3F);
-            gfx.setColor(new Color(255, 84, 0));
-            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F - rate));
-            gfx.fillOval((int) (hitX - handler.getCamera().getxOffset() - 100 - 200 * rate), (int) (hitY - handler.getCamera().getyOffset() - 100 - 200 * rate), (int) (200 + 2 * 200 * rate), (int) (200 + 2 * 200 * rate));
-            gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+            if (facing_right)
+                gfx.drawImage(Assets.crawlid_right, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset() + 5), null);
+            else
+                gfx.drawImage(Assets.crawlid_left, (int) (x - handler.getCamera().getxOffset() - 20), (int) (y - handler.getCamera().getyOffset() + 5), null);
         }
 
         if (Launcher.show_hitboxes)
         {
-            gfx.setColor(Color.red);
+            if (dead)
+                gfx.setColor(Color.blue);
+            else
+                gfx.setColor(Color.red);
             gfx.drawRect((int) (x + bounds.x - handler.getCamera().getxOffset()), (int) (y + bounds.y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
@@ -159,18 +171,10 @@ public class Crawlid extends Creature
             was_just_attacked = true;
             Player player = handler.getWorld().getEntityManager().getPlayer();
             health -= player.nail_damage;
-<<<<<<< HEAD
-            if (!hit)
-            {
-                hit = true;
-                hitX = getCenterX();
-                hitY = getCenterY();
-            }
-
-=======
             handler.getWorld().spawnEntity(new ParticleHit(handler, Colors.infected, getCenterX(), getCenterY()));
-            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
->>>>>>> 6aee207 (v0.3.6)
+            Player p = handler.getWorld().getEntityManager().getPlayer();
+            float yy = (p.up_slashing || p.down_slashing) ? getCenterY() : p.getCenterY();
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), yy));
 
             hit_knockback = true;
             if (!player.up_slashing && !player.down_slashing)
@@ -199,10 +203,10 @@ public class Crawlid extends Creature
     {
         if (!was_just_fireball_hit)
         {
-
             was_just_fireball_hit = true;
             Player player = handler.getWorld().getEntityManager().getPlayer();
             health -= player.fireball_damage;
+            handler.getWorld().spawnEntity(new ParticleHit(handler, Colors.infected, getCenterX(), getCenterY()));
             hit_knockback = true;
 
             if (player.isFacingRight())
@@ -215,22 +219,19 @@ public class Crawlid extends Creature
     @Override
     public void playerContact()
     {
-        Player player = handler.getWorld().getEntityManager().getPlayer();
-        if (!player.invulnerable && !player.shadow_dashing)
+        if (!dead)
         {
-            player.dealDamage();
-            player.triggerScreenShake();
-            player.setScreenShakeLength(Launcher.framerate_limit);
-            player.setScreenShakeLevel(10);
-            player.triggerDamageFreeze();
-            player.setDamageShockFreezeLength(Launcher.framerate_limit / 3F);
-            player.invulnerable = true;
-            player.damage_shocked = true;
-            if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))
-                player.damage_shocked_right = false;
+            Player player = handler.getWorld().getEntityManager().getPlayer();
+            if (!player.dead && !player.invulnerable && !player.shadow_dashing)
+            {
+                player.dealDamageGeneric();
 
-            else
-                player.damage_shocked_right = true;
+                if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))
+                    player.damage_shocked_right = false;
+
+                else
+                    player.damage_shocked_right = true;
+            }
         }
     }
 }

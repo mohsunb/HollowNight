@@ -12,7 +12,7 @@ public class Grass extends StaticEntity
 {
     public Grass(Handler handler, float x, float y)
     {
-        super(handler, x, y, Tile.TILE_WIDTH, Tile.TILE_HEIGHT * 2);
+        super(handler, x, y, Tile.SIZE, Tile.SIZE * 2);
         can_be_killed = false;
     }
 

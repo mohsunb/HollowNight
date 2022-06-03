@@ -120,7 +120,8 @@ public class Geo extends Creature
     }
 
     @Override
-    public void fireballHit() {
+    public void fireballHit()
+    {
 
     }
 

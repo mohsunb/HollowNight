@@ -1,19 +1,17 @@
 package dev.pogodemon.world;
 
+import dev.pogodemon.Launcher;
 import dev.pogodemon.display.ImageLoader;
 import dev.pogodemon.entities.CameraFocusPoint;
 import dev.pogodemon.entities.Entity;
 import dev.pogodemon.entities.EntityManager;
 import dev.pogodemon.entities.Player;
+import dev.pogodemon.utils.Coordinate;
 import dev.pogodemon.utils.Handler;
+import dev.pogodemon.utils.MapHelper;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class World
@@ -26,30 +24,18 @@ public class World
     private int width, height;
     private int[][] tiles;
     private EntityManager entityManager;
+    private int map_id;
 
-<<<<<<< HEAD
-    public World(Handler handler, String path, int spawnX, int spawnY)
-    {
-        this.width = ImageLoader.loadImage(path).getWidth();
-        this.height = ImageLoader.loadImage(path).getHeight();
-=======
     //Transitions
     public World(Handler handler, int map_id, int entrance_id)
     {
         this.width = ImageLoader.loadImage(MapHelper.path(map_id)).getWidth();
         this.height = ImageLoader.loadImage(MapHelper.path(map_id)).getHeight();
         this.map_id = map_id;
->>>>>>> 6aee207 (v0.3.6)
 
         this.handler = handler;
         entityManager = new EntityManager(handler, new Player(handler, 0, 0), new CameraFocusPoint(handler));
 
-<<<<<<< HEAD
-        loadWorldFromImage(path);
-
-        entityManager.getPlayer().setX(spawnX);
-        entityManager.getPlayer().setY(spawnY);
-=======
         loadWorldFromImage(MapHelper.path(map_id));
 
         entityManager.getPlayer().setX(MapHelper.coordinate(map_id, entrance_id).getX());
@@ -123,7 +109,6 @@ public class World
     public int getID()
     {
         return map_id;
->>>>>>> 6aee207 (v0.3.6)
     }
 
     public EntityManager getEntityManager()
@@ -159,20 +144,24 @@ public class World
 
     public void render(Graphics2D gfx)
     {
-        int xStart = (int) Math.max(0, handler.getCamera().getxOffset() / Tile.TILE_WIDTH);
-        int xEnd = (int) Math.min(width, (handler.getCamera().getxOffset() + handler.getWidth()) / Tile.TILE_WIDTH + 1);
-        int yStart = (int) Math.max(0, handler.getCamera().getyOffset() / Tile.TILE_HEIGHT);
-        int yEnd = (int) Math.min(height, (handler.getCamera().getyOffset() + handler.getHeight()) / Tile.TILE_HEIGHT + 1);
+        entityManager.render(gfx);
 
-        for (int y = yStart; y < yEnd; y++)
+        if (Launcher.show_world_bounds)
         {
-            for (int x = xStart; x < xEnd; x++)
+            int xStart = (int) Math.max(0, handler.getCamera().getxOffset() / Tile.SIZE);
+            int xEnd = (int) Math.min(width, (handler.getCamera().getxOffset() + handler.getWidth()) / Tile.SIZE + 1);
+            int yStart = (int) Math.max(0, handler.getCamera().getyOffset() / Tile.SIZE);
+            int yEnd = (int) Math.min(height, (handler.getCamera().getyOffset() + handler.getHeight()) / Tile.SIZE + 1);
+
+            for (int y = yStart; y < yEnd; y++)
             {
-                getTile(x, y).render(gfx, (int) (x * Tile.TILE_WIDTH - handler.getCamera().getxOffset()), (int) (y * Tile.TILE_HEIGHT - handler.getCamera().getyOffset()));
+                for (int x = xStart; x < xEnd; x++)
+                {
+                    if (getTile(x, y).isSolid())
+                        getTile(x, y).render(gfx, (int) (x * Tile.SIZE - handler.getCamera().getxOffset()), (int) (y * Tile.SIZE - handler.getCamera().getyOffset()));
+                }
             }
         }
-
-        entityManager.render(gfx);
     }
 
     public Tile getTile(int x, int y)

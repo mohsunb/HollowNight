@@ -15,7 +15,7 @@ public class SpikesSmall extends StaticEntity
     private int facing = 0; // 0 -> up; 1 -> right; 2 -> down; 3 -> left;
     public SpikesSmall(Handler handler, float x, float y, int facing)
     {
-        super(handler, x, y, Tile.TILE_WIDTH, Tile.TILE_HEIGHT);
+        super(handler, x, y, Tile.SIZE, Tile.SIZE);
         this.facing = facing;
         is_pogoable = true;
     }
@@ -65,7 +65,17 @@ public class SpikesSmall extends StaticEntity
             player.setScreenShakeLength(Launcher.framerate_limit * 0.0625F);
             player.setScreenShakeLevel(5);
             was_just_attacked = true;
-            handler.getWorld().spawnEntity(new ParticleSpikeHit(handler, getCenterX(), getCenterY()));
+
+            float xx = getCenterX();
+            float yy = getCenterY();
+
+            if (player.down_slashing || player.up_slashing)
+                xx = player.getCenterX();
+
+            else
+                yy = player.getCenterY();
+
+            handler.getWorld().spawnEntity(new ParticleSpikeHit(handler, xx, yy));
         }
     }
 

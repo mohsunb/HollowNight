@@ -9,9 +9,9 @@ import java.awt.*;
 public class BreakableWallKingsPass extends BreakableWall
 {
     private final boolean facing_right;
-    public BreakableWallKingsPass(Handler handler, float x, float y, float width, float height, boolean facing_right)
+    public BreakableWallKingsPass(Handler handler, float x, float y, float width, float height, boolean facing_right, String save_file_entry)
     {
-        super(handler, x, y, width, height, 1);
+        super(handler, x, y, width, height, 1, save_file_entry);
         this.facing_right = facing_right;
         has_knockback = false;
         setClimbable(false);

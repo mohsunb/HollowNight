@@ -34,81 +34,70 @@ public class Stalagmite extends Creature
     @Override
     public void update()
     {
-        Player player = handler.getWorld().getEntityManager().getPlayer();
+        if (was_just_attacked && !handler.getWorld().getEntityManager().getPlayer().slashing)
+            was_just_attacked = false;
 
-        if (exists)
+        if (triggered)
         {
-            if (was_just_attacked && !player.slashing)
-                was_just_attacked = false;
-
-            if (triggered)
+            timer++;
+            if (timer >= Launcher.framerate_limit * 0.2)
             {
-                timer++;
-                if (timer >= Launcher.framerate_limit * 0.2)
-                {
-                    falling = true;
-                    enableGravity();
-                }
-            }
-
-            if (falling && !impact)
-                for (Entity e : getCollidingEntities(xMove, yMove))
-                    e.kill();
-
-            if (!impact && grounded)
-                impact = true;
-
-            if (!impact)
-                move();
-
-            if (impact)
-                falling = false;
-
-            if (diagonal && bounds.height != 40)
-                bounds.height = 40;
-
-            if (diagonal)
-            {
-                disableGravity();
-                if (!impact)
-                    yMove = DEFAULT_SPEED * 4;
-                else
-                    yMove = 0;
-                if (facing_right)
-                    xMove = yMove;
-
-                else
-                    xMove = -yMove;
-            }
-
-            if (!impact && !triggered &&
-                    player.getCenterX() >= getCenterX() - 100 &&
-                    player.getCenterX() <= getCenterX() + 100 &&
-                    player.getCenterY() >= getCenterY() &&
-                    player.getCenterY() <= getCenterY() + d)
-                triggered = true;
-
-            if (!impact)
-            {
-                int tx = 0;
-                if (xMove > 0)
-                    tx = (int) Math.floor((x + xMove + bounds.x + bounds.width) / Tile.TILE_WIDTH);
-                else if (xMove < 0)
-                    tx = (int) Math.floor((x + xMove + bounds.x) / Tile.TILE_WIDTH);
-
-                if ((collisionWithTile(tx, (int) Math.floor((y + bounds.y) / Tile.TILE_HEIGHT))
-                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.TILE_HEIGHT))
-                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.TILE_HEIGHT))
-                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.TILE_HEIGHT))
-                        || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.TILE_HEIGHT))) && !impact)
-                    impact = true;
+                falling = true;
+                enableGravity();
             }
         }
 
-        else
+        if (falling && !impact)
+            for (Entity e : getCollidingEntities(xMove, yMove))
+                e.kill();
+
+        if (!impact && grounded)
+            impact = true;
+
+        if (!impact)
+            move();
+
+        if (impact)
+            falling = false;
+
+        if (diagonal && bounds.height != 40)
+            bounds.height = 40;
+
+        if (diagonal)
         {
-            setX(0);
-            setY(0);
+            disableGravity();
+            if (!impact)
+                yMove = DEFAULT_SPEED * 4;
+            else
+                yMove = 0;
+            if (facing_right)
+                xMove = yMove;
+
+            else
+                xMove = -yMove;
+        }
+
+        if (!impact && !triggered &&
+                handler.getWorld().getEntityManager().getPlayer().getCenterX() >= getCenterX() - 100 &&
+                handler.getWorld().getEntityManager().getPlayer().getCenterX() <= getCenterX() + 100 &&
+                handler.getWorld().getEntityManager().getPlayer().getCenterY() >= getCenterY() &&
+                handler.getWorld().getEntityManager().getPlayer().getCenterY() <= getCenterY() + d)
+            triggered = true;
+
+        if (!impact)
+        {
+            int tx = 0;
+            if (xMove > 0)
+                tx = (int) Math.floor((x + xMove + bounds.x + bounds.width) / Tile.SIZE);
+            else if (xMove < 0)
+                tx = (int) Math.floor((x + xMove + bounds.x) / Tile.SIZE);
+
+            if ((collisionWithTile(tx, (int) Math.floor((y + bounds.y) / Tile.SIZE))
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height) / Tile.SIZE))
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.5) / Tile.SIZE))
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.25) / Tile.SIZE))
+                    || collisionWithTile(tx, (int) Math.floor((y + bounds.y + bounds.height * 0.75) / Tile.SIZE))) && !impact)
+                impact = true;
         }
     }
 
@@ -121,17 +110,14 @@ public class Stalagmite extends Creature
     @Override
     public void render(Graphics2D gfx)
     {
-        if (exists)
-        {
-            if (!diagonal)
-                gfx.drawImage(Assets.stalagmite, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
+        if (!diagonal)
+            gfx.drawImage(Assets.stalagmite, (int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), null);
 
-            else if (facing_right)
-                gfx.drawImage(Assets.stalagmite_right, (int) (x - handler.getCamera().getxOffset() - 30), (int) (y - handler.getCamera().getyOffset() - 30), null);
+        else if (facing_right)
+            gfx.drawImage(Assets.stalagmite_right, (int) (x - handler.getCamera().getxOffset() - 30), (int) (y - handler.getCamera().getyOffset() - 30), null);
 
-            else
-                gfx.drawImage(Assets.stalagmite_left, (int) (x - handler.getCamera().getxOffset() - 30), (int) (y - handler.getCamera().getyOffset() - 35), null);
-        }
+        else
+            gfx.drawImage(Assets.stalagmite_left, (int) (x - handler.getCamera().getxOffset() - 30), (int) (y - handler.getCamera().getyOffset() - 35), null);
 
         if (Launcher.show_hitboxes)
         {
@@ -163,10 +149,9 @@ public class Stalagmite extends Creature
             if (!diagonal && !player.up_slashing && !player.down_slashing)
             {
                 diagonal = true;
-<<<<<<< HEAD
-=======
-                handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), getCenterY()));
->>>>>>> 6aee207 (v0.3.6)
+                Player p = handler.getWorld().getEntityManager().getPlayer();
+            float yy = (p.up_slashing || p.down_slashing) ? getCenterY() : p.getCenterY();
+            handler.getWorld().spawnEntity(new ParticleEnemyHit(handler, getCenterX(), yy));
                 facing_right = player.isFacingRight();
             }
 
@@ -178,7 +163,7 @@ public class Stalagmite extends Creature
                 if (!player.down_slashing && !player.up_slashing)
                     player.attack_knockback = true;
 
-                exists = false;
+                handler.getWorld().removeEntity(this);
             }
         }
     }
@@ -196,14 +181,8 @@ public class Stalagmite extends Creature
             Player player = handler.getWorld().getEntityManager().getPlayer();
             if (!player.invulnerable && !player.shadow_dashing)
             {
-                player.dealDamage();
-                player.triggerScreenShake();
-                player.setScreenShakeLength(Launcher.framerate_limit);
-                player.setScreenShakeLevel(10);
-                player.triggerDamageFreeze();
-                player.setDamageShockFreezeLength(Launcher.framerate_limit / 3F);
-                player.invulnerable = true;
-                player.damage_shocked = true;
+                player.dealDamageGeneric();
+
                 if ((player.getX() + bounds.width * 0.5) <= (getX() + bounds.width * 0.5))
                     player.damage_shocked_right = false;
 

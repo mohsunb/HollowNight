@@ -1,3 +1,38 @@
+## Update 03-June-2022: Major Change 2 (v0.4.8)
+***Additions:***
+* Save file system
+* Default save files
+* Parrying system (improper)
+* Dashing twice off walls
+* Collapsing floor and breakable wall textures
+* Dirtmouth entrance door event
+* Animations for Vengefly
+* Broken geo rocks and breakable walls are saved
+* Lifeblood absorption animation
+* Multidirectional room transitions
+* Complete Forgotten Crossroads map
+* Tiktik enemy
+* Husk Bully enemy
+* Hornhead Husk enemy
+* Leaping Husk enemy
+* Gruzzer enemy
+
+***Changes:***
+* Particle effect of hitting walls and enemies is now displayed properly
+* Collected items' name now use the proper font
+* Crawlids are affected by gravity after death
+* Crawlids no more turn around after hitting a wall during knockback
+* Increased wall cling fall speed
+* Increased minimum fall height required for hardfalls
+* Decreased enemy knockback
+
+***Bugfixes:***
+* Fixed soul vessel displaying less soul
+* Fixed Vengeful Spirit not resetting fall speed
+* Fixed spikes sparking more than necessary
+* Fixed a bug where you could buffer attacks during dashes
+* Fixed a bug where player could get stuck in double jump animation
+
 ## Update 7-May-2022: Major Change 1 (v0.3.6)
 ***Additions:***
 * Implemented proper particle system

@@ -28,7 +28,7 @@ public class ParticleGeoCollect extends StaticEntity
     @Override
     public int renderRank()
     {
-        return 3;
+        return 5;
     }
 
     @Override

@@ -202,7 +202,7 @@ public class CameraFocusPoint extends StaticEntity
     @Override
     public int renderRank()
     {
-        return 0;
+        return 3;
     }
 
     @Override

@@ -1,57 +1,12 @@
 package dev.pogodemon.utils;
 
-<<<<<<< HEAD
-=======
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
->>>>>>> 6aee207 (v0.3.6)
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class Utils
 {
-    public static String loadFileAsString(String path)
-    {
-        StringBuilder builder = new StringBuilder();
-
-        try
-        {
-            BufferedReader reader = new BufferedReader(new FileReader(path));
-            String line;
-
-            while ((line = reader.readLine()) != null)
-                builder.append(line + "\n");
-
-            reader.close();
-        }
-
-        catch(IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        return builder.toString();
-    }
-
-    public static int parseInt(String number)
-    {
-        try
-        {
-            return Integer.parseInt(number);
-        }
-
-        catch(NumberFormatException e)
-        {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-<<<<<<< HEAD
-=======
-
     public static void setOpacity(Graphics2D gfx, float opacity)
     {
         gfx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
@@ -91,5 +46,19 @@ public class Utils
 
         return img;
     }
->>>>>>> 6aee207 (v0.3.6)
+
+    public static String detectOS()
+    {
+        return System.getProperty("os.name").toLowerCase();
+    }
+
+    public static boolean isLinux()
+    {
+        return detectOS().contains("linux") || detectOS().contains("nix") || detectOS().contains("nux");
+    }
+
+    public static boolean isWindows()
+    {
+        return detectOS().contains("windows") ||  detectOS().contains("win");
+    }
 }

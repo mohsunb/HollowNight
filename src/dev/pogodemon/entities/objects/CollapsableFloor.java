@@ -20,15 +20,6 @@ public class CollapsableFloor extends StaticEntity
         setSolid(true);
     }
 
-    private void collapse()
-    {
-        bounds.width = 0;
-        bounds.height = 0;
-        exists = false;
-        setX(0);
-        setY(0);
-    }
-
     @Override
     public void update()
     {
@@ -46,9 +37,7 @@ public class CollapsableFloor extends StaticEntity
                 timer++;
                 if (timer >= time)
                 {
-                    collapse();
-                    triggered = false;
-                    timer = 0;
+                    handler.getWorld().removeEntity(this);
                 }
             }
         }
@@ -63,18 +52,15 @@ public class CollapsableFloor extends StaticEntity
     @Override
     public void render(Graphics2D gfx)
     {
-        if (exists)
-        {
-            gfx.setColor(Color.darkGray);
-            gfx.fillRect((int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
+        gfx.setColor(Color.darkGray);
+        gfx.fillRect((int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
 
-            if (Launcher.show_hitboxes)
-            {
-                gfx.setColor(Color.yellow);
-                gfx.drawRect((int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() - 200), (int) (bounds.width), 200);
-                gfx.setColor(Color.blue);
-                gfx.drawRect((int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
-            }
+        if (Launcher.show_hitboxes)
+        {
+            gfx.setColor(Color.yellow);
+            gfx.drawRect((int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset() - 200), (int) (bounds.width), 200);
+            gfx.setColor(Color.blue);
+            gfx.drawRect((int) (x - handler.getCamera().getxOffset()), (int) (y - handler.getCamera().getyOffset()), bounds.width, bounds.height);
         }
     }
 

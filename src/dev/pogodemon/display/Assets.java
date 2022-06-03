@@ -1,11 +1,14 @@
 package dev.pogodemon.display;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Assets
 {
-<<<<<<< HEAD
-=======
+    public static BufferedImage collapsing_floor_1, dirtmouth_entrance_1, dirtmouth_entrance_2, dirtmouth_entrance_3, hardened_surface_back
+            , hardened_surface_front_1, hardened_surface_front_2, hardened_surface_front_3;
     public static Font perpetua, trajan;
 
     public static BufferedImage[] soul1, soul2, soul3, soul4, soul5, soul6, soul7, soul8;
@@ -17,21 +20,16 @@ public class Assets
             , shade_move_right, shade_move_left, shade_attack_left, shade_attack_right, shade_startle_right, shade_startle_left
             , shade_despawn_right, shade_despawn_left, shade_death_left, shade_death_right;
     public static BufferedImage[] superdash_charge_wind, superdash, superdash_trail;
-    public static BufferedImage[] wall_hit, enemy_hit, spike_hit, geo_collect;
+    public static BufferedImage[] wall_hit, enemy_hit, spike_hit, geo_collect, vengefly_idle, vengefly_startle, vengefly_attack
+            , vengefly_death;
 
->>>>>>> 6aee207 (v0.3.6)
-    public static BufferedImage player_right, player_left, tile_collision, tile_empty, grass, mask_full, mask_empty
-            , soul_vessel_hud_up, soul_vessel_hud_down, dash_right, dash_left, walk_right, walk_left, jump_right, jump_left, fall_right, fall_left
-            , fall_shock_right, fall_shock_left, cling_right, cling_left, slash1_right, slash1_left, slash2_right, slash2_left, upslash_right
-            , upslash_left, downslash_right, downslash_left, upslash_char_right, upslash_char_left, downslash_char_right, downslash_char_left
-            , slash1_char_left, slash1_char_right, slash2_char_right, slash2_char_left, spikes_small_up, spikes_small_right
+    public static BufferedImage player_right, player_left, tile_collision, grass, mask_full, mask_empty
+            , soul_vessel_hud_up, soul_vessel_hud_down, soul_vessel_broken, jump_right, jump_left, fall_right, fall_left
+            , fall_shock_right, fall_shock_left, cling_right, cling_left
+            , spikes_small_up, spikes_small_right
             , spikes_small_down, spikes_small_left, spikes_medium_up, spikes_medium_right, spikes_medium_down, spikes_medium_left
             , spikes_large_up, spikes_large_down, spikes_large_left, spikes_large_right, damage_shock_right, damage_shock_left
-<<<<<<< HEAD
-            , wings_right, wings_left, superdash_right, superdash_left, superdash_charge_right, superdash_charge_left
-=======
             , superdash_charge_right, superdash_charge_left
->>>>>>> 6aee207 (v0.3.6)
             , superdash_charge_wall_left, superdash_charge_wall_right, superdash_shocked_right, superdash_shocked_left
 
             , superdash_crystals_right_1, superdash_crystals_right_2, superdash_crystals_right_3, superdash_crystals_right_4
@@ -39,28 +37,88 @@ public class Assets
             , superdash_crystals_wall_right_1, superdash_crystals_wall_right_2, superdash_crystals_wall_right_3, superdash_crystals_wall_right_4
             , superdash_crystals_wall_left_1, superdash_crystals_wall_left_2, superdash_crystals_wall_left_3, superdash_crystals_wall_left_4
 
-            , shadow_dash_right, shadow_dash_left, wandering_husk_idle_right
+            , wandering_husk_idle_right
             , wandering_husk_idle_left, wandering_husk_walk_right, wandering_husk_walk_left, wandering_husk_attack_right
             , wandering_husk_attack_left, wandering_husk_dead_right, wandering_husk_dead_left, crawlid_right, crawlid_left, crawlid_dead_right
             , crawlid_dead_left, geo_hud, geo_small, geo_medium, geo_large, geo_deposit_up, geo_deposit_down, geo_deposit_left, geo_deposit_right
-            , geo_deposit_broken_up, geo_deposit_broken_down, geo_deposit_broken_left, geo_deposit_broken_right, vengefly_idle_right
-            , vengefly_idle_left, vengefly_agro_right, vengefly_agro_left, player_up_right, player_up_left, player_down_right, player_down_left
+            , geo_deposit_broken_up, geo_deposit_broken_down, geo_deposit_broken_left, geo_deposit_broken_right, player_up_right, player_up_left, player_down_right, player_down_left
             , stalagmite, stalagmite_right, stalagmite_left, chest, chest_open_back, chest_open_front, soul_vessel_hud_middle, breakable_wall_generic_right
             , breakable_wall_generic_left, heal_right, heal_left, vengeful_spirit_right, vengeful_spirit_left, vengeful_spirit_big_right, vengeful_spirit_big_left
             , spell_char_right, spell_char_left, item_pickup_right, item_pickup_left, interact, mothwing_cloak, mantis_claw, crystal_heart, monarch_wings, shade_cloak
-<<<<<<< HEAD
-            , hallownest_seal, wanderers_journal, kings_idol, arcane_egg, damage, heal_decal, lifeblood_cocoon, lifeseed_right, lifeseed_left
-            , lifeblood_mask;
-
-    public static void init()
-    {
-=======
             , hallownest_seal, wanderers_journal, kings_idol, arcane_egg, damage_right, damage_left, heal_decal, lifeblood_cocoon, lifeseed_right, lifeseed_left
             , lifeblood_mask, bench_generic, bench_char_1, bench_char_2, cursor, icon, death_right_1, death_left_1, death_right_2, death_left_2, death_shock
-            , vignette_low_hp, prop_nail, prop_shell, soul9, sleeping_right, sleeping_left, wakeup_right, wakeup_left;
+            , vignette_low_hp, prop_nail, prop_shell, soul9, sleeping_right, sleeping_left, wakeup_right, wakeup_left, tiktik, tiktik_corpse;
+
+    public static BufferedImage husk_bully_idle, husk_bully_walk, husk_bully_attack, husk_bully_corpse;
+    public static BufferedImage hornhead_husk_idle, hornhead_husk_walk, hornhead_husk_attack, hornhead_husk_corpse;
+    public static BufferedImage leaping_husk_idle, leaping_husk_walk, leaping_husk_jump_1, leaping_husk_jump_2, leaping_husk_corpse;
+    public static BufferedImage[] gruzzer;
 
     public static void init()
     {
+        gruzzer = new BufferedImage[2];
+        gruzzer[0] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/gruzzer/gruzzer_1.png");
+        gruzzer[1] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/gruzzer/gruzzer_2.png");
+
+        tiktik = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/tiktik/tiktik.png");
+        tiktik_corpse = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/tiktik/tiktik_corpse.png");
+
+        husk_bully_idle = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/husk_bully/husk_bully_idle.png");
+        husk_bully_walk = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/husk_bully/husk_bully_walk.png");
+        husk_bully_attack = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/husk_bully/husk_bully_attack.png");
+        husk_bully_corpse = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/husk_bully/husk_bully_corpse.png");
+
+        hornhead_husk_idle = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/hornhead_husk/hornhead_husk_idle.png");
+        hornhead_husk_walk = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/hornhead_husk/hornhead_husk_walk.png");
+        hornhead_husk_attack = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/hornhead_husk/hornhead_husk_attack.png");
+        hornhead_husk_corpse = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/hornhead_husk/hornhead_husk_corpse.png");
+
+        leaping_husk_idle = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/leaping_husk/leaping_husk_idle.png");
+        leaping_husk_walk = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/leaping_husk/leaping_husk_walk.png");
+        leaping_husk_jump_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/leaping_husk/leaping_husk_jump_1.png");
+        leaping_husk_jump_2 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/leaping_husk/leaping_husk_jump_2.png");
+        leaping_husk_corpse = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/leaping_husk/leaping_husk_corpse.png");
+
+        vengefly_idle = new BufferedImage[5];
+        vengefly_startle = new BufferedImage[5];
+        vengefly_attack = new BufferedImage[4];
+        vengefly_death = new BufferedImage[14];
+
+        for (int i = 0; i < 8; i++)
+            vengefly_death[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_death_1.png");
+        for (int i = 8; i < 13; i++)
+            vengefly_death[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_death_2.png");
+        vengefly_death[13] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_death_3.png");
+
+
+        vengefly_idle[0] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_1.png");
+        vengefly_idle[1] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_2.png");
+        vengefly_idle[2] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_3.png");
+        vengefly_idle[3] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_4.png");
+        vengefly_idle[4] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_5.png");
+
+        vengefly_startle[0] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_startle_1.png");
+        vengefly_startle[1] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_startle_2.png");
+        vengefly_startle[2] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_startle_3.png");
+        vengefly_startle[3] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_startle_4.png");
+        vengefly_startle[4] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_startle_5.png");
+
+        vengefly_attack[0] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_attack_1.png");
+        vengefly_attack[1] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_attack_2.png");
+        vengefly_attack[2] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_attack_3.png");
+        vengefly_attack[3] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_attack_4.png");
+
+        hardened_surface_back = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/hardened_surface_back.png");
+        hardened_surface_front_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/hardened_surface_front_1.png");
+        hardened_surface_front_2 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/hardened_surface_front_2.png");
+        hardened_surface_front_3 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/hardened_surface_front_3.png");
+
+        collapsing_floor_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/collapsing_floors/kings_pass_floor.png");
+
+        dirtmouth_entrance_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/dirtmouth_entrance_1.png");
+        dirtmouth_entrance_2 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/dirtmouth_entrance_2.png");
+        dirtmouth_entrance_3 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/dirtmouth_entrance_3.png");
+
         spike_hit = new BufferedImage[4];
         geo_collect = new BufferedImage[4];
 
@@ -654,11 +712,6 @@ public class Assets
             slash2_char_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/slash2_char_right_5.png");
         }
 
->>>>>>> 6aee207 (v0.3.6)
-        vengefly_idle_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_right.png");
-        vengefly_idle_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_idle_left.png");
-        vengefly_agro_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_agro_right.png");
-        vengefly_agro_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/vengefly/vengefly_agro_left.png");
         geo_deposit_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_up.png");
         geo_deposit_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_down.png");
         geo_deposit_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/geo/geo_deposit_left.png");
@@ -683,8 +736,6 @@ public class Assets
         wandering_husk_attack_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/wandering_husk/husk_attack_left.png");
         wandering_husk_dead_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/wandering_husk/husk_dead_right.png");
         wandering_husk_dead_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/wandering_husk/husk_dead_left.png");
-        shadow_dash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/shadow_dash_right.png");
-        shadow_dash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/shadow_dash_left.png");
 
         superdash_crystals_wall_right_1 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/wall/superdash_crystals_wall_right_1.png");
         superdash_crystals_wall_right_2 = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/decals/right/wall/superdash_crystals_wall_right_2.png");
@@ -715,16 +766,12 @@ public class Assets
         player_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_right.png");
         player_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_left.png");
         tile_collision = ImageLoader.loadImage("/dev/pogodemon/assets/textures/tile_collision.png");
-        tile_empty = ImageLoader.loadImage("/dev/pogodemon/assets/textures/tile_empty.png");
         grass = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/environment/grass.png");
         mask_full = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/mask_full.png");
         mask_empty = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/mask_empty.png");
         soul_vessel_hud_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_hud_up.png");
         soul_vessel_hud_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_hud_down.png");
-        dash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/dash_right.png");
-        dash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/dash_left.png");
-        walk_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/walk_right.png");
-        walk_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/walk_left.png");
+        soul_vessel_broken = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/soul_vessel_broken.png");
         jump_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/jump_right.png");
         jump_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/jump_left.png");
         fall_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/fall_right.png");
@@ -733,22 +780,63 @@ public class Assets
         fall_shock_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/fall_shock_left.png");
         cling_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/cling_right.png");
         cling_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/cling_left.png");
-        slash1_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash1_right.png");
-        slash1_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash1_left.png");
-        slash2_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash2_right.png");
-        slash2_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash2_left.png");
-        upslash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/upslash_right.png");
-        upslash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/upslash_left.png");
-        downslash_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/downslash_right.png");
-        downslash_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/downslash_left.png");
-        upslash_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/upslash_char_right.png");
-        upslash_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/upslash_char_left.png");
-        downslash_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/downslash_char_right.png");
-        downslash_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/downslash_char_left.png");
-        slash1_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/slash1_char_left.png");
-        slash1_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/slash1_char_right.png");
-        slash2_char_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/slash2_char_right.png");
-        slash2_char_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/slash2_char_left.png");
+
+        slash1_left = new BufferedImage[21];
+        slash1_right = new BufferedImage[21];
+        slash2_left = new BufferedImage[21];
+        slash2_right = new BufferedImage[21];
+        downslash_left = new BufferedImage[21];
+        downslash_right = new BufferedImage[21];
+        upslash_left = new BufferedImage[21];
+        upslash_right = new BufferedImage[21];
+
+        for (int i = 0; i < 2; i++)
+        {
+            slash1_right[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            slash1_left[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            slash2_right[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            slash2_left[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            upslash_right[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            upslash_left[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            downslash_right[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            downslash_left[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+        }
+
+        for (int i = 2; i < 5; i++)
+        {
+            slash1_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash1_right_1.png");
+            slash1_left[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash1_left_1.png");
+            slash2_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash2_right_1.png");
+            slash2_left[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash2_left_1.png");
+            upslash_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/upslash_right_1.png");
+            upslash_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/upslash_right_1.png");
+            upslash_left[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/upslash_left_1.png");
+            downslash_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/downslash_right_1.png");
+            downslash_left[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/downslash_left_1.png");
+        }
+
+        for (int i = 5; i < 9; i++)
+        {
+            slash1_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash1_right_2.png");
+            slash1_left[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash1_left_2.png");
+            slash2_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash2_right_2.png");
+            slash2_left[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/slash2_left_2.png");
+            upslash_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/upslash_right_2.png");
+            upslash_left[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/upslash_left_2.png");
+            downslash_right[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/downslash_right_2.png");
+            downslash_left[i] = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/nail_slash/downslash_left_2.png");
+        }
+
+        for (int i = 9; i < 21; i++)
+        {
+            slash2_right[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            slash2_left[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            upslash_right[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            upslash_left[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            downslash_right[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+            downslash_left[i] = new BufferedImage(1, 1, BufferedImage.TYPE_3BYTE_BGR);
+        }
+
         spikes_small_up = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/spikes/spikes_small_up.png");
         spikes_small_down = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/spikes/spikes_small_down.png");
         spikes_small_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/spikes/spikes_small_left.png");
@@ -763,8 +851,6 @@ public class Assets
         spikes_large_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/objects/spikes/spikes_large_right.png");
         damage_shock_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/damage_shock_right.png");
         damage_shock_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/damage_shock_left.png");
-        wings_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/wings_right.png");
-        wings_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/wings_left.png");
         player_up_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_up_right.png");
         player_up_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_up_left.png");
         player_down_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/model/player_down_right.png");
@@ -805,5 +891,19 @@ public class Assets
         lifeblood_mask = ImageLoader.loadImage("/dev/pogodemon/assets/textures/player/hud/lifeblood_mask.png");
         lifeseed_right = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/lifeseed/lifeseed_right.png");
         lifeseed_left = ImageLoader.loadImage("/dev/pogodemon/assets/textures/creatures/lifeseed/lifeseed_left.png");
+
+        try
+        {
+            perpetua = Font.createFont(Font.TRUETYPE_FONT, new File("src/dev/pogodemon/assets/fonts/perpetua.ttf")).deriveFont(45f);
+            trajan = Font.createFont(Font.TRUETYPE_FONT, new File("src/dev/pogodemon/assets/fonts/trajan.otf")).deriveFont(45f);
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(perpetua);
+            ge.registerFont(trajan);
+        }
+
+        catch (IOException | FontFormatException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

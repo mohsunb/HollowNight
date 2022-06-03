@@ -3,34 +3,42 @@ package dev.pogodemon.entities.objects;
 import dev.pogodemon.entities.Geo;
 import dev.pogodemon.utils.Handler;
 
-import java.util.Random;
-
 public class ChestGeo extends Chest
 {
-    private int geo;
+    private final int count_0, count_1, count_2;
 
-    public ChestGeo(Handler handler, float x, float y, int geo)
+    public ChestGeo(Handler handler, float x, float y, String entry, int count_0)
     {
-        super(handler, x, y);
-        this.geo = geo;
+        super(handler, x, y, entry);
+        this.count_0 = count_0;
+        this.count_1 = 0;
+        this.count_2 = 0;
+    }
+
+    public ChestGeo(Handler handler, float x, float y, String entry, int count_0, int count_1)
+    {
+        super(handler, x, y, entry);
+        this.count_0 = count_0;
+        this.count_1 = count_1;
+        this.count_2 = 0;
+    }
+
+    public ChestGeo(Handler handler, float x, float y, String entry, int count_0, int count_1, int count_2)
+    {
+        super(handler, x, y, entry);
+        this.count_0 = count_0;
+        this.count_1 = count_1;
+        this.count_2 = count_2;
     }
 
     @Override
     protected void open()
     {
-        Random rand = new Random();
-
-        int i = rand.nextInt(0, 4);
-        for (int l = 0; l < i; l++)
-            handler.getWorld().spawnEntity(new Geo(handler, getCenterX(), getCenterY() - bounds.height, 2));
-        geo -= i * 25;
-
-        i = rand.nextInt(0, 5);
-        for (int l = 0; l < i; l++)
-            handler.getWorld().spawnEntity(new Geo(handler, getCenterX(), getCenterY() - bounds.height, 1));
-        geo -= i * 5;
-
-        for (int l = 0; l < geo; l++)
+        for (int i = 0; i < count_0; i++)
             handler.getWorld().spawnEntity(new Geo(handler, getCenterX(), getCenterY() - bounds.height, 0));
+        for (int i = 0; i < count_1; i++)
+            handler.getWorld().spawnEntity(new Geo(handler, getCenterX(), getCenterY() - bounds.height, 1));
+        for (int i = 0; i < count_2; i++)
+            handler.getWorld().spawnEntity(new Geo(handler, getCenterX(), getCenterY() - bounds.height, 2));
     }
 }

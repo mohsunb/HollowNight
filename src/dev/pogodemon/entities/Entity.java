@@ -18,6 +18,7 @@ public abstract class Entity
     public boolean has_knockback = true;
     protected boolean gravity = true;
     protected boolean solid = false;
+    protected boolean climbable = false;
     public boolean was_just_attacked = false;
     public boolean is_camera_lock = false;
     protected boolean was_just_fireball_hit = false;
@@ -39,10 +40,21 @@ public abstract class Entity
         return solid;
     }
 
+    public boolean isClimbable()
+    {
+        return climbable;
+    }
+
     public void setSolid(boolean bool)
     {
         if (solid != bool)
             solid = bool;
+    }
+
+    public void setClimbable(boolean bool)
+    {
+        if (climbable != bool)
+            climbable = bool;
     }
 
     //Hazard respawn points

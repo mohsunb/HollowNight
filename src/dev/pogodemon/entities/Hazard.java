@@ -7,7 +7,8 @@ import java.awt.*;
 
 public class Hazard extends StaticEntity
 {
-
+    private Player player = handler.getWorld().getEntityManager().getPlayer();
+    private boolean just_respawned = false;
     public Hazard(Handler handler, float x, float y, float width, float height)
     {
         super(handler, x, y, width, height);
@@ -17,6 +18,9 @@ public class Hazard extends StaticEntity
     @Override
     public void update()
     {
+        if (just_respawned && player.flatSurface())
+            just_respawned = false;
+
         for (Entity e : getCollidingEntities(0, 0))
             e.kill();
     }
@@ -51,6 +55,13 @@ public class Hazard extends StaticEntity
     @Override
     public void playerContact()
     {
-        handler.getWorld().getEntityManager().getPlayer().hazardRespawn();
+        if (player.lifeblood > 0 || player.health > 20)
+        {
+            player.hazardRespawn();
+            just_respawned = true;
+        }
+
+        else if (!just_respawned)
+            player.die();
     }
 }
