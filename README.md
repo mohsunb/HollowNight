@@ -1,6 +1,6 @@
 # Hollow Night
 
-## A pathetic remake of [Hollow Knight](https://www.hollowknight.com/) by [Team Cherry](https://www.teamcherry.com.au/) made in Java using Swing API (Java2D, JPanel)
+## A pathetic remake of [Hollow Knight](https://www.hollowknight.com/) by [Team Cherry](https://www.teamcherry.com.au/) made in Java using AWT (Abstract Windowing Toolkit)
 
 ## Save Files:
 * Windows: ```%USERPROFILE%/hollow_night_savefile.dat```
