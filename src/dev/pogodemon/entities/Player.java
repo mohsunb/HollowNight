@@ -22,9 +22,6 @@ import java.util.ArrayList;
 
 public class Player extends Creature
 {
-    @Deprecated
-    private boolean flag2349832 = false;
-
     private final Animation anim_wings_left = new Animation(Math.round(1000F*29F/60F/23F), Assets.wings_left);
     private final Animation anim_wings_right = new Animation(Math.round(1000F*29F/60F/23F), Assets.wings_right);
 
@@ -1238,9 +1235,6 @@ public class Player extends Creature
 
     private void getInput()
     {
-        //Quick death
-        if (health > 0 && handler.getKeyManager().k)
-            health = -1;
 
         if (item_pickup || damage_shocked || fall_shocked || room_transitioning || benched)
         {
@@ -1745,25 +1739,7 @@ public class Player extends Creature
             }
         }
 
-        //Save current pos as spawn
-        if (handler.getKeyManager().j && !flag2349832)
-        {
-            GameFlags.load_state = 0;
-            GameFlags.load_coordinates = new Coordinate(getX(), getY());
-            GameFlags.load_map_id = handler.getWorld().getID();
-            GameFlags.data.updateValue("load_state", 0);
-            GameFlags.data.updateValue("load_map_id", handler.getWorld().getID());
-            GameFlags.data.updateValue("load_coordinates_x", getX());
-            GameFlags.data.updateValue("load_coordinates_y", getY());
-            GameFlags.data.updateLocalFile();
-            flag2349832 = true;
-            System.out.println("spawn location updated");
-        }
-
-        if (!handler.getKeyManager().j && flag2349832)
-            flag2349832 = false;
-
-        //Quit game (for quick debugging)
+        //Quit game
         if (handler.getKeyManager().esc)
         {
             GameFlags.data.updateValue("geo", getGeo());

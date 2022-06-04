@@ -6,12 +6,7 @@ import java.awt.event.KeyListener;
 public class KeyManager implements KeyListener
 {
     private final boolean[] keys;
-    /*
-    debug tools:
-    k -> kill player
-    j -> set spawn point
-     */
-    public boolean up, down, right, left, esc, z, x, c, s, a, f, k, j;
+    public boolean up, down, right, left, esc, z, x, c, s, a, f;
     public KeyManager()
     {
         keys = new boolean[256];
@@ -30,8 +25,6 @@ public class KeyManager implements KeyListener
         s = keys[KeyEvent.VK_S];
         a = keys[KeyEvent.VK_A];
         f = keys[KeyEvent.VK_F];
-        k = keys[KeyEvent.VK_K];
-        j = keys[KeyEvent.VK_J];
     }
 
     @Override
