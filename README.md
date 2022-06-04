@@ -2,6 +2,24 @@
 
 ## A pathetic remake of [Hollow Knight](https://www.hollowknight.com/) by [Team Cherry](https://www.teamcherry.com.au/) made in Java using AWT (Abstract Windowing Toolkit)
 
+## Installation
+* You can find the latest compiled version in ***Releases*** tab.
+
+* In case you want to compile it yourself:
+```
+git clone https://github.com/pogodemon/HollowNight.git
+```
+```
+cd HollowNight
+```
+```
+gradle build
+```
+Output will be ```./build/libs/HollowNight.jar```. You can run it with:
+```
+java -jar build/libs/HollowNight.jar
+```
+
 ## Save Files:
 * Windows: ```%USERPROFILE%/hollow_night_savefile.dat```
 * Linux: ```$HOME/hollow_knight_savefile.dat```
