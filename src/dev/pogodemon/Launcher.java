@@ -19,7 +19,8 @@ public class Launcher
     public static final boolean exclusive_fullscreen = config.getBoolean("fullscreen");;
     public static void main(String[] args)
     {
-        System.setProperty("sun.java2d.uiScale", String.valueOf(config.getBoolean("scaling")));
+        config.updateLocalFile();
+        System.setProperty("sun.java2d.uiScale", String.valueOf(config.getValue("scaling")));
         Game game = new Game("Hollow Night", game_width, game_height, exclusive_fullscreen);
         game.start();
     }
