@@ -38,7 +38,7 @@ public class Display
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        frame.setIconImage(new ImageIcon(getClass().getResource("../assets/textures/ui/icon_256x256.png")).getImage());
+        frame.setIconImage(new ImageIcon(getClass().getResource("/textures/ui/icon_256x256.png")).getImage());
 
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(width, height));

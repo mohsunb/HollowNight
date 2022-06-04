@@ -66,89 +66,89 @@ public class MapHelper
     public static String path(int map_id)
     {
         if (map_id == KINGS_PASS)
-            return "/dev/pogodemon/assets/collision_maps/kings_pass.png";
+            return "/collision_maps/kings_pass.png";
         else if (map_id == DIRTMOUTH)
-            return "/dev/pogodemon/assets/collision_maps/dirtmouth.png";
+            return "/collision_maps/dirtmouth.png";
         else if (map_id == CR1)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_1.png";
+            return "/collision_maps/crossroads_1.png";
         else if (map_id == CR2)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_2.png";
+            return "/collision_maps/crossroads_2.png";
         else if (map_id == CR3)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_3.png";
+            return "/collision_maps/crossroads_3.png";
         else if (map_id == CR4)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_4.png";
+            return "/collision_maps/crossroads_4.png";
         else if (map_id == CR5)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_5.png";
+            return "/collision_maps/crossroads_5.png";
         else if (map_id == CR6)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_6.png";
+            return "/collision_maps/crossroads_6.png";
         else if (map_id == CR7)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_7.png";
+            return "/collision_maps/crossroads_7.png";
         else if (map_id == CR8)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_8.png";
+            return "/collision_maps/crossroads_8.png";
         else if (map_id == CR9)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_9.png";
+            return "/collision_maps/crossroads_9.png";
         else if (map_id == CR10)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_10.png";
+            return "/collision_maps/crossroads_10.png";
         else if (map_id == CR11)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_11.png";
+            return "/collision_maps/crossroads_11.png";
         else if (map_id == CR12)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_12.png";
+            return "/collision_maps/crossroads_12.png";
         else if (map_id == CR13)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_13.png";
+            return "/collision_maps/crossroads_13.png";
         else if (map_id == CR14)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_14.png";
+            return "/collision_maps/crossroads_14.png";
         else if (map_id == CR15)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_15.png";
+            return "/collision_maps/crossroads_15.png";
         else if (map_id == CR16)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_16.png";
+            return "/collision_maps/crossroads_16.png";
         else if (map_id == CR17)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_17.png";
+            return "/collision_maps/crossroads_17.png";
         else if (map_id == CR18)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_18.png";
+            return "/collision_maps/crossroads_18.png";
         else if (map_id == CR19)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_19.png";
+            return "/collision_maps/crossroads_19.png";
         else if (map_id == CR20)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_20.png";
+            return "/collision_maps/crossroads_20.png";
         else if (map_id == CR21)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_21.png";
+            return "/collision_maps/crossroads_21.png";
         else if (map_id == CR22)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_22.png";
+            return "/collision_maps/crossroads_22.png";
         else if (map_id == CR23)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_23.png";
+            return "/collision_maps/crossroads_23.png";
         else if (map_id == CR24)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_24.png";
+            return "/collision_maps/crossroads_24.png";
         else if (map_id == CR25)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_25.png";
+            return "/collision_maps/crossroads_25.png";
         else if (map_id == CR26)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_26.png";
+            return "/collision_maps/crossroads_26.png";
         else if (map_id == CR27)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_27.png";
+            return "/collision_maps/crossroads_27.png";
         else if (map_id == CR28)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_28.png";
+            return "/collision_maps/crossroads_28.png";
         else if (map_id == CR29)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_29.png";
+            return "/collision_maps/crossroads_29.png";
         else if (map_id == CR30)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_30.png";
+            return "/collision_maps/crossroads_30.png";
         else if (map_id == CR31)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_31.png";
+            return "/collision_maps/crossroads_31.png";
         else if (map_id == CR32)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_32.png";
+            return "/collision_maps/crossroads_32.png";
         else if (map_id == CR33)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_33.png";
+            return "/collision_maps/crossroads_33.png";
         else if (map_id == CR34)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_34.png";
+            return "/collision_maps/crossroads_34.png";
         else if (map_id == CR35)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_35.png";
+            return "/collision_maps/crossroads_35.png";
         else if (map_id == CR36)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_36.png";
+            return "/collision_maps/crossroads_36.png";
         else if (map_id == CR37)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_37.png";
+            return "/collision_maps/crossroads_37.png";
         else if (map_id == CR38)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_38.png";
+            return "/collision_maps/crossroads_38.png";
         else if (map_id == CR39)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_39.png";
+            return "/collision_maps/crossroads_39.png";
         else if (map_id == CR40)
-            return "/dev/pogodemon/assets/collision_maps/crossroads_40.png";
+            return "/collision_maps/crossroads_40.png";
 
         return null;
     }
