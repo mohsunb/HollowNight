@@ -2,8 +2,16 @@
 
 ## A pathetic remake of [Hollow Knight](https://www.hollowknight.com/) by [Team Cherry](https://www.teamcherry.com.au/) made in Java using Swing API (Java2D, JPanel)
 
+## Save Files:
+* Windows: ```%USERPROFILE%/hollow_night_savefile.dat```
+* Linux: ```$HOME/hollow_knight_savefile.dat```
+
+## Configuration:
+* Windows: ```%USERPROFILE%/HollowNight.cfg```
+* Linux: ```$HOME/HollowNight.cfg```
+
 # Credits:
-* u/**Sumwan** for datamined [assets of Hollow Knight](https://www.reddit.com/r/HollowKnight/comments/cf83u1/all_hollow_knight_sprites_as_of_version_1432/?utm_source=share&utm_medium=web2x&context=3)
+* u/**Sumwann** for datamined [assets of Hollow Knight](https://www.reddit.com/r/HollowKnight/comments/cf83u1/all_hollow_knight_sprites_as_of_version_1432/?utm_source=share&utm_medium=web2x&context=3)
 * **The Embraced One** for [detailed map information](https://www.hallownest.net/)
 * **CodeNMore** for [beginner Swing tutorials](https://youtube.com/playlist?list=PLah6faXAgguMnTBs3JnEJY0shAc18XYQZ)
 
