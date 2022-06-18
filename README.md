@@ -22,7 +22,7 @@ java -jar build/libs/HollowNight.jar
 
 ## Save Files:
 * Windows: ```%USERPROFILE%/hollow_night_savefile.dat```
-* Linux: ```$HOME/hollow_knight_savefile.dat```
+* Linux: ```$HOME/hollow_night_savefile.dat```
 
 ## Configuration:
 * Windows: ```%USERPROFILE%/HollowNight.cfg```
