@@ -1,6 +1,6 @@
 # Hollow Night
 
-## A pathetic remake of [Hollow Knight](https://www.hollowknight.com/) by [Team Cherry](https://www.teamcherry.com.au/) made in Java using AWT (Abstract Windowing Toolkit)
+## An amateur remake of [Hollow Knight](https://www.hollowknight.com/) by [Team Cherry](https://www.teamcherry.com.au/) made in Java using AWT (Abstract Windowing Toolkit)
 
 ## Installation
 * You can find the latest compiled version in ***Releases*** tab.
