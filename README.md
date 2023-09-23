@@ -52,7 +52,7 @@ I added a lot of stuff. Missing things include:
 * Some hazards and stalagmites in Crossroads
 
 # Limitations:
-* It is completely 2D, like a glorified slideshow of PNGs, unlike [Hollow Knight which is actually 3D](https://unity.com/madewith/hollow-knight).
+* It is completely 2D, like a glorified slideshow of PNGs, unlike [Hollow Knight which is actually 3D](https://unity.com/sites/default/files/styles/16_9_m_scale_width/public/article/02-6-unity_parallax.1-min-compressor.gif?itok=4QUhfOej).
 * It doesn't leverage GPU at all, everything is done with CPU.
 * It is completely single-threaded, so it will probably run properly only on modern hardware.
 * I tried adding audio, but single-threaded nature of the project made the game stutter a lot when any audio started playing, so I scrapped the idea.
